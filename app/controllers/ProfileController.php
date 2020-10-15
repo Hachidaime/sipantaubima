@@ -69,10 +69,12 @@ class ProfileController extends Controller
     public function submit()
     {
         $data = $_POST;
-        $data['usr_is_master'] = $data['usr_is_master'] ?? 0;
-        $data['usr_is_package'] = $data['usr_is_package'] ?? 0;
-        $data['usr_is_progress'] = $data['usr_is_progress'] ?? 0;
-        $data['usr_is_report'] = $data['usr_is_report'] ?? 0;
+        list($detail) = $this->userModel->singlearray($data['id']);
+
+        $data['usr_is_master'] = $detail['usr_is_master'];
+        $data['usr_is_package'] = $detail['usr_is_package'];
+        $data['usr_is_progress'] = $detail['usr_is_progress'];
+        $data['usr_is_report'] = $detail['usr_is_report'];
 
         $data['usr_password'] = !empty($data['usr_password'])
             ? Functions::encrypt($data['usr_password'])
@@ -94,8 +96,6 @@ class ProfileController extends Controller
             }
 
             if ($result) {
-                list($detail) = $this->userModel->singlearray($id);
-
                 if ($id == $_SESSION['USER']['id']) {
                     $this->setUserSession($detail);
                 }
