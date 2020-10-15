@@ -1,0 +1,76 @@
+/* :root {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.invert {
+  filter: invert(1) hue-rotate(180deg);
+} */
+
+[class*="sidebar-light-"] .nav-treeview > .nav-item > .nav-link:focus,
+[class*="sidebar-light-"] .nav-treeview > .nav-item > .nav-link:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #001f3f !important;
+}
+
+/* https://stackoverflow.com/a/48705668 */
+.tooltip .arrow-top-warning::before {
+  border-top-color: var(--warning);
+}
+.tooltip .arrow-right-warning::before {
+  border-right-color: var(--warning);
+}
+.tooltip .arrow-bottom-warning::before {
+  border-bottom-color: var(--warning);
+}
+.tooltip .arrow-left-warning::before {
+  border-left-color: var(--warning);
+}
+
+/* List table row */
+.list-row {
+  cursor: pointer;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/*#region Sticky Column */
+.sticky-no {
+  /* Background color */
+  background-color: #ffffff;
+
+  /* Outline */
+  outline: 1px solid #e9ecef;
+
+  /* Stick to the left */
+  left: 0px;
+  position: sticky;
+
+  /* Displayed on top of other rows when scrolling */
+  z-index: 10;
+}
+
+.sticky-first {
+  /* Background color */
+  background-color: #ffffff;
+
+  /* Outline */
+  outline: 1px solid #e9ecef;
+
+  /* Stick to the left */
+  left: 40px;
+  position: sticky;
+
+  /* Displayed on top of other rows when scrolling */
+  z-index: 10;
+}
+/* #endregion */

@@ -1,0 +1,53 @@
+{
+  "workbench.sideBar.location": "right",
+  "workbench.colorCustomizations": {
+    "statusBar.background": "#1A1A1A",
+    "statusBar.noFolderBackground": "#212121",
+    "statusBar.debuggingBackground": "#263238",
+    "editorCursor.foreground": "#93f0eb",
+  },
+  "[javascript]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[php]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.minimap.enabled": false,
+  "editor.formatOnSave": true,
+  "editor.fontSize": 11,
+  "editor.lineHeight": 20,
+  "editor.rulers": [
+    80,
+    120
+  ],
+  "workbench.colorTheme": "Mayukai Mirage Darker",
+  "editor.fontFamily": "Cartograph CF, 'JetBrains Mono', 'Droid Sans Mono', 'monospace', monospace, 'Droid Sans Fallback'",
+  "editor.fontLigatures": true,
+  "workbench.iconTheme": "vscode-icons",
+  "bracket-pair-colorizer-2.forceUniqueOpeningColor": true,
+  "bracket-pair-colorizer-2.forceIterationColorCycle": true,
+  "bracket-pair-colorizer-2.colors": [
+    "Gold",
+    "Orchid",
+    "LightSkyBlue"
+  ],
+  "editor.cursorStyle": "block",
+  "editor.cursorBlinking": "solid",
+  "files.associations": {
+    "*.tpl": "html"
+  },
+  "emmet.includeLanguages": {
+    "smarty": "html"
+  },
+  "html.format.wrapLineLength": 80
+}
