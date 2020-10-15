@@ -145,6 +145,9 @@ class ProgressReportModel extends Model
 
                 $row['detail'] = $packageDetail;
                 $package[$idx] = $row;
+                if (is_null($packageDetail) || empty($packageDetail)) {
+                    unset($package[$idx]);
+                }
             }
         }
 
