@@ -115,12 +115,10 @@ class UserController extends Controller
         $data['usr_is_progress'] = $data['usr_is_progress'] ?? 0;
         $data['usr_is_report'] = $data['usr_is_report'] ?? 0;
 
-        $data['usr_password'] = !empty($data['usr_password'])
-            ? Functions::encrypt($data['usr_password'])
-            : '';
-        // var_dump($data);
-        // exit();
         if ($this->validate($data)) {
+            $data['usr_password'] = !empty($data['usr_password'])
+                ? Functions::encrypt($data['usr_password'])
+                : '';
             if (empty($data['usr_password'])) {
                 unset($data['usr_password']);
             }
