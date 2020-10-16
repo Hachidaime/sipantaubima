@@ -9,6 +9,8 @@ if (!session_id()) {
     session_start();
 }
 
+header('Access-Control-Allow-Origin: *');
+
 /**
  * Menampilkan error
  *
