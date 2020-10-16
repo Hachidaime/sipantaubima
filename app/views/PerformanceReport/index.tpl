@@ -37,7 +37,7 @@
           <sup class="fas fa-asterisk text-red"></sup>
           <span class="float-sm-right d-sm-inline d-none">:</span>
         </label>
-        <div class="col-lg-2 col-sm-3 col-8">
+        <div class="col-lg-9 col-sm-8">
           <select class="custom-select rounded-0" name="prg_code" id="prg_code">
             <option value="">-- Pilih --</option>
             {section inner $program}
@@ -59,7 +59,7 @@
           <sup class="fas fa-asterisk text-red"></sup>
           <span class="float-sm-right d-sm-inline d-none">:</span>
         </label>
-        <div class="col-lg-2 col-sm-3 col-8">
+        <div class="col-lg-9 col-sm-8">
           <select class="custom-select rounded-0" name="act_code" id="act_code">
             <option value="">-- Pilih --</option>
             {section inner $activity}
@@ -80,7 +80,7 @@
           Paket
           <span class="float-sm-right d-sm-inline d-none">:</span>
         </label>
-        <div class="col-lg-2 col-sm-3 col-8">
+        <div class="col-lg-9 col-sm-8">
           <select class="custom-select rounded-0" name="pkgd_id" id="pkgd_id">
             <option value="">-- Pilih --</option>
             {section inner $packageDetail}
