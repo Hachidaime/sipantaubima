@@ -353,7 +353,7 @@
               attribute: {
                 width: '125px',
               },
-              children: ['Keuangan (Rp)'],
+              children: ['Keuangan (%)'],
             })
 
             let headProgPhysical = createElement({
@@ -371,7 +371,7 @@
               attribute: {
                 width: '125px',
               },
-              children: ['Keuangan (Rp)'],
+              children: ['Keuangan (%)'],
             })
 
             let headDevnPhysical = createElement({
@@ -389,7 +389,7 @@
               attribute: {
                 width: '125px',
               },
-              children: ['Keuangan (Rp)'],
+              children: ['Keuangan (%)'],
             })
 
             let theadRow2 = createElement({
@@ -419,6 +419,8 @@
             let labels = []
             let trgPhysical = []
             let progPhysical = []
+            let trgFinance = []
+            let progFinance = []
 
             let n = 1
             for (idx in res[index].detail) {
@@ -456,6 +458,7 @@
 
                 let bodyDate = createElement({
                   element: 'td',
+                  class: ['text-center'],
                   children: [`${packageDetail[pkgd].trg_date}`],
                 })
 
@@ -471,8 +474,11 @@
                 let bodyTrgFinance = createElement({
                   element: 'td',
                   class: ['text-right'],
-                  children: [`${packageDetail[pkgd].trg_finance}`],
+                  children: [`${packageDetail[pkgd].trg_finance_pct}`],
                 })
+                trgFinance.push(
+                  Number(packageDetail[pkgd].trg_finance_pct.replace(',', '.'))
+                )
 
                 let bodyProgPhysical = createElement({
                   element: 'td',
@@ -486,8 +492,11 @@
                 let bodyProgFinance = createElement({
                   element: 'td',
                   class: ['text-right'],
-                  children: [`${packageDetail[pkgd].prog_finance}`],
+                  children: [`${packageDetail[pkgd].prog_finance_pct}`],
                 })
+                progFinance.push(
+                  Number(packageDetail[pkgd].prog_finance_pct.replace(',', '.'))
+                )
 
                 let bodyDevnPhysical = createElement({
                   element: 'td',
@@ -498,7 +507,7 @@
                 let bodyDevnFinance = createElement({
                   element: 'td',
                   class: ['text-right'],
-                  children: [`${packageDetail[pkgd].devn_finance}`],
+                  children: [`${packageDetail[pkgd].devn_finance_pct}`],
                 })
 
                 let bodyRow = createElement({
@@ -560,17 +569,31 @@
                 yLabel: 'Persentase Fisik',
                 datasets: [
                   {
-                    label: 'Target',
+                    label: 'Target Fisik',
                     backgroundColor: '#007bff',
                     borderColor: '#007bff',
                     data: trgPhysical,
                     lineTension: 0,
                   },
                   {
-                    label: 'Progres',
+                    label: 'Realisasi Fisik',
                     backgroundColor: '#dc3545',
                     borderColor: '#dc3545',
                     data: progPhysical,
+                    lineTension: 0,
+                  },
+                  {
+                    label: 'Target Keuangan',
+                    backgroundColor: '#28a745',
+                    borderColor: '#28a745',
+                    data: trgFinance,
+                    lineTension: 0,
+                  },
+                  {
+                    label: 'Realisasi Keuangan',
+                    backgroundColor: '#ffc107',
+                    borderColor: '#ffc107',
+                    data: progFinance,
                     lineTension: 0,
                   },
                 ],
