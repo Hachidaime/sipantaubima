@@ -100,11 +100,11 @@
 <div class="card rounded-0 sr-only chart-container">
   <div class="card-body">
     <canvas
-      id="lineChart"
+      id="canvas"
       style="
-        min-height: 300px;
-        height: 300px;
-        max-height: 300px;
+        min-height: 400px;
+        height: 400px;
+        max-height: 400px;
         max-width: 100%;
       "
     ></canvas>
@@ -116,6 +116,7 @@
 {block 'script'}
 <!-- ChartJS -->
 <script src="{$smarty.const.BASE_URL}/assets/plugins/chart.js/Chart.min.js"></script>
+<script src="https://www.chartjs.org/samples/latest/utils.js"></script>
 {literal}
 <script>
   $(document).ready(function () {
@@ -566,35 +567,47 @@
                 id: 'lineChart',
                 labels: labels,
                 xLabel: 'Minggu Ke',
-                yLabel: 'Persentase Fisik',
+                yLabel: 'Persentase',
                 datasets: [
                   {
                     label: 'Target Fisik',
-                    backgroundColor: '#007bff',
-                    borderColor: '#007bff',
+                    backgroundColor: '#e83e8c',
+                    borderColor: '#e83e8c',
                     data: trgPhysical,
                     lineTension: 0,
+                    pointStyle: 'triangle',
+                    pointRadius: '8',
+                    pointHoverRadius: '10',
                   },
                   {
                     label: 'Realisasi Fisik',
-                    backgroundColor: '#dc3545',
-                    borderColor: '#dc3545',
+                    backgroundColor: '#007bff',
+                    borderColor: '#007bff',
                     data: progPhysical,
                     lineTension: 0,
+                    pointStyle: 'rect',
+                    pointRadius: '8',
+                    pointHoverRadius: '10',
                   },
                   {
                     label: 'Target Keuangan',
-                    backgroundColor: '#28a745',
-                    borderColor: '#28a745',
+                    backgroundColor: '#ffc107',
+                    borderColor: '#ffc107',
                     data: trgFinance,
                     lineTension: 0,
+                    pointStyle: 'circle',
+                    pointRadius: '8',
+                    pointHoverRadius: '10',
                   },
                   {
                     label: 'Realisasi Keuangan',
-                    backgroundColor: '#ffc107',
-                    borderColor: '#ffc107',
+                    backgroundColor: '#28a745',
+                    borderColor: '#28a745',
                     data: progFinance,
                     lineTension: 0,
+                    pointStyle: 'rectRot',
+                    pointRadius: '8',
+                    pointHoverRadius: '10',
                   },
                 ],
               }
@@ -637,6 +650,9 @@
     let chartOptions = {
       maintainAspectRatio: false,
       responsive: true,
+      legend: {
+        position: 'right',
+      },
       scales: {
         xAxes: [
           {
@@ -655,8 +671,9 @@
               labelString: params.yLabel,
             },
             ticks: {
-              suggestedMin: 0,
-              suggestedMax: 100,
+              min: 0,
+              max: 100,
+              stepSize: 10,
             },
           },
         ],
@@ -666,10 +683,10 @@
     //-------------
     //- LINE CHART -
     //--------------
-    let lineChartCanvas = $(`#lineChart`).get(0).getContext('2d')
+    let lineChartCanvas = $(`#canvas`).get(0).getContext('2d')
     let lineChartOptions = jQuery.extend(true, {}, chartOptions)
     let lineChartData = jQuery.extend(true, {}, chartData)
-    console.log(params.datasets.length)
+
     for (let i = 0; i < params.datasets.length; i++) {
       lineChartData.datasets[i].fill = false
     }
