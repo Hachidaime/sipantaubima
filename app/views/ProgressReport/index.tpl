@@ -116,7 +116,6 @@
 {block 'script'}
 <!-- ChartJS -->
 <script src="{$smarty.const.BASE_URL}/assets/plugins/chart.js/Chart.min.js"></script>
-<script src="https://www.chartjs.org/samples/latest/utils.js"></script>
 {literal}
 <script>
   $(document).ready(function () {
