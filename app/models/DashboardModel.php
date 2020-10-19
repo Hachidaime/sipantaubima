@@ -21,28 +21,48 @@ class DashboardModel extends Model
     public function activityInfo()
     {
         $performance = $this->performanceReportModel->getData();
+        // print '<pre>';
+        // print_r($performance);
+        // print '</pre>';
+
         $activityOpt = [];
-        foreach ($performance as $perf) {
-            $activityOpt[$perf['act_code']]['act_code'] = $perf['act_code'];
-            $activityOpt[$perf['act_code']]['act_name'] = $perf['act_name'];
-            foreach ($perf['detail'] as $perfd) {
-                foreach ($perfd as $row) {
-                    foreach ($row as $key => $value) {
-                        if (!in_array($key, ['indicator', 'prog_physical'])) {
-                            unset($row[$key]);
-                        }
-                    }
-                    $row['prog_physical'] = str_replace(
-                        ',',
-                        '.',
-                        $row['prog_physical'],
-                    );
-                    $activityOpt[$perf['act_code']]['detail'][] = $row;
+        foreach ($performance as $row) {
+            $red = 0;
+            $yellow = 0;
+            $green = 0;
+            $finish = 0;
+            foreach ($row['detail'] as $value) {
+                switch ($value['indicator']) {
+                    case 'red':
+                        $red += 1;
+                        break;
+
+                    case 'yellow':
+                        $yellow += 1;
+                        break;
+
+                    case 'green':
+                        $green += 1;
+                        break;
+                }
+                if ($value['prog_physical'] == 100) {
+                    $finish += 1;
                 }
             }
+
+            $activityOpt[$row['act_code']] = [
+                'act_code' => $row['act_code'],
+                'act_name' => $row['act_name'],
+                'red' => $red,
+                'yellow' => $yellow,
+                'green' => $green,
+                'finish' => $finish,
+                'all' => count($row['detail']),
+            ];
         }
 
         $activityInfo = array_values($activityOpt);
+        /* 
 
         foreach ($activityInfo as $idx => $row) {
             $red = 0;
@@ -81,6 +101,7 @@ class DashboardModel extends Model
             $activityInfo[$idx] = $row;
         }
 
+        */
         return $activityInfo;
     }
 }
