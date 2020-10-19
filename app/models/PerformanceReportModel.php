@@ -143,11 +143,6 @@ class PerformanceReportModel extends Model
                     }
                 }
 
-                // print '<pre>';
-                // print_r($target);
-                // print_r($progress);
-                // print '</pre>';
-
                 $row['detail'] = $packageDetail;
                 $package[$idx] = $row;
             }
@@ -158,10 +153,18 @@ class PerformanceReportModel extends Model
 
     public function getDetail($detail)
     {
+        $detail['trg_finance_pct'] =
+            ($detail['trg_finance'] / $detail['cnt_value']) * 100;
+
+        $detail['prog_finance_pct'] =
+            ($detail['prog_finance'] / $detail['cnt_value']) * 100;
+
         $detail['devn_physical'] =
             $detail['prog_physical'] - $detail['trg_physical'];
         $detail['devn_finance'] =
             $detail['prog_finance'] - $detail['trg_finance'];
+        $detail['devn_finance_pct'] =
+            ($detail['devn_finance'] / $detail['cnt_value']) * 100;
 
         $indicator = 'white';
         if (!is_null($detail['trg_physical'])) {
@@ -222,27 +225,27 @@ class PerformanceReportModel extends Model
                 $detail['trg_physical'] > 0
                     ? number_format($detail['trg_physical'], 2, ',', '.')
                     : '',
-            'trg_finance' =>
-                $detail['trg_finance'] > 0
-                    ? number_format($detail['trg_finance'], 2, ',', '.')
+            'trg_finance_pct' =>
+                $detail['trg_finance_pct'] > 0
+                    ? number_format($detail['trg_finance_pct'], 2, ',', '.')
                     : '',
             'prog_physical' =>
                 $detail['prog_physical'] > 0
                     ? number_format($detail['prog_physical'], 2, ',', '.')
                     : '',
-            'prog_finance' =>
-                $detail['prog_finance'] > 0
-                    ? number_format($detail['prog_finance'], 2, ',', '.')
+            'prog_finance_pct' =>
+                $detail['prog_finance_pct'] > 0
+                    ? number_format($detail['prog_finance_pct'], 2, ',', '.')
                     : '',
             'devn_physical' =>
                 !empty($detail['trg_physical']) ||
                 !empty($detail['prog_physical'])
                     ? number_format($detail['devn_physical'], 2, ',', '.')
                     : '',
-            'devn_finance' =>
+            'devn_finance_pct' =>
                 !empty($detail['trg_finance']) ||
                 !empty($detail['prog_finance'])
-                    ? number_format($detail['devn_finance'], 2, ',', '.')
+                    ? number_format($detail['devn_finance_pct'], 2, ',', '.')
                     : '',
             'indicator' => $indicator,
         ];

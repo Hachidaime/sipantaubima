@@ -416,7 +416,7 @@
                 let bodyTrgFinance = createElement({
                   element: 'td',
                   class: ['text-right'],
-                  children: [`${packageDetail[pkgd].trg_finance}`],
+                  children: [`${packageDetail[pkgd].trg_finance_pct}`],
                 })
 
                 let bodyProgPhysical = createElement({
@@ -428,7 +428,7 @@
                 let bodyProgFinance = createElement({
                   element: 'td',
                   class: ['text-right'],
-                  children: [`${packageDetail[pkgd].prog_finance}`],
+                  children: [`${packageDetail[pkgd].prog_finance_pct}`],
                 })
 
                 let bodyDevnPhysical = createElement({
@@ -440,7 +440,7 @@
                 let bodyDevnFinance = createElement({
                   element: 'td',
                   class: ['text-right'],
-                  children: [`${packageDetail[pkgd].devn_finance}`],
+                  children: [`${packageDetail[pkgd].devn_finance_pct}`],
                 })
 
                 let bodyIndicator = createElement({
