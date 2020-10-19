@@ -234,7 +234,7 @@
                 rowspan: 2,
                 width: '10%',
               },
-              children: ['Nilai Contract (Rp)'],
+              children: ['Nilai Contract (%)'],
             })
 
             let headDate = createElement({
@@ -317,7 +317,7 @@
               attribute: {
                 width: '125px',
               },
-              children: ['Keuangan (Rp)'],
+              children: ['Keuangan (%)'],
             })
 
             let headProgPhysical = createElement({
@@ -335,7 +335,7 @@
               attribute: {
                 width: '125px',
               },
-              children: ['Keuangan (Rp)'],
+              children: ['Keuangan (%)'],
             })
 
             let headDevnPhysical = createElement({
@@ -353,7 +353,7 @@
               attribute: {
                 width: '125px',
               },
-              children: ['Keuangan (Rp)'],
+              children: ['Keuangan (%)'],
             })
 
             let theadRow2 = createElement({
