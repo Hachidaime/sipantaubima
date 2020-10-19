@@ -74,24 +74,6 @@
           <div class="invalid-feedback"></div>
         </div>
       </div>
-
-      <div class="form-group row">
-        <label for="pkgd_id" class="col-lg-3 col-sm-4 col-form-label">
-          Paket
-          <span class="float-sm-right d-sm-inline d-none">:</span>
-        </label>
-        <div class="col-lg-9 col-sm-8">
-          <select class="custom-select rounded-0" name="pkgd_id" id="pkgd_id">
-            <option value="">-- Pilih --</option>
-            {section inner $packageDetail}
-            <option value="{$packageDetail[inner].id}">
-              {$packageDetail[inner].pkgd_name}
-            </option>
-            {/section}
-          </select>
-          <div class="invalid-feedback"></div>
-        </div>
-      </div>
     </form>
   </div>
   <!-- /.card-body -->
