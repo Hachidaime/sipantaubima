@@ -97,6 +97,29 @@ class PerformanceReportModel extends Model
                 }
                 $progress = array_values($progress);
 
+                $total_trg_physical = 0;
+                $total_trg_finance = 0;
+                foreach ($target as $key => $value) {
+                    $total_trg_physical += $value['trg_physical'];
+                    $total_trg_finance += $value['trg_physical'];
+                }
+                $avg_trg_physical = $total_trg_physical / count($target);
+                $avg_trg_finance = $total_trg_finance / count($target);
+
+                $total_prog_physical = 0;
+                $total_prog_finance = 0;
+                foreach ($progress as $key => $value) {
+                    $total_prog_physical += $value['prog_physical'];
+                    $total_prog_finance += $value['prog_physical'];
+                }
+                $avg_prog_physical = $total_prog_physical / count($progress);
+                $avg_prog_finance = $total_prog_finance / count($progress);
+
+                print '<pre>';
+                print_r($target);
+                print_r($progress);
+                print '</pre>';
+
                 $packageDetail = [];
                 for ($i = 0; $i < count($target); $i++) {
                     if (count($target[$i]) > count($progress[$i])) {
