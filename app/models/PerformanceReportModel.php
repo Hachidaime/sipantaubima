@@ -98,50 +98,72 @@ class PerformanceReportModel extends Model
                 $progress = array_values($progress);
 
                 $packageDetail = [];
+
+                $last_target = [];
                 for ($i = 0; $i < count($target); $i++) {
-                    if (count($target[$i]) > count($progress[$i])) {
-                        foreach ($target[$i] as $key => $value) {
-                            $progress[$i][$key] = is_array($progress[$i][$key])
-                                ? $progress[$i][$key]
-                                : [];
-
-                            $detail = array_merge(
-                                $target[$i][$key],
-                                $progress[$i][$key],
-                            );
-
-                            $detail = $this->getDetail($detail);
-                            if ($detail['week'] > 1) {
-                                $detail['pkgd_no'] = '';
-                                $detail['pkgd_name'] = '';
-                                $detail['cnt_value'] = '';
-                                $detail['pkgd_last_prog_date'] = '';
-                            }
-
-                            $packageDetail[$i][$key] = $detail;
+                    if (is_array($target[$i])) {
+                        $avg_trg_physical = 0;
+                        $avg_trg_finance = 0;
+                        $count_target = count($target[$i]);
+                        foreach ($target[$i] as $value) {
+                            $avg_trg_physical +=
+                                $value['trg_physical'] / $count_target;
+                            $avg_trg_finance +=
+                                $value['trg_finance'] / $count_target;
                         }
-                    } else {
-                        foreach ($progress[$i] as $key => $value) {
-                            $target[$i][$key] = is_array($target[$i][$key])
-                                ? $target[$i][$key]
-                                : [];
 
-                            $detail = array_merge(
-                                $target[$i][$key],
-                                $progress[$i][$key],
-                            );
-
-                            $detail = $this->getDetail($detail);
-                            if ($detail['week'] > 1) {
-                                $detail['pkgd_no'] = '';
-                                $detail['pkgd_name'] = '';
-                                $detail['cnt_value'] = '';
-                                $detail['pkgd_last_prog_date'] = '';
-                            }
-                            $packageDetail[$i][$key] = $detail;
-                        }
+                        $value['avg_trg_physical'] = $avg_trg_physical;
+                        $value['avg_trg_finance'] = $avg_trg_finance;
+                        $last_target[$i] = $value;
                     }
                 }
+
+                $last_progress = [];
+                for ($i = 0; $i < count($progress); $i++) {
+                    if (is_array($progress[$i])) {
+                        $avg_prog_physical = 0;
+                        $avg_prog_finance = 0;
+                        $count_progress = count($progress[$i]);
+                        foreach ($progress[$i] as $value) {
+                            $avg_prog_physical +=
+                                $value['prog_physical'] / $count_progress;
+                            $avg_prog_finance +=
+                                $value['prog_finance'] / $count_progress;
+                        }
+
+                        $value['avg_prog_physical'] = $avg_prog_physical;
+                        $value['avg_prog_finance'] = $avg_prog_finance;
+                        $last_progress[$i] = $value;
+                    }
+                }
+
+                $packageDetail = array_replace_recursive(
+                    $last_target,
+                    $last_progress,
+                );
+
+                $sub_trg_physical = 0;
+                $sub_trg_finance_pct = 0;
+                $sub_prog_physical = 0;
+                $sub_prog_finance_pct = 0;
+                $count_package_Detail = count($packageDetail);
+                foreach ($packageDetail as $key => $value) {
+                    $value = $this->getDetail($value);
+                    $sub_trg_physical +=
+                        $value['avg_trg_physical'] / $count_package_Detail;
+                    $sub_trg_finance_pct +=
+                        $value['avg_trg_finance_pct'] / $count_package_Detail;
+                    $sub_prog_physical +=
+                        $value['avg_prog_physical'] / $count_package_Detail;
+                    $sub_prog_finance_pct +=
+                        $value['avg_prog_finance_pct'] / $count_package_Detail;
+                    $packageDetail[$key] = $value;
+                }
+
+                $row['sub_trg_physical'] = $sub_trg_physical;
+                $row['sub_trg_finance_pct'] = $sub_trg_finance_pct;
+                $row['sub_prog_physical'] = $sub_prog_physical;
+                $row['sub_prog_finance_pct'] = $sub_prog_finance_pct;
                 $row['detail'] = $packageDetail;
 
                 $package[$idx] = $row;
@@ -155,9 +177,13 @@ class PerformanceReportModel extends Model
     {
         $detail['trg_finance_pct'] =
             ($detail['trg_finance'] / $detail['cnt_value']) * 100;
+        $detail['avg_trg_finance_pct'] =
+            ($detail['avg_trg_finance'] / $detail['cnt_value']) * 100;
 
         $detail['prog_finance_pct'] =
             ($detail['prog_finance'] / $detail['cnt_value']) * 100;
+        $detail['avg_prog_finance_pct'] =
+            ($detail['avg_prog_finance'] / $detail['cnt_value']) * 100;
 
         $detail['devn_physical'] =
             $detail['prog_physical'] - $detail['trg_physical'];
@@ -208,12 +234,6 @@ class PerformanceReportModel extends Model
                 $detail['cnt_value'] > 0
                     ? number_format($detail['cnt_value'], 2, ',', '.')
                     : '',
-            'week' =>
-                $detail['trg_week'] > 0
-                    ? $detail['trg_week']
-                    : ($detail['prog_week'] > 0
-                        ? $detail['prog_week']
-                        : ''),
             'pkgd_last_prog_date' => !is_null($detail['pkgd_last_prog_date'])
                 ? Functions::dateFormat(
                     'Y-m-d',
@@ -229,6 +249,14 @@ class PerformanceReportModel extends Model
                 $detail['trg_finance_pct'] > 0
                     ? number_format($detail['trg_finance_pct'], 2, ',', '.')
                     : '',
+            'avg_trg_physical' =>
+                $detail['avg_trg_physical'] > 0
+                    ? number_format($detail['avg_trg_physical'], 2, ',', '.')
+                    : '',
+            'avg_trg_finance_pct' =>
+                $detail['avg_trg_finance_pct'] > 0
+                    ? number_format($detail['avg_trg_finance_pct'], 2, ',', '.')
+                    : '',
             'prog_physical' =>
                 $detail['prog_physical'] > 0
                     ? number_format($detail['prog_physical'], 2, ',', '.')
@@ -236,6 +264,19 @@ class PerformanceReportModel extends Model
             'prog_finance_pct' =>
                 $detail['prog_finance_pct'] > 0
                     ? number_format($detail['prog_finance_pct'], 2, ',', '.')
+                    : '',
+            'avg_prog_physical' =>
+                $detail['avg_prog_physical'] > 0
+                    ? number_format($detail['avg_prog_physical'], 2, ',', '.')
+                    : '',
+            'avg_prog_finance_pct' =>
+                $detail['avg_prog_finance_pct'] > 0
+                    ? number_format(
+                        $detail['avg_prog_finance_pct'],
+                        2,
+                        ',',
+                        '.',
+                    )
                     : '',
             'devn_physical' =>
                 !empty($detail['trg_physical']) ||
