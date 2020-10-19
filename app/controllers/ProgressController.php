@@ -6,6 +6,8 @@ use app\helper\Flasher;
 use app\helper\Functions;
 use app\models\ProgressModel;
 use app\models\PackageDetailModel;
+use app\models\ProgramModel;
+use app\models\ActivityModel;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -303,11 +305,13 @@ class ProgressController extends Controller
                 [
                     'No.',
                     "Tahun\nAnggaran",
-                    'Minggu Ke',
+                    'Program',
+                    'Kegiatan',
+                    "Minggu\nKe",
                     'Nama Paket',
-                    'Tanggal Periode',
-                    'Progres Fisik',
-                    'Progres Keuangan',
+                    "Tanggal\nPeriode",
+                    "Progres Fisik\n(%)",
+                    "Progres Keuangan\n(Rp)",
                 ],
                 null,
                 'A1',
@@ -320,7 +324,7 @@ class ProgressController extends Controller
 
         $spreadsheet
             ->getActiveSheet()
-            ->getStyle('A1:G1')
+            ->getStyle('A1:I1')
             ->applyFromArray([
                 'alignment' => [
                     'horizontal' =>
@@ -342,16 +346,46 @@ class ProgressController extends Controller
                 $n = $idx + 1;
                 $sheet->setCellValue("A{$row}", $n);
                 $sheet->setCellValue("B{$row}", $rows['prog_fiscal_year']);
-                $sheet->setCellValue("C{$row}", $rows['prog_week']);
-                $sheet->setCellValue("D{$row}", $rows['pkgd_name']);
-                $sheet->setCellValue("E{$row}", $rows['prog_date']);
-                $sheet->setCellValue("F{$row}", $rows['prog_physical']);
-                $sheet->setCellValue("G{$row}", $rows['prog_finance']);
+                $sheet->setCellValue("C{$row}", $rows['prg_name']);
+                $sheet->setCellValue("D{$row}", $rows['act_name']);
+                $sheet->setCellValue("E{$row}", $rows['prog_week']);
+                $sheet->setCellValue("F{$row}", $rows['pkgd_name']);
+                $sheet->setCellValue("G{$row}", $rows['prog_date']);
+                $sheet->setCellValue("H{$row}", $rows['prog_physical']);
+                $sheet->setCellValue("I{$row}", $rows['prog_finance']);
+
+                $sheet->getStyle("B{$row}")->applyFromArray([
+                    'alignment' => [
+                        'horizontal' =>
+                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ],
+                ]);
+
+                $sheet->getStyle("E{$row}")->applyFromArray([
+                    'alignment' => [
+                        'horizontal' =>
+                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ],
+                ]);
+
+                $sheet->getStyle("G{$row}")->applyFromArray([
+                    'alignment' => [
+                        'horizontal' =>
+                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ],
+                ]);
+
+                $sheet->getStyle("H{$row}:I{$row}")->applyFromArray([
+                    'alignment' => [
+                        'horizontal' =>
+                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+                    ],
+                ]);
             }
 
             $spreadsheet
                 ->getActiveSheet()
-                ->getStyle("A2:G{$row}")
+                ->getStyle("A2:I{$row}")
                 ->applyFromArray([
                     'borders' => [
                         'allBorders' => [
@@ -390,6 +424,14 @@ class ProgressController extends Controller
             ->getActiveSheet()
             ->getColumnDimension('G')
             ->setAutoSize(true);
+        $spreadsheet
+            ->getActiveSheet()
+            ->getColumnDimension('H')
+            ->setAutoSize(true);
+        $spreadsheet
+            ->getActiveSheet()
+            ->getColumnDimension('I')
+            ->setAutoSize(true);
 
         $writer = new Xlsx($spreadsheet);
         $t = time();
@@ -401,27 +443,7 @@ class ProgressController extends Controller
 
     private function getList($paginate = false)
     {
-        $page = $_POST['page'] ?? 1;
-        $keyword = $_POST['keyword'] ?? null;
-
-        list($packageDetail) = $this->packageDetailModel->multiarray();
-
-        $packageDetailOptions = Functions::listToOptions(
-            $packageDetail,
-            'id',
-            'pkgd_name',
-        );
-
-        $filter =
-            !is_null($keyword) && !empty($keyword) && $keyword != ''
-                ? [['pkg_fiscal_year', 'LIKE', "%{$keyword}%"]]
-                : null;
-
-        $sort = [['prog_fiscal_year', 'ASC'], ['id', 'DESC']];
-
-        list($list, $info) = $paginate
-            ? $this->progressModel->paginate($page, $filter, $sort)
-            : $this->progressModel->multiarray($filter, $sort);
+        list($list, $info) = $this->progressModel->getData($_POST, $paginate);
 
         foreach ($list as $idx => $row) {
             $list[$idx]['prog_date'] = Functions::dateFormat(
@@ -429,7 +451,6 @@ class ProgressController extends Controller
                 'd/m/Y',
                 $row['prog_date'],
             );
-            $list[$idx]['pkgd_name'] = $packageDetailOptions[$row['pkgd_id']];
             $list[$idx]['prog_finance'] = number_format(
                 $row['prog_finance'],
                 2,

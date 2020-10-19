@@ -55,14 +55,20 @@
           <thead>
             <tr>
               <th class="align-middle text-right" width="40px">#</th>
-              <th class="align-middle text-center" width="10%">
+              <th class="align-middle text-center" width="5%">
                 Tahun Anggaran
+              </th>
+              <th class="align-middle text-center" width="10%">
+                Program
+              </th>
+              <th class="align-middle text-center" width="10%">
+                Kegiatan
               </th>
               <th class="align-middle text-center" width="5%">
                 Minggu Ke
               </th>
               <th class="align-middle text-center" width="*">Nama Paket</th>
-              <th class="align-middle text-center" width="15%">
+              <th class="align-middle text-center" width="5%">
                 Tanggal Periode
               </th>
               <th class="align-middle text-center" width="80px">
@@ -142,6 +148,8 @@
           let tRow = null
           let no = null,
             progFiscalYear = null,
+            prgName = null,
+            actName = null,
             progWeek = null,
             pkgdName = null,
             progDate = null,
@@ -157,6 +165,16 @@
           progFiscalYear = createElement({
             element: 'td',
             children: [list[index].prog_fiscal_year],
+          })
+
+          prgName = createElement({
+            element: 'td',
+            children: [list[index].prg_name],
+          })
+
+          actName = createElement({
+            element: 'td',
+            children: [list[index].act_name],
           })
 
           progWeek = createElement({
@@ -259,6 +277,8 @@
             children: [
               no,
               progFiscalYear,
+              prgName,
+              actName,
               progWeek,
               pkgdName,
               progDate,
