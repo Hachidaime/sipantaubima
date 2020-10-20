@@ -104,12 +104,14 @@ class PerformanceReportModel extends Model
                     if (is_array($target[$i])) {
                         $avg_trg_physical = 0;
                         $avg_trg_finance = 0;
-                        $count_target = count($target[$i]);
-                        foreach ($target[$i] as $value) {
-                            $avg_trg_physical +=
-                                $value['trg_physical'] / $count_target;
-                            $avg_trg_finance +=
-                                $value['trg_finance'] / $count_target;
+                        if (is_array($target[$i])) {
+                            $count_target = count($target[$i]);
+                            foreach ($target[$i] as $value) {
+                                $avg_trg_physical +=
+                                    $value['trg_physical'] / $count_target;
+                                $avg_trg_finance +=
+                                    $value['trg_finance'] / $count_target;
+                            }
                         }
 
                         $value['avg_trg_physical'] = $avg_trg_physical;
@@ -123,12 +125,14 @@ class PerformanceReportModel extends Model
                     if (is_array($progress[$i])) {
                         $avg_prog_physical = 0;
                         $avg_prog_finance = 0;
-                        $count_progress = count($progress[$i]);
-                        foreach ($progress[$i] as $value) {
-                            $avg_prog_physical +=
-                                $value['prog_physical'] / $count_progress;
-                            $avg_prog_finance +=
-                                $value['prog_finance'] / $count_progress;
+                        if (is_array($progress[$i])) {
+                            $count_progress = count($progress[$i]);
+                            foreach ($progress[$i] as $value) {
+                                $avg_prog_physical +=
+                                    $value['prog_physical'] / $count_progress;
+                                $avg_prog_finance +=
+                                    $value['prog_finance'] / $count_progress;
+                            }
                         }
 
                         $value['avg_prog_physical'] = $avg_prog_physical;
@@ -146,18 +150,22 @@ class PerformanceReportModel extends Model
                 $sub_trg_finance_pct = 0;
                 $sub_prog_physical = 0;
                 $sub_prog_finance_pct = 0;
-                $count_package_Detail = count($packageDetail);
-                foreach ($packageDetail as $key => $value) {
-                    $value = $this->getDetail($value);
-                    $sub_trg_physical +=
-                        $value['avg_trg_physical'] / $count_package_Detail;
-                    $sub_trg_finance_pct +=
-                        $value['avg_trg_finance_pct'] / $count_package_Detail;
-                    $sub_prog_physical +=
-                        $value['avg_prog_physical'] / $count_package_Detail;
-                    $sub_prog_finance_pct +=
-                        $value['avg_prog_finance_pct'] / $count_package_Detail;
-                    $packageDetail[$key] = $value;
+                if (is_array($packageDetail)) {
+                    $count_package_Detail = count($packageDetail);
+                    foreach ($packageDetail as $key => $value) {
+                        $value = $this->getDetail($value);
+                        $sub_trg_physical +=
+                            $value['avg_trg_physical'] / $count_package_Detail;
+                        $sub_trg_finance_pct +=
+                            $value['avg_trg_finance_pct'] /
+                            $count_package_Detail;
+                        $sub_prog_physical +=
+                            $value['avg_prog_physical'] / $count_package_Detail;
+                        $sub_prog_finance_pct +=
+                            $value['avg_prog_finance_pct'] /
+                            $count_package_Detail;
+                        $packageDetail[$key] = $value;
+                    }
                 }
 
                 $row['sub_trg_physical'] = $sub_trg_physical;
