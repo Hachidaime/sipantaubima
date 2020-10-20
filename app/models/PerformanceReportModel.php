@@ -108,9 +108,13 @@ class PerformanceReportModel extends Model
                             $count_target = count($target[$i]);
                             foreach ($target[$i] as $value) {
                                 $avg_trg_physical +=
-                                    $value['trg_physical'] / $count_target;
+                                    $count_target > 0
+                                        ? $value['trg_physical'] / $count_target
+                                        : 0;
                                 $avg_trg_finance +=
-                                    $value['trg_finance'] / $count_target;
+                                    $count_target > 0
+                                        ? $value['trg_finance'] / $count_target
+                                        : 0;
                             }
                         }
 
@@ -129,9 +133,15 @@ class PerformanceReportModel extends Model
                             $count_progress = count($progress[$i]);
                             foreach ($progress[$i] as $value) {
                                 $avg_prog_physical +=
-                                    $value['prog_physical'] / $count_progress;
+                                    $count_progress > 0
+                                        ? $value['prog_physical'] /
+                                            $count_progress
+                                        : 0;
                                 $avg_prog_finance +=
-                                    $value['prog_finance'] / $count_progress;
+                                    $count_progress > 0
+                                        ? $value['prog_finance'] /
+                                            $count_progress
+                                        : 0;
                             }
                         }
 
@@ -152,18 +162,30 @@ class PerformanceReportModel extends Model
                 $sub_prog_finance_pct = 0;
                 if (is_array($packageDetail)) {
                     $count_package_Detail = count($packageDetail);
+
                     foreach ($packageDetail as $key => $value) {
-                        $value = $this->getDetail($value);
                         $sub_trg_physical +=
-                            $value['avg_trg_physical'] / $count_package_Detail;
+                            $count_package_Detail > 0
+                                ? $value['avg_trg_physical'] /
+                                    $count_package_Detail
+                                : 0;
                         $sub_trg_finance_pct +=
-                            $value['avg_trg_finance_pct'] /
-                            $count_package_Detail;
+                            $count_package_Detail > 0
+                                ? $value['avg_trg_finance_pct'] /
+                                    $count_package_Detail
+                                : 0;
                         $sub_prog_physical +=
-                            $value['avg_prog_physical'] / $count_package_Detail;
+                            $count_package_Detail > 0
+                                ? $value['avg_prog_physical'] /
+                                    $count_package_Detail
+                                : 0;
                         $sub_prog_finance_pct +=
-                            $value['avg_prog_finance_pct'] /
-                            $count_package_Detail;
+                            $count_package_Detail > 0
+                                ? $value['avg_prog_finance_pct'] /
+                                    $count_package_Detail
+                                : 0;
+
+                        $value = $this->getDetail($value);
                         $packageDetail[$key] = $value;
                     }
                 }
@@ -184,21 +206,31 @@ class PerformanceReportModel extends Model
     public function getDetail($detail)
     {
         $detail['trg_finance_pct'] =
-            ($detail['trg_finance'] / $detail['cnt_value']) * 100;
+            $detail['cnt_value'] > 0
+                ? ($detail['trg_finance'] / $detail['cnt_value']) * 100
+                : 0;
         $detail['avg_trg_finance_pct'] =
-            ($detail['avg_trg_finance'] / $detail['cnt_value']) * 100;
+            $detail['cnt_value'] > 0
+                ? ($detail['avg_trg_finance'] / $detail['cnt_value']) * 100
+                : 0;
 
         $detail['prog_finance_pct'] =
-            ($detail['prog_finance'] / $detail['cnt_value']) * 100;
+            $detail['cnt_value'] > 0
+                ? ($detail['prog_finance'] / $detail['cnt_value']) * 100
+                : 0;
         $detail['avg_prog_finance_pct'] =
-            ($detail['avg_prog_finance'] / $detail['cnt_value']) * 100;
+            $detail['cnt_value'] > 0
+                ? ($detail['avg_prog_finance'] / $detail['cnt_value']) * 100
+                : 0;
 
         $detail['devn_physical'] =
             $detail['prog_physical'] - $detail['trg_physical'];
         $detail['devn_finance'] =
             $detail['prog_finance'] - $detail['trg_finance'];
         $detail['devn_finance_pct'] =
-            ($detail['devn_finance'] / $detail['cnt_value']) * 100;
+            $detail['cnt_value'] > 0
+                ? ($detail['devn_finance'] / $detail['cnt_value']) * 100
+                : 0;
 
         $indicator = 'white';
         if (!is_null($detail['trg_physical'])) {
