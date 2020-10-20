@@ -151,23 +151,31 @@ class ProgressReportModel extends Model
             }
         }
 
+        $package = array_values($package);
+
         return $package;
     }
 
     public function getDetail($detail)
     {
         $detail['trg_finance_pct'] =
-            ($detail['trg_finance'] / $detail['cnt_value']) * 100;
+            $detail['cnt_value'] > 0
+                ? ($detail['trg_finance'] / $detail['cnt_value']) * 100
+                : 0;
 
         $detail['prog_finance_pct'] =
-            ($detail['prog_finance'] / $detail['cnt_value']) * 100;
+            $detail['cnt_value'] > 0
+                ? ($detail['prog_finance'] / $detail['cnt_value']) * 100
+                : 0;
 
         $detail['devn_physical'] =
             $detail['prog_physical'] - $detail['trg_physical'];
         $detail['devn_finance'] =
             $detail['prog_finance'] - $detail['trg_finance'];
         $detail['devn_finance_pct'] =
-            ($detail['devn_finance'] / $detail['cnt_value']) * 100;
+            $detail['cnt_value'] > 0
+                ? ($detail['devn_finance'] / $detail['cnt_value']) * 100
+                : 0;
 
         // var_dump($detail);
 
