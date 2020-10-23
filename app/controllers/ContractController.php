@@ -145,7 +145,7 @@ class ContractController extends Controller
     {
         $validation = $this->validator->make($data, [
             'cnt_contractor_name' => 'required|max:250',
-            'cnt_no' => 'required|max:25',
+            'cnt_no' => 'required|max:50',
             'cnt_date' => 'required|date',
             'cnt_wsw_date' => 'required|date',
             'cnt_days' => 'required',
