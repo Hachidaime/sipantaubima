@@ -372,7 +372,7 @@
     const data = $(`#detailList input[data-id=${pkgd_id}]`).data()
 
     $('#contractFormModal').modal('show')
-    $('#contractFormModalLabel').text(`Rekanan ${data.pkgdNo}`)
+    $('#contractFormModalLabel').text(`Kontraktor ${data.pkgdNo}`)
 
     $('#contract_form #pkgd_id').val(pkgd_id)
     $('#addendum_form #pkgd_id').val(pkgd_id)

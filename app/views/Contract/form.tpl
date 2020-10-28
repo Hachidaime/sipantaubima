@@ -51,7 +51,7 @@
               Nomor Kontrak
               <sup class="fas fa-asterisk text-red"></sup>
             </label>
-            <div class="col-lg-3 col-sm-4">
+            <div class="col-lg-8 col-sm-6">
               <input
                 type="text"
                 class="form-control rounded-0"
