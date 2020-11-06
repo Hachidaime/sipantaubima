@@ -138,7 +138,7 @@ class ProgramController extends Controller
     public function validate($data)
     {
         $validation = $this->validator->make($data, [
-            'prg_code' => "required|max:20|min:3|unique:{$this->programModel->getTable()},id,{$data['id']}",
+            'prg_code' => "required|max:25|min:3|unique:{$this->programModel->getTable()},id,{$data['id']}",
             'prg_name' => 'required|max:100|min:6',
         ]);
 
