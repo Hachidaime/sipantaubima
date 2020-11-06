@@ -17,7 +17,7 @@
           <sup class="fas fa-asterisk text-red"></sup>
           <span class="float-sm-right d-sm-inline d-none">:</span>
         </label>
-        <div class="col-lg-2 col-sm-3 col-6">
+        <div class="col-lg-4 col-md-6">
           <input
             type="text"
             class="form-control rounded-0"
