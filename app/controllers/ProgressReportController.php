@@ -134,7 +134,7 @@ class ProgressReportController extends Controller
                         'No.',
                         'Paket Kegiatan',
                         '',
-                        'Nilai Kontrak (Rp)',
+                        'Nilai Awal Kontrak (Rp)',
                         'Minggu Ke',
                         'Tanggal Periode',
                         'Target',

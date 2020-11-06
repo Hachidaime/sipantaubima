@@ -270,7 +270,7 @@
                 rowspan: 2,
                 width: '10%',
               },
-              children: ['Nilai Contract (Rp)'],
+              children: ['Nilai Awal Kontrak (Rp)'],
             })
 
             let headWeek = createElement({
