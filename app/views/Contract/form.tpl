@@ -348,7 +348,7 @@
       autoUnmask: true,
     })
 
-    $('#cnt_date').on('change.datetimepicker', () => {
+    $('#cnt_wsw_date').on('change.datetimepicker', () => {
       setPlanPHODate()
     })
 
@@ -377,17 +377,17 @@
   })
 
   let setPlanPHODate = () => {
-    let cntDate = $('#cnt_date').val()
-    const cntDays = $('#cnt_days').val()
+    let cntWswDate = $('#cnt_wsw_date').val()
+    const cntDays = $('#cnt_days').val() - 1
     const dateFormat = 'DD/MM/YYYY'
 
-    let dt = moment(cntDate, dateFormat)
+    let dt = moment(cntWswDate, dateFormat)
     if (cntDays > 0) {
       dt.add(cntDays, 'days')
     }
 
-    cntDate = dt.format(dateFormat)
-    $('#cnt_plan_pho_date').val(cntDate)
+    cntWswDate = dt.format(dateFormat)
+    $('#cnt_plan_pho_date').val(cntWswDate)
   }
 
   let setAddPlanPHODate = (order) => {
