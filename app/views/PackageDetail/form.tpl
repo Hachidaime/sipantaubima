@@ -52,6 +52,20 @@
             <div class="invalid-feedback"></div>
           </div>
           <div class="form-group">
+            <label for="pkgd_debt_ceiling">
+              Pagu Anggaran
+              <sup class="fas fa-asterisk text-red"></sup>
+            </label>
+            <input
+              class="form-control rounded-0 text-right"
+              id="pkgd_debt_ceiling"
+              name="pkgd_debt_ceiling"
+              autocomplete="off"
+              placeholder="0,00"
+            />
+            <div class="invalid-feedback"></div>
+          </div>
+          <div class="form-group">
             <label for="pkgd_sof">
               Sumber Dana
               <sup class="fas fa-asterisk text-red"></sup>
@@ -138,6 +152,16 @@
       $('#pkgd_advanced_year').prop('checked')
     )
 
+    $('#pkgd_debt_ceiling').inputmask({
+      alias: 'numeric',
+      groupSeparator: '.',
+      radixPoint: ',',
+      placeholder: '0,00',
+      numericInput: true,
+      autoGroup: true,
+      autoUnmask: true,
+    })
+
     $('#detailFormModal #btn_save').click(() => {
       clearErrorMessage()
       saveDetail()
@@ -158,7 +182,7 @@
         } else {
           flash(res.msg, 'success')
           $('#detailFormModal').modal('hide')
-          pkgdSearch()
+          pkgdSearch(true)
         }
       },
       'JSON'

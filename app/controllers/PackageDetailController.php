@@ -44,44 +44,18 @@ class PackageDetailController extends Controller
             ],
         ]);
 
+        $pkg_debt_ceiling = 0;
         foreach ($list as $idx => $row) {
+            $pkg_debt_ceiling += $row['pkgd_debt_ceiling'];
+
+            $row['pkgd_debt_ceiling'] = number_format(
+                $row['pkgd_debt_ceiling'],
+                2,
+                ',',
+                '.',
+            );
             $row['pkgd_sof_name'] = SOF_OPT[$row['pkgd_sof']];
             $row['pkgd_loc_name'] = $location_opt[$row['pkgd_loc_id']];
-            $row['pkgd_contract_date'] = !is_null($row['pkgd_contract_date'])
-                ? Functions::dateFormat(
-                    'Y-m-d',
-                    'd/m/Y',
-                    $row['pkgd_contract_date'],
-                )
-                : null;
-
-            $row['pkgd_contract_end_date'] = !is_null(
-                $row['pkgd_contract_end_date'],
-            )
-                ? Functions::dateFormat(
-                    'Y-m-d',
-                    'd/m/Y',
-                    $row['pkgd_contract_end_date'],
-                )
-                : null;
-
-            $row['pkgd_addendum_date'] = !is_null($row['pkgd_addendum_date'])
-                ? Functions::dateFormat(
-                    'Y-m-d',
-                    'd/m/Y',
-                    $row['pkgd_addendum_date'],
-                )
-                : null;
-
-            $row['pkgd_addendum_end_date'] = !is_null(
-                $row['pkgd_addendum_end_date'],
-            )
-                ? Functions::dateFormat(
-                    'Y-m-d',
-                    'd/m/Y',
-                    $row['pkgd_addendum_end_date'],
-                )
-                : null;
 
             $row['pkgd_last_prog_date'] = !is_null($row['pkgd_last_prog_date'])
                 ? Functions::dateFormat(
@@ -108,7 +82,10 @@ class PackageDetailController extends Controller
             $list[$idx] = $row;
         }
 
-        echo json_encode($list);
+        $pkg_debt_ceiling = number_format($pkg_debt_ceiling, 2, ',', '.');
+
+        $result = ['list' => $list, 'pkg_debt_ceiling' => $pkg_debt_ceiling];
+        echo json_encode($result);
         exit();
     }
 
@@ -125,8 +102,14 @@ class PackageDetailController extends Controller
         $data['pkgd_no'] = strtoupper($data['pkgd_no']);
         $data['pkgs_id'] = $_SESSION['PKGS_ID'];
         $data['pkg_id'] = !empty($data['pkg_id']) ? $data['pkg_id'] : 0;
+        $data['pkgd_debt_ceiling'] =
+            $data['pkgd_debt_ceiling'] > 0 ? $data['pkgd_debt_ceiling'] : '';
         if ($this->validate($data)) {
+            $data['pkgd_debt_ceiling'] = !empty($data['pkgd_debt_ceiling'])
+                ? str_replace(',', '.', $data['pkgd_debt_ceiling'])
+                : 0;
             $result = $this->packageDetailModel->save($data);
+
             if ($data['id'] > 0) {
                 $tag = 'Ubah';
                 $id = $data['id'];
@@ -160,6 +143,7 @@ class PackageDetailController extends Controller
             'pkgd_no' => "required|uniq_pkgd_no:{$data['pkgs_id']},{$data['id']}",
             'pkgd_name' => 'required',
             'pkgd_sof' => 'required',
+            'pkgd_debt_ceiling' => 'required',
             'pkgd_loc_id' => 'required',
         ]);
 
@@ -167,6 +151,7 @@ class PackageDetailController extends Controller
             'pkgd_no' => 'Nomor Paket',
             'pkgd_name' => 'Nama Paket',
             'pkgd_sof' => 'Sumber Dana',
+            'pkgd_debt_ceiling' => 'Pagu Anggaran',
             'pkgd_loc_id' => 'Lokasi Pekerjaan',
         ]);
 

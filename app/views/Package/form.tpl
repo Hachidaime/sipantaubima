@@ -93,6 +93,7 @@
             name="pkg_debt_ceiling"
             autocomplete="off"
             placeholder="0,00"
+            readonly
           />
           <div class="invalid-feedback"></div>
         </div>
@@ -165,7 +166,7 @@
     )
   }
 
-  let save = () => {
+  let save = (is_stay = false) => {
     $.post(
       `${MAIN_URL}/submit`,
       $('#my_form').serialize(),
@@ -176,7 +177,11 @@
               showErrorMessage(id, message)
             })
           } else flash(res.msg, 'error')
-        } else window.location = MAIN_URL
+        } else {
+          if (!is_stay) {
+            window.location = MAIN_URL
+          }
+        }
       },
       'JSON'
     )

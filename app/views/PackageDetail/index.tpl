@@ -30,6 +30,9 @@
             <th class="align-middle text-right" width="40px">#</th>
             <th class="align-middle text-center" width="12%">Nomor Paket</th>
             <th class="align-middle text-center" width="*">Nama Paket</th>
+            <th class="align-middle text-center" width="12%">
+              Pagu Anggaran Fisik (Rp)
+            </th>
             <th class="align-middle text-center" width="10%">Sumber Dana</th>
             <th class="align-middle text-center" width="15%">
               Lokasi Pekerjaan
@@ -106,20 +109,29 @@
     })
   }
 
-  let pkgdSearch = () => {
+  let pkgdSearch = (is_save = false) => {
     $.post(
       `${BASE_URL}/packagedetail/search`,
       { pkg_id: $('#my_form #id').val() },
       (res) => {
-        if (res.length > 0) {
+        $('#pkg_debt_ceiling').val(res.pkg_debt_ceiling)
+
+        if (is_save) {
+          save(true)
+        }
+
+        let list = res.list
+
+        if (list.length > 0) {
           $('#detailList #emptyRow').remove()
           detailList.innerHTML = ''
-          let list = res
+
           for (let index in list) {
             let tRow = null
             let no = null,
               pkgdNo = null,
               pkgdName = null,
+              pkgdDebtCeiling = null,
               pkgdSOFName = null,
               pkgdLocName = null,
               action = null,
@@ -138,6 +150,12 @@
             pkgdName = createElement({
               element: 'td',
               children: [list[index].pkgd_name],
+            })
+
+            pkgdDebtCeiling = createElement({
+              element: 'td',
+              class: ['text-right'],
+              children: [list[index].pkgd_debt_ceiling],
             })
 
             pkgdSOFName = createElement({
@@ -272,6 +290,7 @@
                 no,
                 pkgdNo,
                 pkgdName,
+                pkgdDebtCeiling,
                 pkgdSOFName,
                 pkgdLocName,
                 action,
@@ -340,7 +359,7 @@
       element: 'td',
       class: ['text-center'],
       attribute: {
-        colspan: 6,
+        colspan: 7,
       },
       children: ['Data Kosong'],
     })
