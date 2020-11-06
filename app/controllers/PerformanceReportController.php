@@ -140,7 +140,7 @@ class PerformanceReportController extends Controller
                     [
                         'Paket Kegiatan',
                         '',
-                        'Nilai Kontrak (Rp)',
+                        'Nilai Awal Kontrak (Rp)',
                         "Tanggal Periode\nTerakhir",
                         'Target',
                         '',
@@ -188,80 +188,76 @@ class PerformanceReportController extends Controller
 
                 $n = 1;
                 $no = 1;
-                foreach ($rows['detail'] as $pkg) {
-                    // var_dump($pkg);
-                    foreach ($pkg as $idx => $row) {
-                        $detail_body = $detail_head2 + $n;
-                        $n++;
+                foreach ($rows['detail'] as $row) {
+                    // var_dump($row);
 
-                        $sheet->mergeCells("A{$detail_body}:B{$detail_body}");
+                    $detail_body = $detail_head2 + $n;
+                    $n++;
 
-                        $sheet->setCellValue(
-                            "A{$detail_body}",
-                            "{$row['pkgd_name']}",
-                        );
+                    $sheet->mergeCells("A{$detail_body}:B{$detail_body}");
 
-                        $sheet->setCellValue(
-                            "C{$detail_body}",
-                            $row['cnt_value'],
-                        );
+                    $sheet->setCellValue(
+                        "A{$detail_body}",
+                        "{$row['pkgd_name']}",
+                    );
 
-                        $sheet->setCellValue(
-                            "D{$detail_body}",
-                            $row['pkgd_last_prog_date'],
-                        );
+                    $sheet->setCellValue("C{$detail_body}", $row['cnt_value']);
 
-                        $sheet->setCellValue(
-                            "E{$detail_body}",
-                            $row['trg_physical'],
-                        );
-                        $sheet->setCellValue(
-                            "F{$detail_body}",
-                            $row['trg_finance'],
-                        );
+                    $sheet->setCellValue(
+                        "D{$detail_body}",
+                        $row['pkgd_last_prog_date'],
+                    );
 
-                        $sheet->setCellValue(
-                            "G{$detail_body}",
-                            $row['prog_physical'],
-                        );
-                        $sheet->setCellValue(
-                            "H{$detail_body}",
-                            $row['prog_finance'],
-                        );
+                    $sheet->setCellValue(
+                        "E{$detail_body}",
+                        $row['trg_physical'],
+                    );
+                    $sheet->setCellValue(
+                        "F{$detail_body}",
+                        $row['trg_finance_pct'],
+                    );
 
-                        $sheet->setCellValue(
-                            "I{$detail_body}",
-                            $row['devn_physical'],
-                        );
-                        $sheet->setCellValue(
-                            "J{$detail_body}",
-                            $row['devn_finance'],
-                        );
+                    $sheet->setCellValue(
+                        "G{$detail_body}",
+                        $row['prog_physical'],
+                    );
+                    $sheet->setCellValue(
+                        "H{$detail_body}",
+                        $row['prog_finance_pct'],
+                    );
 
-                        $sheet
-                            ->getStyle("K{$detail_body}")
-                            ->getFill()
-                            ->setFillType(
-                                \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                            )
-                            ->getStartColor()
-                            ->setARGB($colors[$row['indicator']]);
+                    $sheet->setCellValue(
+                        "I{$detail_body}",
+                        $row['devn_physical'],
+                    );
+                    $sheet->setCellValue(
+                        "J{$detail_body}",
+                        $row['devn_finance_pct'],
+                    );
 
-                        $sheet->getStyle("C{$detail_body}")->applyFromArray([
+                    $sheet
+                        ->getStyle("K{$detail_body}")
+                        ->getFill()
+                        ->setFillType(
+                            \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        )
+                        ->getStartColor()
+                        ->setARGB($colors[$row['indicator']]);
+
+                    $sheet->getStyle("C{$detail_body}")->applyFromArray([
+                        'alignment' => [
+                            'horizontal' =>
+                                \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+                        ],
+                    ]);
+                    $sheet
+                        ->getStyle("E{$detail_body}:J{$detail_body}")
+                        ->applyFromArray([
                             'alignment' => [
                                 'horizontal' =>
                                     \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
                             ],
                         ]);
-                        $sheet
-                            ->getStyle("E{$detail_body}:J{$detail_body}")
-                            ->applyFromArray([
-                                'alignment' => [
-                                    'horizontal' =>
-                                        \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
-                                ],
-                            ]);
-                    }
                 }
 
                 $sheet

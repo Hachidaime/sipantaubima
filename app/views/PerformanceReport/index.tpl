@@ -234,7 +234,7 @@
                 rowspan: 2,
                 width: '10%',
               },
-              children: ['Nilai Contract (%)'],
+              children: ['Nilai Awal Kontrak (Rp)'],
             })
 
             let headDate = createElement({
