@@ -140,27 +140,6 @@ class ProgressReportModel extends Model
 
     public function getDetail($detail)
     {
-        $detail['trg_finance_pct'] =
-            $detail['cnt_value'] > 0
-                ? ($detail['trg_finance'] / $detail['cnt_value']) * 100
-                : 0;
-
-        $detail['prog_finance_pct'] =
-            $detail['cnt_value'] > 0
-                ? ($detail['prog_finance'] / $detail['cnt_value']) * 100
-                : 0;
-
-        $detail['devn_physical'] =
-            $detail['prog_physical'] - $detail['trg_physical'];
-        $detail['devn_finance'] =
-            $detail['prog_finance'] - $detail['trg_finance'];
-        $detail['devn_finance_pct'] =
-            $detail['cnt_value'] > 0
-                ? ($detail['devn_finance'] / $detail['cnt_value']) * 100
-                : 0;
-
-        // var_dump($detail);
-
         $query = "SELECT * FROM apm_addendum 
             WHERE add_value > 0 
             AND pkgd_id = {$detail['id']} 
@@ -174,6 +153,29 @@ class ProgressReportModel extends Model
 
         $detail['cnt_value_end'] =
             $this->db->getCount() > 0 ? $cntValueEnd['add_value'] : 0;
+
+        $detail['trg_finance_pct'] =
+            $detail['cnt_value'] > 0
+                ? ($detail['trg_finance'] / $detail['cnt_value']) * 100
+                : 0;
+
+        $detail['prog_finance_pct'] =
+            $detail['cnt_value_end'] > 0
+                ? ($detail['prog_finance'] / $detail['cnt_value_end']) * 100
+                : ($detail['cnt_value'] > 0
+                    ? ($detail['prog_finance'] / $detail['cnt_value']) * 100
+                    : 0);
+
+        $detail['devn_physical'] =
+            $detail['prog_physical'] - $detail['trg_physical'];
+        $detail['devn_finance'] =
+            $detail['prog_finance'] - $detail['trg_finance'];
+        $detail['devn_finance_pct'] =
+            $detail['cnt_value'] > 0
+                ? ($detail['devn_finance'] / $detail['cnt_value']) * 100
+                : 0;
+
+        // var_dump($detail);
 
         $result = [
             'pkgd_id' => $detail['id'],
