@@ -167,12 +167,13 @@ class ProgressReportModel extends Model
             ORDER BY add_order DESC 
             LIMIT 1";
 
-        $cntValueEnd = $this->db
-            ->query($query)
-            ->first()
-            ->toArray();
+        $cntValueEnd = $this->db->query($query)->first();
+        $cntValueEnd = !empty($cntValueEnd)
+            ? $cntValueEnd->toArray()
+            : $cntValueEnd;
 
-        $detail['cnt_value_end'] = $cntValueEnd['add_value'];
+        $detail['cnt_value_end'] =
+            $this->db->getCount() > 0 ? $cntValueEnd['add_value'] : 0;
 
         $result = [
             'pkgd_id' => $detail['id'],
