@@ -108,11 +108,6 @@ class ProgressReportModel extends Model
                             );
 
                             $detail = $this->getDetail($detail);
-                            if ($detail['week'] > 1) {
-                                $detail['pkgd_no'] = '';
-                                $detail['pkgd_name'] = '';
-                                $detail['cnt_value'] = '';
-                            }
 
                             $packageDetail[$i][$key] = $detail;
                         }
@@ -128,11 +123,7 @@ class ProgressReportModel extends Model
                             );
 
                             $detail = $this->getDetail($detail);
-                            if ($detail['week'] > 1) {
-                                $detail['pkgd_no'] = '';
-                                $detail['pkgd_name'] = '';
-                                $detail['cnt_value'] = '';
-                            }
+
                             $packageDetail[$i][$key] = $detail;
                         }
                     }
@@ -179,13 +170,17 @@ class ProgressReportModel extends Model
 
         // var_dump($detail);
 
-        return [
+        $result = [
             'pkgd_id' => $detail['id'],
             'pkgd_no' => $detail['pkgd_no'],
             'pkgd_name' => $detail['pkgd_name'],
             'cnt_value' =>
                 $detail['cnt_value'] > 0
                     ? number_format($detail['cnt_value'], 2, ',', '.')
+                    : '',
+            'pkgd_debt_ceiling' =>
+                $detail['pkgd_debt_ceiling'] > 0
+                    ? number_format($detail['pkgd_debt_ceiling'], 2, ',', '.')
                     : '',
             'week' =>
                 $detail['trg_week'] > 0
@@ -223,6 +218,14 @@ class ProgressReportModel extends Model
                     ? number_format($detail['devn_finance_pct'], 2, ',', '.')
                     : '',
         ];
+
+        if ($result['week'] > 1) {
+            $result['pkgd_no'] = '';
+            $result['pkgd_name'] = '';
+            $result['cnt_value'] = '';
+            $result['pkgd_debt_ceiling'] = '';
+        }
+        return $result;
     }
 
     private function getTargetOpt($pkgIdList, $pkgd_id = null)
@@ -240,6 +243,7 @@ class ProgressReportModel extends Model
             `{$table_left}`.`pkg_id`,
             `{$table_left}`.`pkgd_no`,
             `{$table_left}`.`pkgd_name`,
+            `{$table_left}`.`pkgd_debt_ceiling`,
             `{$table_right}`.`trg_week`,
             `{$table_right}`.`trg_date`,
             `{$table_right}`.`trg_physical`,
@@ -288,6 +292,7 @@ class ProgressReportModel extends Model
             `{$table_left}`.`pkg_id`,
             `{$table_left}`.`pkgd_no`,
             `{$table_left}`.`pkgd_name`,
+            `{$table_left}`.`pkgd_debt_ceiling`,
             `{$table_right}`.`prog_week`,
             `{$table_right}`.`prog_physical`,
             `{$table_right}`.`prog_finance`,

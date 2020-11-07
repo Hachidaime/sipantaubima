@@ -273,6 +273,16 @@
               children: ['Nilai Awal Kontrak (Rp)'],
             })
 
+            let headPkgdDebtCeiling = createElement({
+              element: 'th',
+              class: ['text-center', 'align-middle'],
+              attribute: {
+                rowspan: 2,
+                width: '10%',
+              },
+              children: ['Pagu Anggaran Fisik (Rp)'],
+            })
+
             let headWeek = createElement({
               element: 'th',
               class: ['text-center', 'align-middle'],
@@ -298,7 +308,7 @@
               class: ['text-center', 'align-middle'],
               attribute: {
                 colspan: 2,
-                width: '200px',
+                width: '110px',
               },
               children: ['Target'],
             })
@@ -308,7 +318,7 @@
               class: ['text-center', 'align-middle'],
               attribute: {
                 colspan: 2,
-                width: '200px',
+                width: '110px',
               },
               children: ['Realisasi'],
             })
@@ -317,7 +327,7 @@
               class: ['text-center', 'align-middle'],
               attribute: {
                 colspan: 2,
-                width: '200px',
+                width: '110px',
               },
               children: ['Deviasi'],
             })
@@ -328,6 +338,7 @@
                 headNo,
                 headPackage,
                 headCntValue,
+                headPkgdDebtCeiling,
                 headWeek,
                 headDate,
                 headTarget,
@@ -342,54 +353,54 @@
               element: 'th',
               class: ['text-center', 'align-middle'],
               attribute: {
-                width: '75px',
+                width: '50px',
               },
-              children: ['Fisik (%)'],
+              children: ['Fisik<br>(%)'],
             })
 
             let headTrgFinance = createElement({
               element: 'th',
               class: ['text-center', 'align-middle'],
               attribute: {
-                width: '125px',
+                width: '60px',
               },
-              children: ['Keuangan (%)'],
+              children: ['Keuangan<br>(%)'],
             })
 
             let headProgPhysical = createElement({
               element: 'th',
               class: ['text-center', 'align-middle'],
               attribute: {
-                width: '75px',
+                width: '50px',
               },
-              children: ['Fisik (%)'],
+              children: ['Fisik<br>(%)'],
             })
 
             let headProgFinance = createElement({
               element: 'th',
               class: ['text-center', 'align-middle'],
               attribute: {
-                width: '125px',
+                width: '60px',
               },
-              children: ['Keuangan (%)'],
+              children: ['Keuangan<br>(%)'],
             })
 
             let headDevnPhysical = createElement({
               element: 'th',
               class: ['text-center', 'align-middle'],
               attribute: {
-                width: '75px',
+                width: '50px',
               },
-              children: ['Fisik (%)'],
+              children: ['Fisik<br>(%)'],
             })
 
             let headDevnFinance = createElement({
               element: 'th',
               class: ['text-center', 'align-middle'],
               attribute: {
-                width: '125px',
+                width: '60px',
               },
-              children: ['Keuangan (%)'],
+              children: ['Keuangan<br>(%)'],
             })
 
             let theadRow2 = createElement({
@@ -447,6 +458,12 @@
                   element: 'td',
                   class: ['text-right'],
                   children: [`${packageDetail[pkgd].cnt_value}`],
+                })
+
+                let bodyPkgdDebtCeiling = createElement({
+                  element: 'td',
+                  class: ['text-right'],
+                  children: [`${packageDetail[pkgd].pkgd_debt_ceiling}`],
                 })
 
                 let bodyWeek = createElement({
@@ -516,6 +533,7 @@
                     bodyNo,
                     bodyPackage,
                     bodyCntValue,
+                    bodyPkgdDebtCeiling,
                     bodyWeek,
                     bodyDate,
                     bodyTrgPhysical,
