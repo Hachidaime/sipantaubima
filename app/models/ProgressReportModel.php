@@ -208,12 +208,12 @@ class ProgressReportModel extends Model
                     ? number_format($detail['prog_finance_pct'], 2, ',', '.')
                     : '',
             'devn_physical' =>
-                !empty($detail['trg_physical']) ||
+                // !empty($detail['trg_physical']) ||
                 !empty($detail['prog_physical'])
                     ? number_format($detail['devn_physical'], 2, ',', '.')
                     : '',
             'devn_finance_pct' =>
-                !empty($detail['trg_finance']) ||
+                // !empty($detail['trg_finance']) ||
                 !empty($detail['prog_finance'])
                     ? number_format($detail['devn_finance_pct'], 2, ',', '.')
                     : '',
