@@ -71,11 +71,7 @@ class ProgressReportModel extends Model
             $targetOpt = $this->getTargetOpt($pkgIdList, $data['pkgd_id']);
             $progressOpt = $this->getProgressOpt($pkgIdList, $data['pkgd_id']);
 
-            // var_dump($targetOpt);
-            // var_dump($progressOpt);
-
             foreach ($package as $idx => $row) {
-                // var_dump($row);
                 $row['prg_name'] = $programOptions[$row['prg_code']];
                 $row['act_name'] = $activityOptions[$row['act_code']];
 
@@ -129,11 +125,6 @@ class ProgressReportModel extends Model
                     }
                 }
 
-                // print '<pre>';
-                // print_r($target);
-                // print_r($progress);
-                // print '</pre>';
-
                 $row['detail'] = $packageDetail;
                 $package[$idx] = $row;
                 if (is_null($packageDetail) || empty($packageDetail)) {
@@ -170,6 +161,19 @@ class ProgressReportModel extends Model
 
         // var_dump($detail);
 
+        $query = "SELECT * FROM apm_addendum 
+            WHERE add_value > 0 
+            AND pkgd_id = {$detail['id']} 
+            ORDER BY add_order DESC 
+            LIMIT 1";
+
+        $cntValueEnd = $this->db
+            ->query($query)
+            ->first()
+            ->toArray();
+
+        $detail['cnt_value_end'] = $cntValueEnd['add_value'];
+
         $result = [
             'pkgd_id' => $detail['id'],
             'pkgd_no' => $detail['pkgd_no'],
@@ -177,6 +181,10 @@ class ProgressReportModel extends Model
             'cnt_value' =>
                 $detail['cnt_value'] > 0
                     ? number_format($detail['cnt_value'], 2, ',', '.')
+                    : '',
+            'cnt_value_end' =>
+                $detail['cnt_value_end'] > 0
+                    ? number_format($detail['cnt_value_end'], 2, ',', '.')
                     : '',
             'pkgd_debt_ceiling' =>
                 $detail['pkgd_debt_ceiling'] > 0
@@ -223,6 +231,7 @@ class ProgressReportModel extends Model
             $result['pkgd_no'] = '';
             $result['pkgd_name'] = '';
             $result['cnt_value'] = '';
+            $result['cnt_value_end'] = '';
             $result['pkgd_debt_ceiling'] = '';
         }
         return $result;
