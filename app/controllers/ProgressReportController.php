@@ -224,7 +224,7 @@ class ProgressReportController extends Controller
                         );
                         $sheet->setCellValue(
                             "I{$detail_body}",
-                            $row['trg_finance'],
+                            $row['trg_finance_pct'],
                         );
                         $sheet->setCellValue(
                             "J{$detail_body}",
@@ -232,7 +232,7 @@ class ProgressReportController extends Controller
                         );
                         $sheet->setCellValue(
                             "K{$detail_body}",
-                            $row['prog_finance'],
+                            $row['prog_finance_pct'],
                         );
                         $sheet->setCellValue(
                             "L{$detail_body}",
@@ -240,7 +240,7 @@ class ProgressReportController extends Controller
                         );
                         $sheet->setCellValue(
                             "M{$detail_body}",
-                            $row['devn_finance'],
+                            $row['devn_finance_pct'],
                         );
 
                         $sheet
