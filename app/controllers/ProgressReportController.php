@@ -82,13 +82,18 @@ class ProgressReportController extends Controller
         $list = $this->ProgressReportModel->getData($_POST);
         $list_count = count($list);
 
-        $sheet->setCellValue('A1', 'LAPORAN PERKEMBANGAN CAPAIAN KINERJA');
-        $sheet->setCellValue('A2', 'BINA MARGA KAB. SEMARANG');
-        $sheet->setCellValue('A3', "THN ANGGARAN: {$_POST['pkg_fiscal_year']}");
+        $lastCol = 'M';
 
-        $sheet->mergeCells('A1:M1');
-        $sheet->mergeCells('A2:M2');
-        $sheet->mergeCells('A3:M3');
+        $titles = [
+            'LAPORAN PERKEMBANGAN CAPAIAN KINERJA',
+            'BINA MARGA KAB. SEMARANG',
+            "THN ANGGARAN: {$_POST['pkg_fiscal_year']}",
+        ];
+
+        for ($i = 1; $i <= 3; $i++) {
+            $sheet->setCellValue("A{$i}", $titles[$i - 1]);
+            $sheet->mergeCells("A{$i}:{$lastCol}{$i}");
+        }
 
         $sheet->getStyle('A1:A3')->applyFromArray([
             'font' => [
@@ -101,6 +106,12 @@ class ProgressReportController extends Controller
                     \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
             ],
         ]);
+
+        $alphabet = range('A', $lastCol);
+        if (($key = array_search('C', $alphabet)) !== false) {
+            unset($alphabet[$key]);
+        }
+        $alphabet = array_values($alphabet);
 
         if ($list_count > 0) {
             foreach ($list as $rows) {
@@ -120,14 +131,22 @@ class ProgressReportController extends Controller
 
                 $sheet->mergeCells("A{$detail_head1}:A{$detail_head2}");
                 $sheet->mergeCells("B{$detail_head1}:C{$detail_head2}");
-                $sheet->mergeCells("D{$detail_head1}:D{$detail_head2}");
-                $sheet->mergeCells("E{$detail_head1}:E{$detail_head2}");
-                $sheet->mergeCells("F{$detail_head1}:F{$detail_head2}");
-                $sheet->mergeCells("G{$detail_head1}:G{$detail_head2}");
 
-                $sheet->mergeCells("H{$detail_head1}:I{$detail_head1}");
-                $sheet->mergeCells("J{$detail_head1}:K{$detail_head1}");
-                $sheet->mergeCells("L{$detail_head1}:M{$detail_head1}");
+                $cols1 = range('D', 'G');
+                foreach ($cols1 as $col) {
+                    $sheet->mergeCells(
+                        "{$col}{$detail_head1}:{$col}{$detail_head2}",
+                    );
+                }
+
+                $cols2 = range('H', 'L', 2);
+                $cols3 = range('I', 'M', 2);
+                for ($i = 0; $i < 3; $i++) {
+                    $sheet->mergeCells(
+                        "{$cols2[$i]}{$detail_head1}:{$cols3[$i]}{$detail_head1}",
+                    );
+                }
+
                 // $sheet->getRowDimension($detail_head1)->setRowHeight(30);
                 $sheet->getRowDimension($detail_head2)->setRowHeight(30);
 
@@ -164,7 +183,7 @@ class ProgressReportController extends Controller
                 );
 
                 $sheet
-                    ->getStyle("A{$detail_head1}:M{$detail_head2}")
+                    ->getStyle("A{$detail_head1}:{$lastCol}{$detail_head2}")
                     ->applyFromArray([
                         'font' => [
                             'bold' => true,
@@ -186,8 +205,7 @@ class ProgressReportController extends Controller
                 $n = 1;
                 $no = 1;
                 foreach ($rows['detail'] as $pkg) {
-                    // var_dump($pkg);
-                    foreach ($pkg as $idx => $row) {
+                    foreach ($pkg as $row) {
                         $detail_body = $detail_head2 + $n;
                         $n++;
 
@@ -199,49 +217,27 @@ class ProgressReportController extends Controller
                             $no++;
                         }
 
-                        $sheet->setCellValue("A{$detail_body}", $number);
-                        $sheet->setCellValue(
-                            "B{$detail_body}",
-                            "{$row['pkgd_name']}",
-                        );
-                        $sheet->setCellValue(
-                            "D{$detail_body}",
+                        $content = [
+                            $number,
+                            $row['pkgd_name'],
                             $row['cnt_value'],
-                        );
-                        $sheet->setCellValue(
-                            "E{$detail_body}",
                             $row['pkgd_debt_ceiling'],
-                        );
-                        $sheet->setCellValue("F{$detail_body}", $row['week']);
-                        $sheet->setCellValue(
-                            "G{$detail_body}",
+                            $row['week'],
                             $row['trg_date'],
-                        );
-
-                        $sheet->setCellValue(
-                            "H{$detail_body}",
                             $row['trg_physical'],
-                        );
-                        $sheet->setCellValue(
-                            "I{$detail_body}",
                             $row['trg_finance_pct'],
-                        );
-                        $sheet->setCellValue(
-                            "J{$detail_body}",
                             $row['prog_physical'],
-                        );
-                        $sheet->setCellValue(
-                            "K{$detail_body}",
                             $row['prog_finance_pct'],
-                        );
-                        $sheet->setCellValue(
-                            "L{$detail_body}",
                             $row['devn_physical'],
-                        );
-                        $sheet->setCellValue(
-                            "M{$detail_body}",
                             $row['devn_finance_pct'],
-                        );
+                        ];
+
+                        foreach ($alphabet as $key => $value) {
+                            $sheet->setCellValue(
+                                "{$value}{$detail_body}",
+                                $content[$key],
+                            );
+                        }
 
                         $sheet
                             ->getStyle("D{$detail_body}:E{$detail_body}")
@@ -273,7 +269,7 @@ class ProgressReportController extends Controller
                 }
 
                 $sheet
-                    ->getStyle("A{$detail_head2}:M{$detail_body}")
+                    ->getStyle("A{$detail_head2}:{$lastCol}{$detail_body}")
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [
@@ -287,18 +283,9 @@ class ProgressReportController extends Controller
             }
         }
 
-        $sheet->getColumnDimension('A')->setAutoSize(true);
-        $sheet->getColumnDimension('B')->setAutoSize(true);
-        $sheet->getColumnDimension('D')->setAutoSize(true);
-        $sheet->getColumnDimension('E')->setAutoSize(true);
-        $sheet->getColumnDimension('F')->setAutoSize(true);
-        $sheet->getColumnDimension('G')->setAutoSize(true);
-        $sheet->getColumnDimension('H')->setAutoSize(true);
-        $sheet->getColumnDimension('I')->setAutoSize(true);
-        $sheet->getColumnDimension('J')->setAutoSize(true);
-        $sheet->getColumnDimension('K')->setAutoSize(true);
-        $sheet->getColumnDimension('L')->setAutoSize(true);
-        $sheet->getColumnDimension('M')->setAutoSize(true);
+        foreach ($alphabet as $value) {
+            $sheet->getColumnDimension($value)->setAutoSize(true);
+        }
 
         $writer = new Xlsx($spreadsheet);
         $t = time();
