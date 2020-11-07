@@ -280,7 +280,7 @@
                 rowspan: 2,
                 width: '10%',
               },
-              children: ['Nilai Akhir Kontrak (Rp)'],
+              children: ['Nilai Kontrak Akhir (Rp)'],
             })
 
             let headPkgdDebtCeiling = createElement({

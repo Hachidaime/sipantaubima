@@ -82,7 +82,7 @@ class ProgressReportController extends Controller
         $list = $this->ProgressReportModel->getData($_POST);
         $list_count = count($list);
 
-        $lastCol = 'M';
+        $lastCol = 'N';
 
         $titles = [
             'LAPORAN PERKEMBANGAN CAPAIAN KINERJA',
@@ -132,15 +132,15 @@ class ProgressReportController extends Controller
                 $sheet->mergeCells("A{$detail_head1}:A{$detail_head2}");
                 $sheet->mergeCells("B{$detail_head1}:C{$detail_head2}");
 
-                $cols1 = range('D', 'G');
+                $cols1 = range('D', 'H');
                 foreach ($cols1 as $col) {
                     $sheet->mergeCells(
                         "{$col}{$detail_head1}:{$col}{$detail_head2}",
                     );
                 }
 
-                $cols2 = range('H', 'L', 2);
-                $cols3 = range('I', 'M', 2);
+                $cols2 = range('I', 'M', 2);
+                $cols3 = range('J', 'N', 2);
                 for ($i = 0; $i < 3; $i++) {
                     $sheet->mergeCells(
                         "{$cols2[$i]}{$detail_head1}:{$cols3[$i]}{$detail_head1}",
@@ -156,6 +156,7 @@ class ProgressReportController extends Controller
                         'Paket Kegiatan',
                         '',
                         "Nilai Awal Kontrak\n(Rp)",
+                        "Nilai Kontrak Akhir\n(Rp)",
                         "Pagu Anggaran Fisik\n(Rp)",
                         "Minggu\nKe",
                         "Tanggal\nPeriode",
@@ -179,7 +180,7 @@ class ProgressReportController extends Controller
                         "Keuangan\n(%)",
                     ],
                     null,
-                    "H{$detail_head2}",
+                    "I{$detail_head2}",
                 );
 
                 $sheet
@@ -221,6 +222,7 @@ class ProgressReportController extends Controller
                             $number,
                             $row['pkgd_name'],
                             $row['cnt_value'],
+                            $row['cnt_value_end'],
                             $row['pkgd_debt_ceiling'],
                             $row['week'],
                             $row['trg_date'],
@@ -249,7 +251,7 @@ class ProgressReportController extends Controller
                             ]);
 
                         $sheet
-                            ->getStyle("F{$detail_body}:G{$detail_body}")
+                            ->getStyle("F{$detail_body}:H{$detail_body}")
                             ->applyFromArray([
                                 'alignment' => [
                                     'horizontal' =>
@@ -258,7 +260,7 @@ class ProgressReportController extends Controller
                             ]);
 
                         $sheet
-                            ->getStyle("H{$detail_body}:M{$detail_body}")
+                            ->getStyle("I{$detail_body}:N{$detail_body}")
                             ->applyFromArray([
                                 'alignment' => [
                                     'horizontal' =>
