@@ -161,15 +161,15 @@ class ProgressReportModel extends Model
 
         $detail['prog_finance_pct'] =
             $detail['cnt_value_end'] > 0
-                ? ($detail['prog_finance'] / $detail['cnt_value_end']) * 100
+                ? ($detail['prog_finance_cum'] / $detail['cnt_value_end']) * 100
                 : ($detail['cnt_value'] > 0
-                    ? ($detail['prog_finance'] / $detail['cnt_value']) * 100
+                    ? ($detail['prog_finance_cum'] / $detail['cnt_value']) * 100
                     : 0);
 
         $detail['devn_physical'] =
             $detail['prog_physical'] - $detail['trg_physical'];
         $detail['devn_finance'] =
-            $detail['prog_finance'] - $detail['trg_finance'];
+            $detail['prog_finance_cum'] - $detail['trg_finance'];
         $detail['devn_finance_pct'] =
             $detail['cnt_value'] > 0
                 ? ($detail['devn_finance'] / $detail['cnt_value']) * 100
@@ -329,7 +329,14 @@ class ProgressReportModel extends Model
         $progress = $this->db->query($query)->toArray();
 
         $progressOpt = [];
-        foreach ($progress as $row) {
+        foreach ($progress as $idx => $row) {
+            $row['prog_finance_cum'] =
+                $idx > 0
+                    ? $progress[$idx - 1]['prog_finance_cum'] +
+                        $row['prog_finance']
+                    : $row['prog_finance'];
+
+            $progress[$idx] = $row;
             $progressOpt[$row['pkg_id']][] = $row;
         }
 
