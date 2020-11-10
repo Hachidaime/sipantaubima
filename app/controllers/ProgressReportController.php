@@ -74,6 +74,13 @@ class ProgressReportController extends Controller
 
     public function downloadSpreadsheet()
     {
+        $colors = [
+            'white' => 'FFFFFF',
+            'red' => 'dc3545',
+            'yellow' => 'ffc107',
+            'green' => '28a745',
+        ];
+
         $ext = $_POST['ext'] ?? 'xls';
 
         $spreadsheet = new Spreadsheet();
@@ -82,7 +89,7 @@ class ProgressReportController extends Controller
         $list = $this->ProgressReportModel->getData($_POST);
         $list_count = count($list);
 
-        $lastCol = 'N';
+        $lastCol = 'O';
 
         $titles = [
             'LAPORAN PERKEMBANGAN CAPAIAN KINERJA',
@@ -147,6 +154,13 @@ class ProgressReportController extends Controller
                     );
                 }
 
+                $cols1 = range('O', 'O');
+                foreach ($cols1 as $col) {
+                    $sheet->mergeCells(
+                        "{$col}{$detail_head1}:{$col}{$detail_head2}",
+                    );
+                }
+
                 // $sheet->getRowDimension($detail_head1)->setRowHeight(30);
                 $sheet->getRowDimension($detail_head2)->setRowHeight(30);
 
@@ -166,6 +180,7 @@ class ProgressReportController extends Controller
                         '',
                         'Deviasi',
                         '',
+                        "Indi-\nkator",
                     ],
                     null,
                     "A{$detail_head1}",
@@ -240,6 +255,15 @@ class ProgressReportController extends Controller
                                 $content[$key],
                             );
                         }
+
+                        $sheet
+                            ->getStyle("O{$detail_body}")
+                            ->getFill()
+                            ->setFillType(
+                                \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                            )
+                            ->getStartColor()
+                            ->setARGB($colors[$row['indicator']]);
 
                         $sheet
                             ->getStyle("D{$detail_body}:E{$detail_body}")

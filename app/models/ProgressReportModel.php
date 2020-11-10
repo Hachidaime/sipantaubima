@@ -262,7 +262,7 @@ class ProgressReportModel extends Model
                 !empty($progFinance)
                     ? number_format($devnFinancePct, 2, ',', '.')
                     : '',
-            'indikator' => $indicator,
+            'indicator' => $indicator,
         ];
 
         if ($result['week'] > 1) {
