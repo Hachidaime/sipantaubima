@@ -342,6 +342,16 @@
               children: ['Deviasi'],
             })
 
+            let headIndicator = createElement({
+              element: 'th',
+              class: ['text-center', 'align-middle'],
+              attribute: {
+                rowspan: 2,
+                width: '50px',
+              },
+              children: [/*html*/ `Indi-<br>kator`],
+            })
+
             let theadRow1 = createElement({
               element: 'tr',
               children: [
@@ -355,6 +365,7 @@
                 headTarget,
                 headProgress,
                 headDeviation,
+                headIndicator,
               ],
             })
             //#endregion
@@ -544,6 +555,11 @@
                   children: [`${packageDetail[pkgd].devn_finance_pct}`],
                 })
 
+                let bodyIndicator = createElement({
+                  element: 'td',
+                  class: [`bg-${packageDetail[idx].indicator}`],
+                })
+
                 let bodyRow = createElement({
                   element: 'tr',
                   children: [
@@ -560,6 +576,7 @@
                     bodyProgFinance,
                     bodyDevnPhysical,
                     bodyDevnFinance,
+                    bodyIndicator,
                   ],
                 })
 
