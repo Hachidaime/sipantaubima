@@ -146,6 +146,17 @@ class Functions
         return preg_split($re, $string);
     }
 
+    public static function camelize(string $string, $pascalize = false)
+    {
+        $str = str_replace('_', '', ucwords($string, '_'));
+
+        if (!$pascalize) {
+            $str = lcfirst($str);
+        }
+
+        return $str;
+    }
+
     public static function slugify(string $string)
     {
         return strtolower(rawurlencode(str_replace(' ', '-', trim($string))));
