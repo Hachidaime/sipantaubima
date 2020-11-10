@@ -92,7 +92,10 @@ class ProgressReportModel extends Model
 
                 $packageDetail = [];
                 for ($i = 0; $i < count($target); $i++) {
-                    if (count($target[$i]) > count($progress[$i])) {
+                    $target_count = count($target[$i]);
+                    $progress_count = count($progress[$i]);
+
+                    if ($target_count > $progress_count) {
                         foreach ($target[$i] as $key => $value) {
                             $progress[$i][$key] = is_array($progress[$i][$key])
                                 ? $progress[$i][$key]
@@ -102,6 +105,9 @@ class ProgressReportModel extends Model
                                 $target[$i][$key],
                                 $progress[$i][$key],
                             );
+
+                            $detail['last_key'] =
+                                $key == $target_count - 1 ? true : false;
 
                             $detail = $this->getDetail($detail);
 
@@ -118,11 +124,16 @@ class ProgressReportModel extends Model
                                 $progress[$i][$key],
                             );
 
+                            $detail['last_key'] =
+                                $key == $progress_count - 1 ? true : false;
+
                             $detail = $this->getDetail($detail);
 
                             $packageDetail[$i][$key] = $detail;
                         }
                     }
+
+                    // var_dump($packageDetail[$i]);
                 }
 
                 $row['detail'] = $packageDetail;
@@ -140,94 +151,118 @@ class ProgressReportModel extends Model
 
     public function getDetail($detail)
     {
+        foreach ($detail as $key => $value) {
+            $key = Functions::camelize($key);
+            $$key = $value;
+        }
+
         $query = "SELECT * FROM apm_addendum 
             WHERE add_value > 0 
             AND pkgd_id = {$detail['id']} 
             ORDER BY add_order DESC 
             LIMIT 1";
 
-        $cntValueEnd = $this->db->query($query)->first();
-        $cntValueEnd = !empty($cntValueEnd)
-            ? $cntValueEnd->toArray()
-            : $cntValueEnd;
+        $addendum = $this->db->query($query)->first();
+        $addendum = !empty($addendum) ? $addendum->toArray() : $addendum;
 
-        $detail['cnt_value_end'] =
-            $this->db->getCount() > 0 ? $cntValueEnd['add_value'] : 0;
+        $cntValueEnd = $this->db->getCount() > 0 ? $addendum['add_value'] : 0;
 
-        $detail['trg_finance_pct'] =
-            $detail['cnt_value'] > 0
-                ? ($detail['trg_finance'] / $detail['cnt_value']) * 100
-                : 0;
+        $trgFinancePct = $cntValue > 0 ? ($trgFinance / $cntValue) * 100 : 0;
 
-        $detail['prog_finance_pct'] =
-            $detail['cnt_value_end'] > 0
-                ? ($detail['prog_finance_cum'] / $detail['cnt_value_end']) * 100
-                : ($detail['cnt_value'] > 0
-                    ? ($detail['prog_finance_cum'] / $detail['cnt_value']) * 100
+        $progFinancePct =
+            $cntValueEnd > 0
+                ? ($progFinanceCum / $cntValueEnd) * 100
+                : ($cntValue > 0
+                    ? ($progFinanceCum / $cntValue) * 100
                     : 0);
 
-        $detail['devn_physical'] =
-            $detail['prog_physical'] - $detail['trg_physical'];
-        $detail['devn_finance'] =
-            $detail['prog_finance_cum'] - $detail['trg_finance'];
-        $detail['devn_finance_pct'] =
-            $detail['cnt_value'] > 0
-                ? ($detail['devn_finance'] / $detail['cnt_value']) * 100
-                : 0;
+        $devnPhysical = $progPhysical - $trgPhysical;
+        $devnFinance = $progFinanceCum - $trgFinance;
+        $devnFinancePct = $cntValue > 0 ? ($devnFinance / $cntValue) * 100 : 0;
 
+        $indicator = 'white';
+        if ($lastKey) {
+            if (!is_null($trgPhysical) && !is_null($detail[$devnPhysical])) {
+                if (
+                    ($trgPhysical >= 0 &&
+                        $trgPhysical <= 70 &&
+                        $devnPhysical > -10) ||
+                    ($trgPhysical > 70 &&
+                        $trgPhysical <= 100 &&
+                        $devnPhysical > -5)
+                ) {
+                    $indicator = 'red';
+                } elseif (
+                    ($trgPhysical >= 0 &&
+                        $trgPhysical <= 70 &&
+                        $devnPhysical >= 0 &&
+                        $devnPhysical <= 10) ||
+                    ($trgPhysical > 70 &&
+                        $trgPhysical <= 100 &&
+                        $devnPhysical >= 0 &&
+                        $devnPhysical <= 5)
+                ) {
+                    $indicator = 'yellow';
+                } elseif (
+                    ($trgPhysical >= 0 &&
+                        $trgPhysical <= 70 &&
+                        $devnPhysical > 0) ||
+                    ($trgPhysical > 70 &&
+                        $trgPhysical <= 100 &&
+                        $devnPhysical > 0)
+                ) {
+                    $indicator = 'green';
+                }
+            }
+        }
         // var_dump($detail);
 
         $result = [
-            'pkgd_id' => $detail['id'],
-            'pkgd_no' => $detail['pkgd_no'],
-            'pkgd_name' => $detail['pkgd_name'],
+            'pkgd_id' => $id,
+            'pkgd_no' => $pkgdNo,
+            'pkgd_name' => $pkgdName,
             'cnt_value' =>
-                $detail['cnt_value'] > 0
-                    ? number_format($detail['cnt_value'], 2, ',', '.')
-                    : '',
+                $cntValue > 0 ? number_format($cntValue, 2, ',', '.') : '',
             'cnt_value_end' =>
-                $detail['cnt_value_end'] > 0
-                    ? number_format($detail['cnt_value_end'], 2, ',', '.')
+                $cntValueEnd > 0
+                    ? number_format($cntValueEnd, 2, ',', '.')
                     : '',
             'pkgd_debt_ceiling' =>
-                $detail['pkgd_debt_ceiling'] > 0
-                    ? number_format($detail['pkgd_debt_ceiling'], 2, ',', '.')
+                $pkgdDebtCeiling > 0
+                    ? number_format($pkgdDebtCeiling, 2, ',', '.')
                     : '',
             'week' =>
-                $detail['trg_week'] > 0
-                    ? $detail['trg_week']
-                    : ($detail['prog_week'] > 0
-                        ? $detail['prog_week']
-                        : ''),
-            'trg_date' => !is_null($detail['trg_date'])
-                ? Functions::dateFormat('Y-m-d', 'd/m/Y', $detail['trg_date'])
+                $trgWeek > 0 ? $trgWeek : ($progWeek > 0 ? $progWeek : ''),
+            'trg_date' => !is_null($trgDate)
+                ? Functions::dateFormat('Y-m-d', 'd/m/Y', $trgDate)
                 : '',
             'trg_physical' =>
-                $detail['trg_physical'] > 0
-                    ? number_format($detail['trg_physical'], 2, ',', '.')
+                $trgPhysical > 0
+                    ? number_format($trgPhysical, 2, ',', '.')
                     : '',
             'trg_finance_pct' =>
-                $detail['trg_finance_pct'] > 0
-                    ? number_format($detail['trg_finance_pct'], 2, ',', '.')
+                $trgFinancePct > 0
+                    ? number_format($trgFinancePct, 2, ',', '.')
                     : '',
             'prog_physical' =>
-                $detail['prog_physical'] > 0
-                    ? number_format($detail['prog_physical'], 2, ',', '.')
+                $progPhysical > 0
+                    ? number_format($progPhysical, 2, ',', '.')
                     : '',
             'prog_finance_pct' =>
-                $detail['prog_finance_pct'] > 0
-                    ? number_format($detail['prog_finance_pct'], 2, ',', '.')
+                $progFinancePct > 0
+                    ? number_format($progFinancePct, 2, ',', '.')
                     : '',
             'devn_physical' =>
-                // !empty($detail['trg_physical']) ||
-                !empty($detail['prog_physical'])
-                    ? number_format($detail['devn_physical'], 2, ',', '.')
+                // !empty($trgPhysical) ||
+                !empty($progPhysical)
+                    ? number_format($devnPhysical, 2, ',', '.')
                     : '',
             'devn_finance_pct' =>
-                // !empty($detail['trg_finance']) ||
-                !empty($detail['prog_finance'])
-                    ? number_format($detail['devn_finance_pct'], 2, ',', '.')
+                // !empty($trgFinance) ||
+                !empty($progFinance)
+                    ? number_format($devnFinancePct, 2, ',', '.')
                     : '',
+            'indikator' => $indicator,
         ];
 
         if ($result['week'] > 1) {
