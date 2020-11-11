@@ -205,128 +205,101 @@ class PerformanceReportModel extends Model
 
     public function getDetail($detail)
     {
-        $detail['trg_finance_pct'] =
-            $detail['cnt_value'] > 0
-                ? ($detail['trg_finance'] / $detail['cnt_value']) * 100
-                : 0;
-        $detail['avg_trg_finance_pct'] =
-            $detail['cnt_value'] > 0
-                ? ($detail['avg_trg_finance'] / $detail['cnt_value']) * 100
-                : 0;
+        foreach ($detail as $key => $value) {
+            $key = Functions::camelize($key);
+            $$key = $value;
+        }
 
-        $detail['prog_finance_pct'] =
-            $detail['cnt_value'] > 0
-                ? ($detail['prog_finance'] / $detail['cnt_value']) * 100
-                : 0;
-        $detail['avg_prog_finance_pct'] =
-            $detail['cnt_value'] > 0
-                ? ($detail['avg_prog_finance'] / $detail['cnt_value']) * 100
-                : 0;
+        $trgFinancePct = $cntValue > 0 ? ($trgFinance / $cntValue) * 100 : 0;
+        $avgTrgFinancePct =
+            $cntValue > 0 ? ($avgTrgFinance / $cntValue) * 100 : 0;
 
-        $detail['devn_physical'] =
-            $detail['prog_physical'] - $detail['trg_physical'];
-        $detail['devn_finance'] =
-            $detail['prog_finance'] - $detail['trg_finance'];
-        $detail['devn_finance_pct'] =
-            $detail['cnt_value'] > 0
-                ? ($detail['devn_finance'] / $detail['cnt_value']) * 100
-                : 0;
+        $progFinancePct = $cntValue > 0 ? ($progFinance / $cntValue) * 100 : 0;
+        $avgProgFinancePct =
+            $cntValue > 0 ? ($avgProgFinance / $cntValue) * 100 : 0;
+
+        $devnPhysical = $progPhysical - $trgPhysical;
+        $devnFinance = $progFinance - $trgFinance;
+        $devnFinancePct = $cntValue > 0 ? ($devnFinance / $cntValue) * 100 : 0;
 
         $indicator = 'white';
-        if (!is_null($detail['trg_physical'])) {
+        if (!is_null($trgPhysical)) {
             if (
-                ($detail['trg_physical'] >= 0 &&
-                    $detail['trg_physical'] <= 70 &&
-                    $detail['devn_physical'] > -10) ||
-                ($detail['trg_physical'] > 70 &&
-                    $detail['trg_physical'] <= 100 &&
-                    $detail['devn_physical'] > -5)
+                ($trgPhysical >= 0 &&
+                    $trgPhysical <= 70 &&
+                    $devnPhysical > -10) ||
+                ($trgPhysical > 70 && $trgPhysical <= 100 && $devnPhysical > -5)
             ) {
                 $indicator = 'red';
             } elseif (
-                ($detail['trg_physical'] >= 0 &&
-                    $detail['trg_physical'] <= 70 &&
-                    $detail['devn_physical'] >= 0 &&
-                    $detail['devn_physical'] <= 10) ||
-                ($detail['trg_physical'] > 70 &&
-                    $detail['trg_physical'] <= 100 &&
-                    $detail['devn_physical'] >= 0 &&
-                    $detail['devn_physical'] <= 5)
+                ($trgPhysical >= 0 &&
+                    $trgPhysical <= 70 &&
+                    $devnPhysical >= 0 &&
+                    $devnPhysical <= 10) ||
+                ($trgPhysical > 70 &&
+                    $trgPhysical <= 100 &&
+                    $devnPhysical >= 0 &&
+                    $devnPhysical <= 5)
             ) {
                 $indicator = 'yellow';
             } elseif (
-                ($detail['trg_physical'] >= 0 &&
-                    $detail['trg_physical'] <= 70 &&
-                    $detail['devn_physical'] > 0) ||
-                ($detail['trg_physical'] > 70 &&
-                    $detail['trg_physical'] <= 100 &&
-                    $detail['devn_physical'] > 0)
+                ($trgPhysical >= 0 &&
+                    $trgPhysical <= 70 &&
+                    $devnPhysical > 0) ||
+                ($trgPhysical > 70 && $trgPhysical <= 100 && $devnPhysical > 0)
             ) {
                 $indicator = 'green';
             }
         }
 
         return [
-            'pkgd_id' => $detail['id'],
-            'pkgd_no' => $detail['pkgd_no'],
-            'pkgd_name' => $detail['pkgd_name'],
+            'pkgd_id' => $id,
+            'pkgd_no' => $pkgdNo,
+            'pkgd_name' => $pkgdName,
             'cnt_value' =>
-                $detail['cnt_value'] > 0
-                    ? number_format($detail['cnt_value'], 2, ',', '.')
-                    : '',
-            'pkgd_last_prog_date' => !is_null($detail['pkgd_last_prog_date'])
-                ? Functions::dateFormat(
-                    'Y-m-d',
-                    'd/m/Y',
-                    $detail['pkgd_last_prog_date'],
-                )
+                $cntValue > 0 ? number_format($cntValue, 2, ',', '.') : '',
+            'pkgd_last_prog_date' => !is_null($pkgdLastProgDate)
+                ? Functions::dateFormat('Y-m-d', 'd/m/Y', $pkgdLastProgDate)
                 : '',
             'trg_physical' =>
-                $detail['trg_physical'] > 0
-                    ? number_format($detail['trg_physical'], 2, ',', '.')
+                $trgPhysical > 0
+                    ? number_format($trgPhysical, 2, ',', '.')
                     : '',
             'trg_finance_pct' =>
-                $detail['trg_finance_pct'] > 0
-                    ? number_format($detail['trg_finance_pct'], 2, ',', '.')
+                $trgFinancePct > 0
+                    ? number_format($trgFinancePct, 2, ',', '.')
                     : '',
             'avg_trg_physical' =>
-                $detail['avg_trg_physical'] > 0
-                    ? number_format($detail['avg_trg_physical'], 2, ',', '.')
+                $avgTrgPhysical > 0
+                    ? number_format($avgTrgPhysical, 2, ',', '.')
                     : '',
             'avg_trg_finance_pct' =>
-                $detail['avg_trg_finance_pct'] > 0
-                    ? number_format($detail['avg_trg_finance_pct'], 2, ',', '.')
+                $avgTrgFinancePct > 0
+                    ? number_format($avgTrgFinancePct, 2, ',', '.')
                     : '',
             'prog_physical' =>
-                $detail['prog_physical'] > 0
-                    ? number_format($detail['prog_physical'], 2, ',', '.')
+                $progPhysical > 0
+                    ? number_format($progPhysical, 2, ',', '.')
                     : '',
             'prog_finance_pct' =>
-                $detail['prog_finance_pct'] > 0
-                    ? number_format($detail['prog_finance_pct'], 2, ',', '.')
+                $progFinancePct > 0
+                    ? number_format($progFinancePct, 2, ',', '.')
                     : '',
             'avg_prog_physical' =>
-                $detail['avg_prog_physical'] > 0
-                    ? number_format($detail['avg_prog_physical'], 2, ',', '.')
+                $avgProgPhysical > 0
+                    ? number_format($avgProgPhysical, 2, ',', '.')
                     : '',
             'avg_prog_finance_pct' =>
-                $detail['avg_prog_finance_pct'] > 0
-                    ? number_format(
-                        $detail['avg_prog_finance_pct'],
-                        2,
-                        ',',
-                        '.',
-                    )
+                $avgProgFinancePct > 0
+                    ? number_format($avgProgFinancePct, 2, ',', '.')
                     : '',
             'devn_physical' =>
-                !empty($detail['trg_physical']) ||
-                !empty($detail['prog_physical'])
-                    ? number_format($detail['devn_physical'], 2, ',', '.')
+                !empty($trgPhysical) || !empty($progPhysical)
+                    ? number_format($devnPhysical, 2, ',', '.')
                     : '',
             'devn_finance_pct' =>
-                !empty($detail['trg_finance']) ||
-                !empty($detail['prog_finance'])
-                    ? number_format($detail['devn_finance_pct'], 2, ',', '.')
+                !empty($trgFinance) || !empty($progFinance)
+                    ? number_format($devnFinancePct, 2, ',', '.')
                     : '',
             'indicator' => $indicator,
         ];
