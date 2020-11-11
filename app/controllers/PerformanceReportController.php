@@ -90,13 +90,18 @@ class PerformanceReportController extends Controller
         $list = $this->performanceReportModel->getData($_POST);
         $list_count = count($list);
 
-        $sheet->setCellValue('A1', 'LAPORAN CAPAIAN KINERJA BULANAN');
-        $sheet->setCellValue('A2', 'BINA MARGA KAB. SEMARANG');
-        $sheet->setCellValue('A3', "THN ANGGARAN: {$_POST['pkg_fiscal_year']}");
+        $lastCol = 'K';
 
-        $sheet->mergeCells('A1:K1');
-        $sheet->mergeCells('A2:K2');
-        $sheet->mergeCells('A3:K3');
+        $titles = [
+            'LAPORAN CAPAIAN KINERJA BULANAN',
+            'BINA MARGA KAB. SEMARANG',
+            "THN ANGGARAN: {$_POST['pkg_fiscal_year']}",
+        ];
+
+        for ($i = 1; $i <= 3; $i++) {
+            $sheet->setCellValue("A{$i}", $titles[$i - 1]);
+            $sheet->mergeCells("A{$i}:{$lastCol}{$i}");
+        }
 
         $sheet->getStyle('A1:A3')->applyFromArray([
             'font' => [
@@ -109,6 +114,12 @@ class PerformanceReportController extends Controller
                     \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
             ],
         ]);
+
+        $alphabet = range('A', $lastCol);
+        if (($key = array_search('B', $alphabet)) !== false) {
+            unset($alphabet[$key]);
+        }
+        $alphabet = array_values($alphabet);
 
         if ($list_count > 0) {
             foreach ($list as $rows) {
@@ -127,20 +138,36 @@ class PerformanceReportController extends Controller
                 $detail_head2 = $detail_head1 + 1;
 
                 $sheet->mergeCells("A{$detail_head1}:B{$detail_head2}");
-                $sheet->mergeCells("C{$detail_head1}:C{$detail_head2}");
-                $sheet->mergeCells("D{$detail_head1}:D{$detail_head2}");
 
-                $sheet->mergeCells("E{$detail_head1}:F{$detail_head1}");
-                $sheet->mergeCells("G{$detail_head1}:H{$detail_head1}");
-                $sheet->mergeCells("I{$detail_head1}:J{$detail_head1}");
-                $sheet->mergeCells("K{$detail_head1}:K{$detail_head2}");
-                $sheet->getRowDimension($detail_head1)->setRowHeight(30);
+                $cols1 = range('C', 'D');
+                foreach ($cols1 as $col) {
+                    $sheet->mergeCells(
+                        "{$col}{$detail_head1}:{$col}{$detail_head2}",
+                    );
+                }
+
+                $cols2 = range('E', 'I', 2);
+                $cols3 = range('F', 'J', 2);
+                for ($i = 0; $i < 3; $i++) {
+                    $sheet->mergeCells(
+                        "{$cols2[$i]}{$detail_head1}:{$cols3[$i]}{$detail_head1}",
+                    );
+                }
+
+                $cols1 = range('K', 'K');
+                foreach ($cols1 as $col) {
+                    $sheet->mergeCells(
+                        "{$col}{$detail_head1}:{$col}{$detail_head2}",
+                    );
+                }
+                // $sheet->getRowDimension($detail_head1)->setRowHeight(30);
+                $sheet->getRowDimension($detail_head2)->setRowHeight(30);
 
                 $sheet->fromArray(
                     [
                         'Paket Kegiatan',
                         '',
-                        'Nilai Awal Kontrak (Rp)',
+                        "Nilai Awal Kontrak\n(Rp)",
                         "Tanggal Periode\nTerakhir",
                         'Target',
                         '',
@@ -155,12 +182,12 @@ class PerformanceReportController extends Controller
                 );
                 $sheet->fromArray(
                     [
-                        'Fisik (%)',
-                        'Keuangan (Rp)',
-                        'Fisik (%)',
-                        'Keuangan (Rp)',
-                        'Fisik (%)',
-                        'Keuangan (Rp)',
+                        "Fisik\n(%)",
+                        "Keuangan\n(%)",
+                        "Fisik\n(%)",
+                        "Keuangan\n(%)",
+                        "Fisik\n(%)",
+                        "Keuangan\n(%)",
                     ],
                     null,
                     "E{$detail_head2}",
@@ -196,44 +223,24 @@ class PerformanceReportController extends Controller
 
                     $sheet->mergeCells("A{$detail_body}:B{$detail_body}");
 
-                    $sheet->setCellValue(
-                        "A{$detail_body}",
-                        "{$row['pkgd_name']}",
-                    );
-
-                    $sheet->setCellValue("C{$detail_body}", $row['cnt_value']);
-
-                    $sheet->setCellValue(
-                        "D{$detail_body}",
+                    $content = [
+                        $row['pkgd_name'],
+                        $row['cnt_value'],
                         $row['pkgd_last_prog_date'],
-                    );
-
-                    $sheet->setCellValue(
-                        "E{$detail_body}",
                         $row['trg_physical'],
-                    );
-                    $sheet->setCellValue(
-                        "F{$detail_body}",
                         $row['trg_finance_pct'],
-                    );
-
-                    $sheet->setCellValue(
-                        "G{$detail_body}",
                         $row['prog_physical'],
-                    );
-                    $sheet->setCellValue(
-                        "H{$detail_body}",
                         $row['prog_finance_pct'],
-                    );
-
-                    $sheet->setCellValue(
-                        "I{$detail_body}",
                         $row['devn_physical'],
-                    );
-                    $sheet->setCellValue(
-                        "J{$detail_body}",
                         $row['devn_finance_pct'],
-                    );
+                    ];
+
+                    foreach ($alphabet as $key => $value) {
+                        $sheet->setCellValue(
+                            "{$value}{$detail_body}",
+                            $content[$key],
+                        );
+                    }
 
                     $sheet
                         ->getStyle("K{$detail_body}")
@@ -250,6 +257,14 @@ class PerformanceReportController extends Controller
                                 \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
                         ],
                     ]);
+
+                    $sheet->getStyle("D{$detail_body}")->applyFromArray([
+                        'alignment' => [
+                            'horizontal' =>
+                                \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                        ],
+                    ]);
+
                     $sheet
                         ->getStyle("E{$detail_body}:J{$detail_body}")
                         ->applyFromArray([
@@ -275,16 +290,9 @@ class PerformanceReportController extends Controller
             }
         }
 
-        $sheet->getColumnDimension('A')->setAutoSize(true);
-        $sheet->getColumnDimension('C')->setAutoSize(true);
-        $sheet->getColumnDimension('D')->setAutoSize(true);
-        $sheet->getColumnDimension('E')->setAutoSize(true);
-        $sheet->getColumnDimension('F')->setAutoSize(true);
-        $sheet->getColumnDimension('G')->setAutoSize(true);
-        $sheet->getColumnDimension('H')->setAutoSize(true);
-        $sheet->getColumnDimension('I')->setAutoSize(true);
-        $sheet->getColumnDimension('J')->setAutoSize(true);
-        $sheet->getColumnDimension('K')->setAutoSize(true);
+        foreach ($alphabet as $value) {
+            $sheet->getColumnDimension($value)->setAutoSize(true);
+        }
 
         $writer = new Xlsx($spreadsheet);
         $t = time();
