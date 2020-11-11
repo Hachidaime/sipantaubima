@@ -32,6 +32,27 @@
       </div>
 
       <div class="form-group row">
+        <label for="pkg_fiscal_year" class="col-lg-3 col-sm-4 col-form-label">
+          Bulan
+          <sup class="fas fa-asterisk text-red"></sup>
+          <span class="float-sm-right d-sm-inline d-none">:</span>
+        </label>
+        <div class="col-lg-1 col-sm-2 col-3">
+          <input
+            type="text"
+            class="form-control rounded-0 text-center"
+            id="pkg_month"
+            name="pkg_month"
+            value="{$smarty.now|date_format:'%m'}"
+            autocomplete="off"
+            data-toggle="datetimepicker"
+            data-target="#pkg_month"
+          />
+          <div class="invalid-feedback"></div>
+        </div>
+      </div>
+
+      <div class="form-group row">
         <label for="prg_code" class="col-lg-3 col-sm-4 col-form-label">
           Program
           <sup class="fas fa-asterisk text-red"></sup>
@@ -41,11 +62,8 @@
           <select class="custom-select rounded-0" name="prg_code" id="prg_code">
             <option value="">-- Pilih --</option>
             {section inner $program}
-            <option
-              value="{$program[inner].prg_code}"
-              data-value="{$program[inner].prg_name}"
-            >
-              {$program[inner].prg_code}
+            <option value="{$program[inner].prg_code}">
+              {$program[inner].prg_name}
             </option>
             {/section}
           </select>
@@ -63,11 +81,8 @@
           <select class="custom-select rounded-0" name="act_code" id="act_code">
             <option value="">-- Pilih --</option>
             {section inner $activity}
-            <option
-              value="{$activity[inner].act_code}"
-              data-value="{$activity[inner].act_name}"
-            >
-              {$activity[inner].act_code}
+            <option value="{$activity[inner].act_code}">
+              {$activity[inner].act_name}
             </option>
             {/section}
           </select>
@@ -97,6 +112,11 @@
     $('#pkg_fiscal_year').datetimepicker({
       viewMode: 'years',
       format: 'YYYY',
+    })
+
+    $('#pkg_month').datetimepicker({
+      viewMode: 'months',
+      format: 'MM',
     })
 
     $('#btn_search').click(() => {
@@ -234,7 +254,7 @@
                 rowspan: 2,
                 width: '10%',
               },
-              children: ['Nilai Awal Kontrak (Rp)'],
+              children: [/* html */ `Nilai Awal Kontrak<br>(Rp)`],
             })
 
             let headDate = createElement({
@@ -252,7 +272,7 @@
               class: ['text-center', 'align-middle'],
               attribute: {
                 colspan: 2,
-                width: '200px',
+                width: '110px',
               },
               children: ['Target'],
             })
@@ -262,7 +282,7 @@
               class: ['text-center', 'align-middle'],
               attribute: {
                 colspan: 2,
-                width: '200px',
+                width: '110px',
               },
               children: ['Realisasi'],
             })
@@ -272,7 +292,7 @@
               class: ['text-center', 'align-middle'],
               attribute: {
                 colspan: 2,
-                width: '200px',
+                width: '110px',
               },
               children: ['Deviasi'],
             })
@@ -306,54 +326,54 @@
               element: 'th',
               class: ['text-center', 'align-middle'],
               attribute: {
-                width: '75px',
+                width: '50px',
               },
-              children: ['Fisik (%)'],
+              children: [/* html */ `Fisik<br>(%)`],
             })
 
             let headTrgFinance = createElement({
               element: 'th',
               class: ['text-center', 'align-middle'],
               attribute: {
-                width: '125px',
+                width: '60px',
               },
-              children: ['Keuangan (%)'],
+              children: [/* html */ `Keuangan<br>(%)`],
             })
 
             let headProgPhysical = createElement({
               element: 'th',
               class: ['text-center', 'align-middle'],
               attribute: {
-                width: '75px',
+                width: '50px',
               },
-              children: ['Fisik (%)'],
+              children: [/* html */ `Fisik<br>(%)`],
             })
 
             let headProgFinance = createElement({
               element: 'th',
               class: ['text-center', 'align-middle'],
               attribute: {
-                width: '125px',
+                width: '60px',
               },
-              children: ['Keuangan (%)'],
+              children: [/* html */ `Keuangan<br>(%)`],
             })
 
             let headDevnPhysical = createElement({
               element: 'th',
               class: ['text-center', 'align-middle'],
               attribute: {
-                width: '75px',
+                width: '50px',
               },
-              children: ['Fisik (%)'],
+              children: [/* html */ `Fisik<br>(%)`],
             })
 
             let headDevnFinance = createElement({
               element: 'th',
               class: ['text-center', 'align-middle'],
               attribute: {
-                width: '125px',
+                width: '60px',
               },
-              children: ['Keuangan (%)'],
+              children: [/* html */ `Keuangan<br>(%)`],
             })
 
             let theadRow2 = createElement({

@@ -27,30 +27,12 @@ class PerformanceReportController extends Controller
     public function index()
     {
         $programModel = new ProgramModel();
-        list($program) = $programModel->multiarray(null, [['prg_code', 'ASC']]);
+        list($program) = $programModel->multiarray(null, [['prg_name', 'ASC']]);
 
         $activityModel = new ActivityModel();
         list($activity) = $activityModel->multiarray(null, [
-            ['act_code', 'ASC'],
+            ['act_name', 'ASC'],
         ]);
-
-        $packageModel = new PackageModel();
-        list($package, $packageCount) = $packageModel->multiarray();
-
-        $packageDetail = [];
-        if ($packageCount > 0) {
-            $pkgIdList = implode(
-                ',',
-                array_map(function ($val) {
-                    return $val['id'];
-                }, $package),
-            );
-            $packageDetailModel = new PackageDetailModel();
-            $query = "SELECT * FROM `{$packageDetailModel->getTable()}` 
-                WHERE `pkg_id` IN ($pkgIdList) 
-                ORDER BY `pkgd_name` ASC";
-            $packageDetail = $packageDetailModel->db->query($query)->toArray();
-        }
 
         $this->smarty->assign('breadcrumb', [
             ['Laporan', ''],
@@ -60,7 +42,6 @@ class PerformanceReportController extends Controller
         $this->smarty->assign('subtitle', "Laporan {$this->title}");
         $this->smarty->assign('program', $program);
         $this->smarty->assign('activity', $activity);
-        $this->smarty->assign('packageDetail', $packageDetail);
 
         $this->smarty->display("{$this->directory}/index.tpl");
     }
@@ -71,6 +52,11 @@ class PerformanceReportController extends Controller
 
         echo json_encode($list);
         exit();
+    }
+
+    private function validate($data)
+    {
+        # code...
     }
 
     public function downloadSpreadsheet()
