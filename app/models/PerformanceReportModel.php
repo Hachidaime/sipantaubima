@@ -94,27 +94,39 @@ class PerformanceReportModel extends Model
                         $row['detail'][$key] = $detail;
 
                         $avgTrgPhysical += number_format(
-                            $detail['trg_physical'] / $packageDetailCount,
+                            (!empty($detail['trg_physical'])
+                                ? $detail['trg_physical']
+                                : 0) / $packageDetailCount,
                             2,
                         );
                         $avgTrgFinancePct += number_format(
-                            $detail['trg_finance_pct'] / $packageDetailCount,
+                            (!empty($detail['trg_finance_pct'])
+                                ? $detail['trg_finance_pct']
+                                : 0) / $packageDetailCount,
                             2,
                         );
                         $avgProgPhysical += number_format(
-                            $detail['prog_physical'] / $packageDetailCount,
+                            (!empty($detail['prog_physical'])
+                                ? $detail['prog_physical']
+                                : 0) / $packageDetailCount,
                             2,
                         );
                         $avgProgFinancePct += number_format(
-                            $detail['prog_finance_pct'] / $packageDetailCount,
+                            (!empty($detail['prog_finance_pct'])
+                                ? $detail['prog_finance_pct']
+                                : 0) / $packageDetailCount,
                             2,
                         );
                         $avgDevnPhysical += number_format(
-                            $detail['devn_physical'] / $packageDetailCount,
+                            (!empty($detail['devn_physical'])
+                                ? $detail['devn_physical']
+                                : 0) / $packageDetailCount,
                             2,
                         );
                         $avgDevnFinancePct += number_format(
-                            $detail['devn_finance_pct'] / $packageDetailCount,
+                            (!empty($detail['devn_finance_pct'])
+                                ? $detail['devn_finance_pct']
+                                : 0) / $packageDetailCount,
                             2,
                         );
                     }

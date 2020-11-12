@@ -102,10 +102,26 @@
 <div class="card rounded-0 sr-only result-container">
   <div class="card-body"></div>
 </div>
+
+<div class="card rounded-0 sr-only chart-container">
+  <div class="card-body">
+    <canvas
+      id="canvas"
+      style="
+        min-height: 400px;
+        height: 400px;
+        max-height: 400px;
+        max-width: 100%;
+      "
+    ></canvas>
+  </div>
+</div>
 <!-- prettier-ignore -->
 {/block}
 
 {block 'script'}
+<!-- ChartJS -->
+<script src="{$smarty.const.BASE_URL}/assets/plugins/chart.js/Chart.min.js"></script>
 {literal}
 <script>
   $(document).ready(function () {
@@ -424,6 +440,7 @@
 
             // let labels = []
             let detail = res[index].detail
+
             for (idx in detail) {
               let bodyPackage = createElement({
                 element: 'td',
@@ -542,8 +559,46 @@
             })
             //#endregion
             resultWrapper.append(progContainer, actContainer, package)
+
+            let chartContainer = document.querySelector('.chart-container')
+            chartContainer.classList.add('sr-only')
+
+            if ($('#act_code').val() != '') {
+              chartContainer.classList.remove('sr-only')
+              let chartData = {
+                id: 'barChart',
+                xLabel: 'Subtotal',
+                yLabel: 'Persentase',
+                labels: [
+                  'Target Fisik',
+                  'Realiasi Fisik',
+                  'Target Keuangan',
+                  'Realisasi Keuangan',
+                ],
+                datasets: [
+                  {
+                    // label: 'Subtotal',
+                    backgroundColor: 'rgba(60,141,188,0.9)',
+                    borderColor: 'rgba(60,141,188,0.8)',
+                    pointRadius: false,
+                    pointColor: '#3b8bba',
+                    pointStrokeColor: 'rgba(60,141,188,1)',
+                    pointHighlightFill: '#fff',
+                    data: [
+                      Number(detail[idx].trg_physical.replace(',', '.')),
+                      Number(detail[idx].trg_finance_pct.replace(',', '.')),
+                      Number(detail[idx].prog_physical.replace(',', '.')),
+                      Number(detail[idx].prog_finance_pct.replace(',', '.')),
+                    ],
+                  },
+                ],
+              }
+              createChart(chartData)
+            }
           }
         } else {
+          let chartContainer = document.querySelector('.chart-container')
+          chartContainer.classList.add('sr-only')
           resultWrapper.innerHTML = /*html*/ `<h3 class="text-center">Data tidak ditemukan.</h3>`
         }
       },
@@ -567,6 +622,49 @@
       },
       'JSON'
     )
+  }
+
+  let createChart = (params) => {
+    console.log(params)
+    var ctx = document.getElementById('canvas').getContext('2d')
+    window.myBar = new Chart(ctx, {
+      type: 'bar',
+      data: params,
+      options: {
+        responsive: false,
+        legend: {
+          display: false,
+        },
+        title: {
+          display: false,
+        },
+        scales: {
+          xAxes: [
+            {
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: params.xLabel,
+              },
+            },
+          ],
+          yAxes: [
+            {
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: params.yLabel,
+              },
+              ticks: {
+                min: 0,
+                max: 100,
+                stepSize: 10,
+              },
+            },
+          ],
+        },
+      },
+    })
   }
 </script>
 <!-- prettier-ignore -->
