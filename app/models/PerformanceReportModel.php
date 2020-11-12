@@ -77,134 +77,77 @@ class PerformanceReportModel extends Model
                 $row['prg_name'] = $programOptions[$row['prg_code']];
                 $row['act_name'] = $activityOptions[$row['act_code']];
 
-                foreach ($packageDetail[$row['id']] as $key => $value) {
-                    $row['detail'][$key] = $this->getDetail($value);
+                $packageDetailCount = count($packageDetail[$row['id']]);
+
+                $row['detail'] = [];
+
+                if ($packageDetailCount > 0) {
+                    $avgTrgPhysical = 0;
+                    $avgTrgFinancePct = 0;
+                    $avgProgPhysical = 0;
+                    $avgProgFinancePct = 0;
+                    $avgDevnPhysical = 0;
+                    $avgDevnFinancePct = 0;
+
+                    foreach ($packageDetail[$row['id']] as $key => $value) {
+                        $detail = $this->getDetail($value);
+                        $row['detail'][$key] = $detail;
+
+                        $avgTrgPhysical += number_format(
+                            $detail['trg_physical'] / $packageDetailCount,
+                            2,
+                        );
+                        $avgTrgFinancePct += number_format(
+                            $detail['trg_finance_pct'] / $packageDetailCount,
+                            2,
+                        );
+                        $avgProgPhysical += number_format(
+                            $detail['prog_physical'] / $packageDetailCount,
+                            2,
+                        );
+                        $avgProgFinancePct += number_format(
+                            $detail['prog_finance_pct'] / $packageDetailCount,
+                            2,
+                        );
+                        $avgDevnPhysical += number_format(
+                            $detail['devn_physical'] / $packageDetailCount,
+                            2,
+                        );
+                        $avgDevnFinancePct += number_format(
+                            $detail['devn_finance_pct'] / $packageDetailCount,
+                            2,
+                        );
+                    }
+
+                    $row['detail'][$key + 1] = [
+                        'pkgd_name' => 'Subtotal',
+                        'cnt_value' => '',
+                        'cnt_value_end' => '',
+                        'pkgd_debt_ceiling' => '',
+                        'pkgd_last_prog_date' => '',
+                        'trg_physical' => !empty($avgTrgPhysical)
+                            ? number_format($avgTrgPhysical, 2, ',', '.')
+                            : '',
+                        'trg_finance_pct' => !empty($avgTrgFinancePct)
+                            ? number_format($avgTrgFinancePct, 2, ',', '.')
+                            : '',
+                        'prog_physical' => !empty($avgProgPhysical)
+                            ? number_format($avgProgPhysical, 2, ',', '.')
+                            : '',
+                        'prog_finance_pct' => !empty($avgProgFinancePct)
+                            ? number_format($avgProgFinancePct, 2, ',', '.')
+                            : '',
+                        'devn_physical' => !empty($avgDevnPhysical)
+                            ? number_format($avgDevnPhysical, 2, ',', '.')
+                            : '',
+                        'devn_finance_pct' => !empty($avgDevnFinancePct)
+                            ? number_format($avgDevnFinancePct, 2, ',', '.')
+                            : '',
+                    ];
                 }
 
                 $package[$idx] = $row;
             }
-
-            /* foreach ($package as $idx => $row) {
-                // var_dump($row);
-                $row['prg_name'] = $programOptions[$row['prg_code']];
-                $row['act_name'] = $activityOptions[$row['act_code']];
-
-                $targetOpt[$row['id']] = $targetOpt[$row['id']] ?? [];
-                $progressOpt[$row['id']] = $progressOpt[$row['id']] ?? [];
-
-                $target = [];
-                foreach ($targetOpt[$row['id']] as $value) {
-                    $target[$value['id']][] = $value;
-                }
-                $target = array_values($target);
-
-                $progress = [];
-                foreach ($progressOpt[$row['id']] as $key => $value) {
-                    $progress[$value['id']][] = $value;
-                }
-                $progress = array_values($progress);
-
-                $packageDetail = [];
-
-                $last_target = [];
-                for ($i = 0; $i < count($target); $i++) {
-                    if (is_array($target[$i])) {
-                        $avg_trg_physical = 0;
-                        $avg_trg_finance = 0;
-                        if (is_array($target[$i])) {
-                            $count_target = count($target[$i]);
-                            foreach ($target[$i] as $value) {
-                                $avg_trg_physical +=
-                                    $count_target > 0
-                                        ? $value['trg_physical'] / $count_target
-                                        : 0;
-                                $avg_trg_finance +=
-                                    $count_target > 0
-                                        ? $value['trg_finance'] / $count_target
-                                        : 0;
-                            }
-                        }
-
-                        $value['avg_trg_physical'] = $avg_trg_physical;
-                        $value['avg_trg_finance'] = $avg_trg_finance;
-                        $last_target[$i] = $value;
-                    }
-                }
-
-                $last_progress = [];
-                for ($i = 0; $i < count($progress); $i++) {
-                    if (is_array($progress[$i])) {
-                        $avg_prog_physical = 0;
-                        $avg_prog_finance = 0;
-                        if (is_array($progress[$i])) {
-                            $count_progress = count($progress[$i]);
-                            foreach ($progress[$i] as $value) {
-                                $avg_prog_physical +=
-                                    $count_progress > 0
-                                        ? $value['prog_physical'] /
-                                            $count_progress
-                                        : 0;
-                                $avg_prog_finance +=
-                                    $count_progress > 0
-                                        ? $value['prog_finance'] /
-                                            $count_progress
-                                        : 0;
-                            }
-                        }
-
-                        $value['avg_prog_physical'] = $avg_prog_physical;
-                        $value['avg_prog_finance'] = $avg_prog_finance;
-                        $last_progress[$i] = $value;
-                    }
-                }
-
-                $packageDetail = array_replace_recursive(
-                    $last_target,
-                    $last_progress,
-                );
-
-                $sub_trg_physical = 0;
-                $sub_trg_finance_pct = 0;
-                $sub_prog_physical = 0;
-                $sub_prog_finance_pct = 0;
-                if (is_array($packageDetail)) {
-                    $count_package_Detail = count($packageDetail);
-
-                    foreach ($packageDetail as $key => $value) {
-                        $sub_trg_physical +=
-                            $count_package_Detail > 0
-                                ? $value['avg_trg_physical'] /
-                                    $count_package_Detail
-                                : 0;
-                        $sub_trg_finance_pct +=
-                            $count_package_Detail > 0
-                                ? $value['avg_trg_finance_pct'] /
-                                    $count_package_Detail
-                                : 0;
-                        $sub_prog_physical +=
-                            $count_package_Detail > 0
-                                ? $value['avg_prog_physical'] /
-                                    $count_package_Detail
-                                : 0;
-                        $sub_prog_finance_pct +=
-                            $count_package_Detail > 0
-                                ? $value['avg_prog_finance_pct'] /
-                                    $count_package_Detail
-                                : 0;
-
-                        $value = $this->getDetail($value);
-                        $packageDetail[$key] = $value;
-                    }
-                }
-
-                $row['sub_trg_physical'] = $sub_trg_physical;
-                $row['sub_trg_finance_pct'] = $sub_trg_finance_pct;
-                $row['sub_prog_physical'] = $sub_prog_physical;
-                $row['sub_prog_finance_pct'] = $sub_prog_finance_pct;
-                $row['detail'] = $packageDetail;
-
-                $package[$idx] = $row;
-            } */
         }
 
         return $package;
