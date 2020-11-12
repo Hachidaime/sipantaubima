@@ -226,7 +226,9 @@ class ProgressReportModel extends Model
             'cnt_value_end' =>
                 $cntValueEnd > 0
                     ? number_format($cntValueEnd, 2, ',', '.')
-                    : '',
+                    : ($cntValue > 0
+                        ? number_format($cntValue, 2, ',', '.')
+                        : ''),
             'pkgd_debt_ceiling' =>
                 $pkgdDebtCeiling > 0
                     ? number_format($pkgdDebtCeiling, 2, ',', '.')

@@ -557,7 +557,7 @@
 
                 let bodyIndicator = createElement({
                   element: 'td',
-                  class: [`bg-${packageDetail[idx].indicator}`],
+                  class: [`bg-${packageDetail[pkgd].indicator}`],
                 })
 
                 let bodyRow = createElement({
