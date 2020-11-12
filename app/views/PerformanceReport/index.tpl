@@ -267,6 +267,16 @@
               children: [/* html */ `Nilai Kontrak Akhirr<br>(Rp)`],
             })
 
+            let headPkgdDebtCeiling = createElement({
+              element: 'th',
+              class: ['text-center', 'align-middle'],
+              attribute: {
+                rowspan: 2,
+                width: '10%',
+              },
+              children: [/* html */ `Pagu Anggaran<br>(Rp)`],
+            })
+
             let headDate = createElement({
               element: 'th',
               class: ['text-center', 'align-middle'],
@@ -323,6 +333,7 @@
                 headPackage,
                 headCntValue,
                 headCntValueEnd,
+                headPkgdDebtCeiling,
                 headDate,
                 headTarget,
                 headProgress,
@@ -433,6 +444,12 @@
                 children: [`${detail[idx].cnt_value_end}`],
               })
 
+              let bodyPkgdDebtCeiling = createElement({
+                element: 'td',
+                class: ['text-right'],
+                children: [`${detail[idx].pkgd_debt_ceiling}`],
+              })
+
               let bodyDate = createElement({
                 element: 'td',
                 children: [`${detail[idx].pkgd_last_prog_date}`],
@@ -485,6 +502,7 @@
                   bodyPackage,
                   bodyCntValue,
                   bodyCntValueEnd,
+                  bodyPkgdDebtCeiling,
                   bodyDate,
                   bodyTrgPhysical,
                   bodyTrgFinance,

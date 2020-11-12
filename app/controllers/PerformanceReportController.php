@@ -76,7 +76,7 @@ class PerformanceReportController extends Controller
         $list = $this->performanceReportModel->getData($_POST);
         $list_count = count($list);
 
-        $lastCol = 'L';
+        $lastCol = 'M';
 
         $titles = [
             'LAPORAN CAPAIAN KINERJA BULANAN',
@@ -125,22 +125,22 @@ class PerformanceReportController extends Controller
 
                 $sheet->mergeCells("A{$detail_head1}:B{$detail_head2}");
 
-                $cols1 = range('C', 'E');
+                $cols1 = range('C', 'F');
                 foreach ($cols1 as $col) {
                     $sheet->mergeCells(
                         "{$col}{$detail_head1}:{$col}{$detail_head2}",
                     );
                 }
 
-                $cols2 = range('F', 'J', 2);
-                $cols3 = range('G', 'K', 2);
+                $cols2 = range('G', 'K', 2);
+                $cols3 = range('H', 'L', 2);
                 for ($i = 0; $i < 3; $i++) {
                     $sheet->mergeCells(
                         "{$cols2[$i]}{$detail_head1}:{$cols3[$i]}{$detail_head1}",
                     );
                 }
 
-                $cols1 = range('L', 'L');
+                $cols1 = range('M', 'M');
                 foreach ($cols1 as $col) {
                     $sheet->mergeCells(
                         "{$col}{$detail_head1}:{$col}{$detail_head2}",
@@ -155,6 +155,7 @@ class PerformanceReportController extends Controller
                         '',
                         "Nilai Awal Kontrak\n(Rp)",
                         "Nilai Kontrak Akhir\n(Rp)",
+                        "Pagu Anggaran\n(Rp)",
                         "Tanggal Periode\nTerakhir",
                         'Target',
                         '',
@@ -177,7 +178,7 @@ class PerformanceReportController extends Controller
                         "Keuangan\n(%)",
                     ],
                     null,
-                    "F{$detail_head2}",
+                    "G{$detail_head2}",
                 );
 
                 $sheet
@@ -214,6 +215,7 @@ class PerformanceReportController extends Controller
                         $row['pkgd_name'],
                         $row['cnt_value'],
                         $row['cnt_value_end'],
+                        $row['pkgd_debt_ceiling'],
                         $row['pkgd_last_prog_date'],
                         $row['trg_physical'],
                         $row['trg_finance_pct'],
@@ -231,7 +233,7 @@ class PerformanceReportController extends Controller
                     }
 
                     $sheet
-                        ->getStyle("L{$detail_body}")
+                        ->getStyle("M{$detail_body}")
                         ->getFill()
                         ->setFillType(
                             \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
@@ -240,7 +242,7 @@ class PerformanceReportController extends Controller
                         ->setARGB($colors[$row['indicator']]);
 
                     $sheet
-                        ->getStyle("C{$detail_body}:D{$detail_body}")
+                        ->getStyle("C{$detail_body}:E{$detail_body}")
                         ->applyFromArray([
                             'alignment' => [
                                 'horizontal' =>
@@ -248,7 +250,7 @@ class PerformanceReportController extends Controller
                             ],
                         ]);
 
-                    $sheet->getStyle("E{$detail_body}")->applyFromArray([
+                    $sheet->getStyle("F{$detail_body}")->applyFromArray([
                         'alignment' => [
                             'horizontal' =>
                                 \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
@@ -256,7 +258,7 @@ class PerformanceReportController extends Controller
                     ]);
 
                     $sheet
-                        ->getStyle("G{$detail_body}:K{$detail_body}")
+                        ->getStyle("G{$detail_body}:L{$detail_body}")
                         ->applyFromArray([
                             'alignment' => [
                                 'horizontal' =>
