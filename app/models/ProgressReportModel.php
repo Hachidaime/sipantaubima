@@ -165,7 +165,8 @@ class ProgressReportModel extends Model
         $addendum = $this->db->query($query)->first();
         $addendum = !empty($addendum) ? $addendum->toArray() : $addendum;
 
-        $cntValueEnd = $this->db->getCount() > 0 ? $addendum['add_value'] : 0;
+        $cntValueEnd =
+            $this->db->getCount() > 0 ? $addendum['add_value'] : $cntValue;
 
         $trgFinancePct = $cntValue > 0 ? ($trgFinance / $cntValue) * 100 : 0;
 
@@ -226,9 +227,7 @@ class ProgressReportModel extends Model
             'cnt_value_end' =>
                 $cntValueEnd > 0
                     ? number_format($cntValueEnd, 2, ',', '.')
-                    : ($cntValue > 0
-                        ? number_format($cntValue, 2, ',', '.')
-                        : ''),
+                    : '',
             'pkgd_debt_ceiling' =>
                 $pkgdDebtCeiling > 0
                     ? number_format($pkgdDebtCeiling, 2, ',', '.')

@@ -239,6 +239,8 @@ class ProgressController extends Controller
         $result = $this->progressModel->delete($id);
 
         if ($result) {
+            $this->updatePackageDetail($data['pkgd_id']);
+
             Flasher::setFlash(
                 "Berhasil {$tag} {$this->title}.",
                 $this->name,
