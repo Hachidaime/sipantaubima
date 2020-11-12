@@ -117,7 +117,7 @@ class ProgressReportModel extends Model
                         foreach ($progress[$i] as $key => $value) {
                             $target[$i][$key] = is_array($target[$i][$key])
                                 ? $target[$i][$key]
-                                : [];
+                                : $target[$i][$key - 1];
 
                             $detail = array_merge(
                                 $target[$i][$key],
