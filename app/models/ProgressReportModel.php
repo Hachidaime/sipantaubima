@@ -107,7 +107,7 @@ class ProgressReportModel extends Model
                             );
 
                             $detail['last_key'] =
-                                $key == $target_count - 1 ? true : false;
+                                $key == $progress_count - 1 ? true : false;
 
                             $detail = $this->getDetail($detail);
 
@@ -178,12 +178,12 @@ class ProgressReportModel extends Model
                     : 0);
 
         $devnPhysical = $progPhysical - $trgPhysical;
-        $devnFinance = $progFinanceCum - $trgFinance;
-        $devnFinancePct = $cntValue > 0 ? ($devnFinance / $cntValue) * 100 : 0;
+        $devnFinancePct = $progFinancePct - $trgFinancePct;
 
         $indicator = 'white';
+        // var_dump($lastKey);
         if ($lastKey) {
-            if (!is_null($trgPhysical) && !is_null($detail[$devnPhysical])) {
+            if (!is_null($trgPhysical)) {
                 if (
                     ($trgPhysical >= 0 &&
                         $trgPhysical <= 70 &&
@@ -260,7 +260,7 @@ class ProgressReportModel extends Model
                     : '',
             'devn_finance_pct' =>
                 // !empty($trgFinance) ||
-                !empty($progFinance)
+                !empty($progFinancePct)
                     ? number_format($devnFinancePct, 2, ',', '.')
                     : '',
             'indicator' => $indicator,
