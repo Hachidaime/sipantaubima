@@ -257,6 +257,16 @@
               children: [/* html */ `Nilai Awal Kontrak<br>(Rp)`],
             })
 
+            let headCntValueEnd = createElement({
+              element: 'th',
+              class: ['text-center', 'align-middle'],
+              attribute: {
+                rowspan: 2,
+                width: '10%',
+              },
+              children: [/* html */ `Nilai Kontrak Akhirr<br>(Rp)`],
+            })
+
             let headDate = createElement({
               element: 'th',
               class: ['text-center', 'align-middle'],
@@ -312,6 +322,7 @@
               children: [
                 headPackage,
                 headCntValue,
+                headCntValueEnd,
                 headDate,
                 headTarget,
                 headProgress,
@@ -416,6 +427,12 @@
                 children: [`${detail[idx].cnt_value}`],
               })
 
+              let bodyCntValueEnd = createElement({
+                element: 'td',
+                class: ['text-right'],
+                children: [`${detail[idx].cnt_value_end}`],
+              })
+
               let bodyDate = createElement({
                 element: 'td',
                 children: [`${detail[idx].pkgd_last_prog_date}`],
@@ -467,6 +484,7 @@
                 children: [
                   bodyPackage,
                   bodyCntValue,
+                  bodyCntValueEnd,
                   bodyDate,
                   bodyTrgPhysical,
                   bodyTrgFinance,

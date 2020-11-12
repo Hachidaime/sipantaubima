@@ -76,12 +76,12 @@ class PerformanceReportController extends Controller
         $list = $this->performanceReportModel->getData($_POST);
         $list_count = count($list);
 
-        $lastCol = 'K';
+        $lastCol = 'L';
 
         $titles = [
             'LAPORAN CAPAIAN KINERJA BULANAN',
             'BINA MARGA KAB. SEMARANG',
-            "THN ANGGARAN: {$_POST['pkg_fiscal_year']}",
+            "THN ANGGARAN: {$_POST['fiscal_year']}",
         ];
 
         for ($i = 1; $i <= 3; $i++) {
@@ -125,22 +125,22 @@ class PerformanceReportController extends Controller
 
                 $sheet->mergeCells("A{$detail_head1}:B{$detail_head2}");
 
-                $cols1 = range('C', 'D');
+                $cols1 = range('C', 'E');
                 foreach ($cols1 as $col) {
                     $sheet->mergeCells(
                         "{$col}{$detail_head1}:{$col}{$detail_head2}",
                     );
                 }
 
-                $cols2 = range('E', 'I', 2);
-                $cols3 = range('F', 'J', 2);
+                $cols2 = range('F', 'J', 2);
+                $cols3 = range('G', 'K', 2);
                 for ($i = 0; $i < 3; $i++) {
                     $sheet->mergeCells(
                         "{$cols2[$i]}{$detail_head1}:{$cols3[$i]}{$detail_head1}",
                     );
                 }
 
-                $cols1 = range('K', 'K');
+                $cols1 = range('L', 'L');
                 foreach ($cols1 as $col) {
                     $sheet->mergeCells(
                         "{$col}{$detail_head1}:{$col}{$detail_head2}",
@@ -154,6 +154,7 @@ class PerformanceReportController extends Controller
                         'Paket Kegiatan',
                         '',
                         "Nilai Awal Kontrak\n(Rp)",
+                        "Nilai Kontrak Akhir\n(Rp)",
                         "Tanggal Periode\nTerakhir",
                         'Target',
                         '',
@@ -176,11 +177,11 @@ class PerformanceReportController extends Controller
                         "Keuangan\n(%)",
                     ],
                     null,
-                    "E{$detail_head2}",
+                    "F{$detail_head2}",
                 );
 
                 $sheet
-                    ->getStyle("A{$detail_head1}:K{$detail_head2}")
+                    ->getStyle("A{$detail_head1}:{$lastCol}{$detail_head2}")
                     ->applyFromArray([
                         'font' => [
                             'bold' => true,
@@ -212,6 +213,7 @@ class PerformanceReportController extends Controller
                     $content = [
                         $row['pkgd_name'],
                         $row['cnt_value'],
+                        $row['cnt_value_end'],
                         $row['pkgd_last_prog_date'],
                         $row['trg_physical'],
                         $row['trg_finance_pct'],
@@ -229,7 +231,7 @@ class PerformanceReportController extends Controller
                     }
 
                     $sheet
-                        ->getStyle("K{$detail_body}")
+                        ->getStyle("L{$detail_body}")
                         ->getFill()
                         ->setFillType(
                             \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
@@ -237,14 +239,16 @@ class PerformanceReportController extends Controller
                         ->getStartColor()
                         ->setARGB($colors[$row['indicator']]);
 
-                    $sheet->getStyle("C{$detail_body}")->applyFromArray([
-                        'alignment' => [
-                            'horizontal' =>
-                                \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
-                        ],
-                    ]);
+                    $sheet
+                        ->getStyle("C{$detail_body}:D{$detail_body}")
+                        ->applyFromArray([
+                            'alignment' => [
+                                'horizontal' =>
+                                    \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+                            ],
+                        ]);
 
-                    $sheet->getStyle("D{$detail_body}")->applyFromArray([
+                    $sheet->getStyle("E{$detail_body}")->applyFromArray([
                         'alignment' => [
                             'horizontal' =>
                                 \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
@@ -252,7 +256,7 @@ class PerformanceReportController extends Controller
                     ]);
 
                     $sheet
-                        ->getStyle("E{$detail_body}:J{$detail_body}")
+                        ->getStyle("G{$detail_body}:K{$detail_body}")
                         ->applyFromArray([
                             'alignment' => [
                                 'horizontal' =>
@@ -262,7 +266,7 @@ class PerformanceReportController extends Controller
                 }
 
                 $sheet
-                    ->getStyle("A{$detail_head2}:K{$detail_body}")
+                    ->getStyle("A{$detail_head2}:{$lastCol}{$detail_body}")
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [
