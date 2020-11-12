@@ -31,49 +31,8 @@ class DashboardModel extends Model
             $yellow = 0;
             $green = 0;
             $finish = 0;
-            foreach ($row['detail'] as $value) {
-                switch ($value['indicator']) {
-                    case 'red':
-                        $red += 1;
-                        break;
-
-                    case 'yellow':
-                        $yellow += 1;
-                        break;
-
-                    case 'green':
-                        $green += 1;
-                        break;
-                }
-                if ($value['prog_physical'] == 100) {
-                    $finish += 1;
-                }
-            }
-
-            $activityOpt[$row['act_code']] = [
-                'act_code' => $row['act_code'],
-                'act_name' => $row['act_name'],
-                'red' => $red,
-                'yellow' => $yellow,
-                'green' => $green,
-                'finish' => $finish,
-                'all' => count($row['detail']),
-            ];
-        }
-
-        $activityInfo = array_values($activityOpt);
-        /* 
-
-        foreach ($activityInfo as $idx => $row) {
-            $red = 0;
-            $yellow = 0;
-            $green = 0;
-            $finish = 0;
-
-            if (is_array($row['detail'])) {
-                $row['all'] = count($row['detail']);
-
-                foreach ($row['detail'] as $key => $value) {
+            if (!empty($row['detail'])) {
+                foreach ($row['detail'] as $value) {
                     switch ($value['indicator']) {
                         case 'red':
                             $red += 1;
@@ -93,15 +52,19 @@ class DashboardModel extends Model
                 }
             }
 
-            $row['red'] = $red;
-            $row['yellow'] = $yellow;
-            $row['green'] = $green;
-            $row['finish'] = $finish;
-            unset($row['detail']);
-            $activityInfo[$idx] = $row;
+            $activityOpt[$row['act_code']] = [
+                'act_code' => $row['act_code'],
+                'act_name' => $row['act_name'],
+                'red' => $red,
+                'yellow' => $yellow,
+                'green' => $green,
+                'finish' => $finish,
+                'all' => !empty($row['detail']) ? count($row['detail']) : 0,
+            ];
         }
 
-        */
+        $activityInfo = array_values($activityOpt);
+
         return $activityInfo;
     }
 }

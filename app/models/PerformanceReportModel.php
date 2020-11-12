@@ -77,85 +77,119 @@ class PerformanceReportModel extends Model
                 $row['prg_name'] = $programOptions[$row['prg_code']];
                 $row['act_name'] = $activityOptions[$row['act_code']];
 
-                $packageDetailCount = count($packageDetail[$row['id']]);
+                if (is_array($packageDetail[$row['id']])) {
+                    $packageDetailCount = count($packageDetail[$row['id']]);
 
-                $row['detail'] = [];
+                    $row['detail'] = [];
 
-                if ($packageDetailCount > 0) {
-                    $avgTrgPhysical = 0;
-                    $avgTrgFinancePct = 0;
-                    $avgProgPhysical = 0;
-                    $avgProgFinancePct = 0;
-                    $avgDevnPhysical = 0;
-                    $avgDevnFinancePct = 0;
+                    if ($packageDetailCount > 0) {
+                        $avgTrgPhysical = 0;
+                        $avgTrgFinancePct = 0;
+                        $avgProgPhysical = 0;
+                        $avgProgFinancePct = 0;
+                        $avgDevnPhysical = 0;
+                        $avgDevnFinancePct = 0;
 
-                    foreach ($packageDetail[$row['id']] as $key => $value) {
-                        $detail = $this->getDetail($value);
-                        $row['detail'][$key] = $detail;
+                        foreach ($packageDetail[$row['id']] as $key => $value) {
+                            $detail = $this->getDetail($value);
+                            $row['detail'][$key] = $detail;
 
-                        $avgTrgPhysical += number_format(
-                            (!empty($detail['trg_physical'])
-                                ? $detail['trg_physical']
-                                : 0) / $packageDetailCount,
-                            2,
-                        );
-                        $avgTrgFinancePct += number_format(
-                            (!empty($detail['trg_finance_pct'])
-                                ? $detail['trg_finance_pct']
-                                : 0) / $packageDetailCount,
-                            2,
-                        );
-                        $avgProgPhysical += number_format(
-                            (!empty($detail['prog_physical'])
-                                ? $detail['prog_physical']
-                                : 0) / $packageDetailCount,
-                            2,
-                        );
-                        $avgProgFinancePct += number_format(
-                            (!empty($detail['prog_finance_pct'])
-                                ? $detail['prog_finance_pct']
-                                : 0) / $packageDetailCount,
-                            2,
-                        );
-                        $avgDevnPhysical += number_format(
-                            (!empty($detail['devn_physical'])
-                                ? $detail['devn_physical']
-                                : 0) / $packageDetailCount,
-                            2,
-                        );
-                        $avgDevnFinancePct += number_format(
-                            (!empty($detail['devn_finance_pct'])
-                                ? $detail['devn_finance_pct']
-                                : 0) / $packageDetailCount,
-                            2,
-                        );
+                            $avgTrgPhysical += number_format(
+                                (!empty($detail['trg_physical'])
+                                    ? $detail['trg_physical']
+                                    : 0) / $packageDetailCount,
+                                2,
+                            );
+                            $avgTrgFinancePct += number_format(
+                                (!empty($detail['trg_finance_pct'])
+                                    ? $detail['trg_finance_pct']
+                                    : 0) / $packageDetailCount,
+                                2,
+                            );
+                            $avgProgPhysical += number_format(
+                                (!empty($detail['prog_physical'])
+                                    ? $detail['prog_physical']
+                                    : 0) / $packageDetailCount,
+                                2,
+                            );
+                            $avgProgFinancePct += number_format(
+                                (!empty($detail['prog_finance_pct'])
+                                    ? $detail['prog_finance_pct']
+                                    : 0) / $packageDetailCount,
+                                2,
+                            );
+                            $avgDevnPhysical += number_format(
+                                (!empty($detail['devn_physical'])
+                                    ? $detail['devn_physical']
+                                    : 0) / $packageDetailCount,
+                                2,
+                            );
+                            $avgDevnFinancePct += number_format(
+                                (!empty($detail['devn_finance_pct'])
+                                    ? $detail['devn_finance_pct']
+                                    : 0) / $packageDetailCount,
+                                2,
+                            );
+                        }
+
+                        if (!is_null($data)) {
+                            $row['detail'][$key + 1] = [
+                                'pkgd_name' => 'Subtotal',
+                                'cnt_value' => '',
+                                'cnt_value_end' => '',
+                                'pkgd_debt_ceiling' => '',
+                                'pkgd_last_prog_date' => '',
+                                'trg_physical' => !empty($avgTrgPhysical)
+                                    ? number_format(
+                                        $avgTrgPhysical,
+                                        2,
+                                        ',',
+                                        '.',
+                                    )
+                                    : '',
+                                'trg_finance_pct' => !empty($avgTrgFinancePct)
+                                    ? number_format(
+                                        $avgTrgFinancePct,
+                                        2,
+                                        ',',
+                                        '.',
+                                    )
+                                    : '',
+                                'prog_physical' => !empty($avgProgPhysical)
+                                    ? number_format(
+                                        $avgProgPhysical,
+                                        2,
+                                        ',',
+                                        '.',
+                                    )
+                                    : '',
+                                'prog_finance_pct' => !empty($avgProgFinancePct)
+                                    ? number_format(
+                                        $avgProgFinancePct,
+                                        2,
+                                        ',',
+                                        '.',
+                                    )
+                                    : '',
+                                'devn_physical' => !empty($avgDevnPhysical)
+                                    ? number_format(
+                                        $avgDevnPhysical,
+                                        2,
+                                        ',',
+                                        '.',
+                                    )
+                                    : '',
+                                'devn_finance_pct' => !empty($avgDevnFinancePct)
+                                    ? number_format(
+                                        $avgDevnFinancePct,
+                                        2,
+                                        ',',
+                                        '.',
+                                    )
+                                    : '',
+                            ];
+                        }
                     }
-
-                    $row['detail'][$key + 1] = [
-                        'pkgd_name' => 'Subtotal',
-                        'cnt_value' => '',
-                        'cnt_value_end' => '',
-                        'pkgd_debt_ceiling' => '',
-                        'pkgd_last_prog_date' => '',
-                        'trg_physical' => !empty($avgTrgPhysical)
-                            ? number_format($avgTrgPhysical, 2, ',', '.')
-                            : '',
-                        'trg_finance_pct' => !empty($avgTrgFinancePct)
-                            ? number_format($avgTrgFinancePct, 2, ',', '.')
-                            : '',
-                        'prog_physical' => !empty($avgProgPhysical)
-                            ? number_format($avgProgPhysical, 2, ',', '.')
-                            : '',
-                        'prog_finance_pct' => !empty($avgProgFinancePct)
-                            ? number_format($avgProgFinancePct, 2, ',', '.')
-                            : '',
-                        'devn_physical' => !empty($avgDevnPhysical)
-                            ? number_format($avgDevnPhysical, 2, ',', '.')
-                            : '',
-                        'devn_finance_pct' => !empty($avgDevnFinancePct)
-                            ? number_format($avgDevnFinancePct, 2, ',', '.')
-                            : '',
-                    ];
                 }
 
                 $package[$idx] = $row;
