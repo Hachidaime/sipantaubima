@@ -53,7 +53,7 @@
           </div>
           <div class="form-group">
             <label for="pkgd_debt_ceiling">
-              Pagu Anggaran
+              Pagu Anggaran Fisik
               <sup class="fas fa-asterisk text-red"></sup>
             </label>
             <input
