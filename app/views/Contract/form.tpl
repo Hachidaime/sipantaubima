@@ -199,7 +199,7 @@
                 >
                   Nomor Addendum
                 </label>
-                <div class="col-lg-3 col-sm-4">
+                <div class="col-lg-8 col-sm-6">
                   <input
                     type="text"
                     class="form-control rounded-0 add-no"
