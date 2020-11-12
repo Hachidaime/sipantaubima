@@ -11,7 +11,7 @@
     <!-- form start -->
     <form id="my_form" role="form" method="POST">
       <div class="form-group row">
-        <label for="pkg_fiscal_year" class="col-lg-3 col-sm-4 col-form-label">
+        <label for="fiscal_year" class="col-lg-3 col-sm-4 col-form-label">
           Tahun Anggaran
           <sup class="fas fa-asterisk text-red"></sup>
           <span class="float-sm-right d-sm-inline d-none">:</span>
@@ -20,19 +20,19 @@
           <input
             type="text"
             class="form-control rounded-0 text-center"
-            id="pkg_fiscal_year"
-            name="pkg_fiscal_year"
+            id="fiscal_year"
+            name="fiscal_year"
             value="{$smarty.session.FISCAL_YEAR}"
             autocomplete="off"
             data-toggle="datetimepicker"
-            data-target="#pkg_fiscal_year"
+            data-target="#fiscal_year"
           />
           <div class="invalid-feedback"></div>
         </div>
       </div>
 
       <div class="form-group row">
-        <label for="pkg_fiscal_year" class="col-lg-3 col-sm-4 col-form-label">
+        <label for="fiscal_month" class="col-lg-3 col-sm-4 col-form-label">
           Bulan
           <sup class="fas fa-asterisk text-red"></sup>
           <span class="float-sm-right d-sm-inline d-none">:</span>
@@ -41,12 +41,12 @@
           <input
             type="text"
             class="form-control rounded-0 text-center"
-            id="pkg_month"
-            name="pkg_month"
+            id="fiscal_month"
+            name="fiscal_month"
             value="{$smarty.now|date_format:'%m'}"
             autocomplete="off"
             data-toggle="datetimepicker"
-            data-target="#pkg_month"
+            data-target="#fiscal_month"
           />
           <div class="invalid-feedback"></div>
         </div>
@@ -109,12 +109,12 @@
 {literal}
 <script>
   $(document).ready(function () {
-    $('#pkg_fiscal_year').datetimepicker({
+    $('#fiscal_year').datetimepicker({
       viewMode: 'years',
       format: 'YYYY',
     })
 
-    $('#pkg_month').datetimepicker({
+    $('#fiscal_month').datetimepicker({
       viewMode: 'months',
       format: 'MM',
     })
@@ -184,7 +184,7 @@
           title3 = createElement({
             element: 'h5',
             class: ['text-center', 'mb-3'],
-            children: [`THN ANGGARAN: ${params.pkg_fiscal_year}`],
+            children: [`THN ANGGARAN: ${params.fiscal_year}`],
           })
 
           resultWrapper.append(downloadBtn, title1, title2, title3)

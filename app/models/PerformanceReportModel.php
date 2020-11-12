@@ -51,8 +51,8 @@ class PerformanceReportModel extends Model
         );
 
         $where = [];
-        if (!empty($data['pkg_fiscal_year'])) {
-            $where[] = ['pkg_fiscal_year', $data['pkg_fiscal_year']];
+        if (!empty($data['fiscal_year'])) {
+            $where[] = ['pkg_fiscal_year', $data['fiscal_year']];
         }
         if (!empty($data['prg_code'])) {
             $where[] = ['prg_code', $data['prg_code']];
@@ -71,13 +71,20 @@ class PerformanceReportModel extends Model
                 }, $package),
             );
 
-            $targetOpt = $this->getTargetOpt($pkgIdList, $data['pkgd_id']);
-            $progressOpt = $this->getProgressOpt($pkgIdList, $data['pkgd_id']);
-
-            // var_dump($targetOpt);
-            // var_dump($progressOpt);
+            $packageDetail = $this->getPackageDetail($pkgIdList, $data);
 
             foreach ($package as $idx => $row) {
+                $row['prg_name'] = $programOptions[$row['prg_code']];
+                $row['act_name'] = $activityOptions[$row['act_code']];
+
+                foreach ($packageDetail[$row['id']] as $key => $value) {
+                    $row['detail'][$key] = $this->getDetail($value);
+                }
+
+                $package[$idx] = $row;
+            }
+
+            /* foreach ($package as $idx => $row) {
                 // var_dump($row);
                 $row['prg_name'] = $programOptions[$row['prg_code']];
                 $row['act_name'] = $activityOptions[$row['act_code']];
@@ -197,7 +204,7 @@ class PerformanceReportModel extends Model
                 $row['detail'] = $packageDetail;
 
                 $package[$idx] = $row;
-            }
+            } */
         }
 
         return $package;
@@ -205,22 +212,34 @@ class PerformanceReportModel extends Model
 
     public function getDetail($detail)
     {
+        $query = "SELECT * FROM apm_addendum 
+            WHERE add_value > 0 
+            AND pkgd_id = {$detail['id']} 
+            ORDER BY add_order DESC 
+            LIMIT 1";
+
+        $addendum = $this->db->query($query)->first();
+        $addendum = !empty($addendum) ? $addendum->toArray() : $addendum;
+
         foreach ($detail as $key => $value) {
             $key = Functions::camelize($key);
             $$key = $value;
         }
 
-        $trgFinancePct = $cntValue > 0 ? ($trgFinance / $cntValue) * 100 : 0;
-        $avgTrgFinancePct =
-            $cntValue > 0 ? ($avgTrgFinance / $cntValue) * 100 : 0;
+        $cntValueEnd =
+            $this->db->getCount() > 0 ? $addendum['add_value'] : $cntValue;
 
-        $progFinancePct = $cntValue > 0 ? ($progFinance / $cntValue) * 100 : 0;
-        $avgProgFinancePct =
-            $cntValue > 0 ? ($avgProgFinance / $cntValue) * 100 : 0;
+        $trgFinancePct = $cntValue > 0 ? ($trgFinance / $cntValue) * 100 : 0;
+
+        $progFinancePct =
+            $cntValueEnd > 0
+                ? ($progFinanceCum / $cntValueEnd) * 100
+                : ($cntValue > 0
+                    ? ($progFinanceCum / $cntValue) * 100
+                    : 0);
 
         $devnPhysical = $progPhysical - $trgPhysical;
-        $devnFinance = $progFinance - $trgFinance;
-        $devnFinancePct = $cntValue > 0 ? ($devnFinance / $cntValue) * 100 : 0;
+        $devnFinancePct = $progFinancePct - $trgFinancePct;
 
         $indicator = 'white';
         if (!is_null($trgPhysical)) {
@@ -252,12 +271,20 @@ class PerformanceReportModel extends Model
             }
         }
 
-        return [
+        $result = [
             'pkgd_id' => $id,
-            'pkgd_no' => $pkgdNo,
             'pkgd_name' => $pkgdName,
             'cnt_value' =>
                 $cntValue > 0 ? number_format($cntValue, 2, ',', '.') : '',
+            'cnt_value_end' =>
+                $cntValueEnd > 0
+                    ? number_format($cntValueEnd, 2, ',', '.')
+                    : '',
+            'pkgd_debt_ceiling' =>
+                $pkgdDebtCeiling > 0
+                    ? number_format($pkgdDebtCeiling, 2, ',', '.')
+                    : '',
+            'week' => $week,
             'pkgd_last_prog_date' => !is_null($pkgdLastProgDate)
                 ? Functions::dateFormat('Y-m-d', 'd/m/Y', $pkgdLastProgDate)
                 : '',
@@ -269,14 +296,6 @@ class PerformanceReportModel extends Model
                 $trgFinancePct > 0
                     ? number_format($trgFinancePct, 2, ',', '.')
                     : '',
-            'avg_trg_physical' =>
-                $avgTrgPhysical > 0
-                    ? number_format($avgTrgPhysical, 2, ',', '.')
-                    : '',
-            'avg_trg_finance_pct' =>
-                $avgTrgFinancePct > 0
-                    ? number_format($avgTrgFinancePct, 2, ',', '.')
-                    : '',
             'prog_physical' =>
                 $progPhysical > 0
                     ? number_format($progPhysical, 2, ',', '.')
@@ -285,118 +304,120 @@ class PerformanceReportModel extends Model
                 $progFinancePct > 0
                     ? number_format($progFinancePct, 2, ',', '.')
                     : '',
-            'avg_prog_physical' =>
-                $avgProgPhysical > 0
-                    ? number_format($avgProgPhysical, 2, ',', '.')
-                    : '',
-            'avg_prog_finance_pct' =>
-                $avgProgFinancePct > 0
-                    ? number_format($avgProgFinancePct, 2, ',', '.')
-                    : '',
             'devn_physical' =>
-                !empty($trgPhysical) || !empty($progPhysical)
+                // !empty($trgPhysical) ||
+                !empty($progPhysical)
                     ? number_format($devnPhysical, 2, ',', '.')
                     : '',
             'devn_finance_pct' =>
-                !empty($trgFinance) || !empty($progFinance)
+                // !empty($trgFinance) ||
+                !empty($progFinancePct)
                     ? number_format($devnFinancePct, 2, ',', '.')
                     : '',
             'indicator' => $indicator,
         ];
+
+        return $result;
     }
 
-    private function getTargetOpt($pkgIdList, $pkgd_id = null)
+    private function getPackageDetail($pkgIdList, $data)
     {
-        $filter =
-            $pkgd_id > 0
-                ? "AND `{$this->packageDetailModel->getTable()}`.`id` = {$pkgd_id}"
-                : '';
+        $packageDetailTable = $this->packageDetailModel->getTable();
+        $progressTable = $this->progressModel->getTable();
+        $targetTable = $this->targetModel->getTable();
+        $contractTable = $this->contractModel->getTable();
 
-        $table_left = $this->packageDetailModel->getTable();
-        $table_right = $this->targetModel->getTable();
-        $table_contract = $this->contractModel->getTable();
-        $select = "
-            `{$table_left}`.`id`,
-            `{$table_left}`.`pkg_id`,
-            `{$table_left}`.`pkgd_no`,
-            `{$table_left}`.`pkgd_name`,
-            `{$table_left}`.`pkgd_last_prog_date`,
-            `{$table_right}`.`trg_week`,
-            `{$table_right}`.`trg_physical`,
-            `{$table_right}`.`trg_finance`,
-            `{$table_contract}`.`cnt_value`
-        ";
-        $join = "`{$table_right}`
-            ON `{$table_right}`.`pkgd_id` = `{$table_left}`.`id`";
-        $join_contract = "`{$table_contract}`
-            ON `{$table_contract}`.`pkgd_id` = `{$table_left}`.`id`";
-        $where = "WHERE `{$table_left}`.`pkg_id` IN ({$pkgIdList})
-            {$filter}";
+        $query = "SELECT 
+            `{$packageDetailTable}`.`id`,
+            `{$packageDetailTable}`.`pkg_id`,
+            `{$packageDetailTable}`.`pkgd_name`,
+            `{$packageDetailTable}`.`pkgd_debt_ceiling`,
+            `{$packageDetailTable}`.`pkgd_sum_prog_finance` as `prog_finance_cum`,
+            `{$contractTable}`.`cnt_value`
+            FROM `{$packageDetailTable}`
+            LEFT JOIN `{$contractTable}` 
+                ON `{$packageDetailTable}`.id = `{$contractTable}`.`pkgd_id`
+            WHERE `pkg_id` IN ({$pkgIdList}) 
+            ORDER BY pkgd_name";
+        $packageDetail = $this->db->query($query)->toArray();
 
-        $query = "SELECT {$select} FROM `{$table_left}` 
-            LEFT JOIN {$join} 
-            LEFT JOIN {$join_contract}
-            {$where}
-            UNION 
-            SELECT {$select} FROM `{$table_left}` 
-            RIGHT JOIN {$join} 
-            LEFT JOIN {$join_contract}
-            {$where}";
-        $target = $this->db->query($query)->toArray();
-        // echo nl2br($query);
+        $filter = [];
 
-        $targetOpt = [];
-        foreach ($target as $row) {
-            $targetOpt[$row['pkg_id']][] = $row;
+        $fiscalYear = $data['fiscal_year'] ?? $_SESSION['FISCAL_YEAR'];
+        $fiscalMonth = $data['fiscal_month'];
+
+        if ($fiscalYear) {
+            $filter[] = "YEAR(prog_date) = '{$fiscalYear}'";
         }
 
-        return $targetOpt;
-    }
-
-    private function getProgressOpt($pkgIdList, $pkgd_id = null)
-    {
-        $filter =
-            $pkgd_id > 0
-                ? "AND `{$this->packageDetailModel->getTable()}`.`id` = {$pkgd_id}"
-                : '';
-
-        $table_left = $this->packageDetailModel->getTable();
-        $table_right = $this->progressModel->getTable();
-        $table_contract = $this->contractModel->getTable();
-        $select = "
-            `{$table_left}`.`id`,
-            `{$table_left}`.`pkg_id`,
-            `{$table_left}`.`pkgd_no`,
-            `{$table_left}`.`pkgd_name`,
-            `{$table_left}`.`pkgd_last_prog_date`,
-            `{$table_right}`.`prog_week`,
-            `{$table_right}`.`prog_physical`,
-            `{$table_right}`.`prog_finance`,
-            `{$table_contract}`.`cnt_value`
-        ";
-        $join = "`{$table_right}`
-            ON `{$table_right}`.`pkgd_id` = `{$table_left}`.`id`";
-        $join_contract = "`{$table_contract}`
-            ON `{$table_contract}`.`pkgd_id` = `{$table_left}`.`id`";
-        $where = "WHERE `{$table_left}`.`pkg_id` IN ({$pkgIdList})
-            {$filter}";
-
-        $query = "SELECT {$select} FROM `{$table_left}` 
-            LEFT JOIN {$join} 
-            LEFT JOIN {$join_contract}
-            {$where}
-            UNION 
-            SELECT {$select} FROM `{$table_left}` 
-            RIGHT JOIN {$join} 
-            LEFT JOIN {$join_contract}
-            {$where}";
-        $progress = $this->db->query($query)->toArray();
-
-        $progressOpt = [];
-        foreach ($progress as $row) {
-            $progressOpt[$row['pkg_id']][] = $row;
+        if ($fiscalMonth) {
+            $filter[] = "MONTH(prog_date) = '{$fiscalMonth}'";
         }
 
-        return $progressOpt;
+        $filter = !empty($filter) ? 'AND ' . implode(' AND ', $filter) : '';
+
+        $result = [];
+        foreach ($packageDetail as $idx => $row) {
+            if ($fiscalMonth != date('m') || $fiscalYear != date('Y')) {
+                $query = "SELECT
+                    SUM(`prog_finance`) as `prog_finance_cum`
+                    FROM `{$progressTable}`
+                    WHERE pkgd_id = '{$row['id']}'
+                    {$filter}
+                ";
+
+                $progress = $this->db->query($query)->first();
+                $progress = !empty($progress) ? $progress->toArray() : [];
+                $row['prog_finance_cum'] = $progress['prog_finance_cum'];
+            }
+
+            $query = "SELECT
+                `prog_week` as `week`,
+                `prog_date` as pkgd_last_prog_date,
+                `prog_physical` as `prog_physical`
+                FROM `{$progressTable}`
+                WHERE pkgd_id = '{$row['id']}'
+                {$filter}
+                AND `prog_week` = (
+                    SELECT MAX(`prog_week`) 
+                    FROM `{$progressTable}`
+                    WHERE pkgd_id = '{$row['id']}'
+                    {$filter}
+                )
+            ";
+
+            $progress = $this->db->query($query)->first();
+            $progress = !empty($progress) ? $progress->toArray() : [];
+
+            $query = "SELECT 
+                MAX(`trg_week`) as `trg_week`
+                FROM `{$targetTable}`
+                WHERE pkgd_id = '{$row['id']}'
+            ";
+            $lastTarget = $this->db
+                ->query($query)
+                ->first()
+                ->toArray();
+
+            $trgWeek =
+                $lastTarget['trg_week'] >= $progress['week']
+                    ? $progress['week']
+                    : $lastTarget['trg_week'];
+
+            $query = "SELECT
+                `trg_date`,
+                `trg_physical`,
+                `trg_finance`
+                FROM `{$targetTable}`
+                WHERE pkgd_id = '{$row['id']}'
+                AND `trg_week` = '{$trgWeek}'
+            ";
+            $target = $this->db->query($query)->first();
+            $target = !empty($target) ? $target->toArray() : [];
+
+            $result[$row['pkg_id']][] = array_merge($row, $progress, $target);
+        }
+
+        return $result;
     }
 }
