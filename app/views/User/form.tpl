@@ -79,18 +79,18 @@
 
             <div class="form-group row">
               <label
-                for="usr_contractor_name"
+                for="usr_consultant_name"
                 class="col-lg-3 col-sm-4 col-form-label"
               >
-                Nama Kontraktor
+                Nama Konsultan
                 <span class="float-sm-right d-sm-inline d-none">:</span>
               </label>
               <div class="col-lg-9 col-sm-8">
                 <input
                   type="text"
                   class="form-control rounded-0"
-                  id="usr_contractor_name"
-                  name="usr_contractor_name"
+                  id="usr_consultant_name"
+                  name="usr_consultant_name"
                   autocomplete="off"
                 />
                 <div class="invalid-feedback"></div>
