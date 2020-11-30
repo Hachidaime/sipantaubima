@@ -3,70 +3,81 @@
 {include 'Templates/pagination.tpl'}
 
 {block name='content'}
-<div class="row mb-3">
-  <div class="col-12">
-    {include 'Templates/buttons/add.tpl'}
+<div class="container">
+  <div class="row mb-3">
+    <div class="col-12">
+      {include 'Templates/buttons/add.tpl'}
+    </div>
   </div>
-</div>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card rounded-0">
-      <div class="card-header bg-gradient-navy rounded-0">
-        <h3 class="card-title text-warning">{$subtitle}</h3>
-        <div class="card-tools">
-          <div class="input-group input-group-sm" style="width: 150px;">
-            <input
-              type="text"
-              id="keyword"
-              name="keyword"
-              class="form-control float-right"
-              value="{$keyword}"
-              data-title="Cari Nama User"
-            />
-            <div class="input-group-append">
-              <button type="button" class="btn btn-default" id="searchBtn">
-                <i class="fas fa-search"></i>
-              </button>
+  <div class="row">
+    <div class="col-12">
+      <div class="card rounded-0">
+        <div class="card-header bg-gradient-navy rounded-0">
+          <h3 class="card-title text-warning">{$subtitle}</h3>
+          <div class="card-tools">
+            <div class="input-group input-group-sm" style="width: 150px;">
+              <input
+                type="text"
+                id="keyword"
+                name="keyword"
+                class="form-control float-right"
+                value="{$keyword}"
+                data-title="Cari Nama User"
+              />
+              <div class="input-group-append">
+                <button type="button" class="btn btn-default" id="searchBtn">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- /.card-header -->
-      <div class="card-body table-responsive p-0 border">
-        <table class="table table-bordered table-sm">
-          <thead>
-            <tr>
-              <th class="align-middle text-right" width="40px">#</th>
-              <th class="align-middle text-center" width="*">
-                Nama
-              </th>
-              <th class="align-middle text-center" width="20%">
-                Username
-              </th>
-              <th class="align-middle text-center" width="10%">
-                Privilege<br />Master
-              </th>
-              <th class="align-middle text-center" width="10%">
-                Privilege<br />Paket
-              </th>
-              <th class="align-middle text-center" width="10%">
-                Privilege<br />Progress Paket
-              </th>
-              <th class="align-middle text-center" width="10%">
-                Privilege<br />Laporan
-              </th>
-              <th class="align-middle text-center" width="15%">&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody id="result_data"></tbody>
-        </table>
-      </div>
-      <!-- /.card-body -->
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0 border">
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th class="align-middle text-right" width="40px" rowspan="2">
+                  #
+                </th>
+                <th class="align-middle text-center" width="*" rowspan="2">
+                  Nama
+                </th>
+                <th class="align-middle text-center" width="20%" rowspan="2">
+                  Username
+                </th>
+                <th class="align-middle text-center" colspan="4">
+                  Privilege
+                </th>
+                <th class="align-middle text-center" width="120px" rowspan="2">
+                  &nbsp;
+                </th>
+              </tr>
+              <tr>
+                <th class="align-middle text-center px-0" width="10%">
+                  Master
+                </th>
+                <th class="align-middle text-center px-0" width="10%">
+                  Paket
+                </th>
+                <th class="align-middle text-center px-0" width="10%">
+                  Progress Paket
+                </th>
+                <th class="align-middle text-center px-0" width="10%">
+                  Laporan
+                </th>
+              </tr>
+            </thead>
+            <tbody id="result_data"></tbody>
+          </table>
+        </div>
+        <!-- /.card-body -->
 
-      <div class="card-footer clearfix">{block 'pagination'}{/block}</div>
+        <div class="card-footer clearfix">{block 'pagination'}{/block}</div>
+      </div>
+      <!-- /.card -->
     </div>
-    <!-- /.card -->
   </div>
 </div>
 <!-- prettier-ignore -->

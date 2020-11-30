@@ -1,8 +1,8 @@
 <nav
-  class="main-header navbar navbar-expand-md navbar-dark navbar-dark-gray sticky-top d-flex flex-column p-0 border-0"
+  class="main-header navbar navbar-expand-md navbar-dark navbar-dark-gray sticky-top d-flex flex-column p-0 border-0 shadow"
 >
   <div
-    class="header sticky-top py-3 d-flex flex-column flex-sm-row bg-gradient-navy align-sm-center justify-content-between px-3 w-100"
+    class="header sticky-top d-flex flex-column flex-sm-row bg-gradient-navy align-sm-center justify-content-between px-3 py-2 w-100"
   >
     <div class="main-title lead d-flex flex-column flex-sm-row">
       <div class="mr-sm-1">SIPANTAUBIMA</div>
@@ -12,7 +12,7 @@
   </div>
   {if $smarty.session.USER.id}
 
-  <div class="d-flex justify-content-between align-content-center w-100 py-1">
+  <div class="d-flex justify-content-between align-content-center w-100">
     <button
       class="navbar-toggler order-1"
       type="button"
