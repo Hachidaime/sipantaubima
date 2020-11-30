@@ -364,9 +364,9 @@
       setPlanPHODate()
     })
 
-    $('.add-date').on('change.datetimepicker', function () {
-      setAddPlanPHODate(this.dataset.order)
-    })
+    // $('.add-date').on('change.datetimepicker', function () {
+    //   setAddPlanPHODate(this.dataset.order)
+    // })
 
     $('.add-days').on('change', function () {
       setAddPlanPHODate(this.dataset.order)
@@ -396,20 +396,26 @@
 
     cntWswDate = dt.format(dateFormat)
     $('#cnt_plan_pho_date').val(cntWswDate)
+
+    $('.add-no').each(function () {
+      if ($(this).val() != '') {
+        setAddPlanPHODate($(this).data('order'))
+      }
+    })
   }
 
   let setAddPlanPHODate = (order) => {
-    let addDate = $(`#add_date${order}`).val()
+    let cntPlanPHODate = $(`#cnt_plan_pho_date`).val()
     const addDays = $(`#add_days${order}`).val()
     const dateFormat = 'DD/MM/YYYY'
 
-    let dt = moment(addDate, dateFormat)
+    let dt = moment(cntPlanPHODate, dateFormat)
     if (addDays > 0) {
       dt.add(addDays, 'days')
     }
 
-    addDate = dt.format(dateFormat)
-    $(`#add_plan_pho_date${order}`).val(addDate)
+    cntPlanPHODate = dt.format(dateFormat)
+    $(`#add_plan_pho_date${order}`).val(cntPlanPHODate)
   }
 
   let saveContract = () => {
