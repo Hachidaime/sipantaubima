@@ -3,56 +3,58 @@
 {include 'Templates/pagination.tpl'}
 
 {block name='content'}
-<div class="row mb-3">
-  <div class="col-12">
-    {include 'Templates/buttons/add.tpl'}
+<div class="container">
+  <div class="row mb-3">
+    <div class="col-12">
+      {include 'Templates/buttons/add.tpl'}
+    </div>
   </div>
-</div>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card rounded-0">
-      <div class="card-header bg-gradient-navy rounded-0">
-        <h3 class="card-title text-warning">{$subtitle}</h3>
-        <div class="card-tools">
-          <div class="input-group input-group-sm" style="width: 150px;">
-            <input
-              type="text"
-              id="keyword"
-              name="keyword"
-              class="form-control float-right"
-              value="{$keyword}"
-              data-title="Cari Kode Lokasi"
-            />
-            <div class="input-group-append">
-              <button type="button" class="btn btn-default" id="searchBtn">
-                <i class="fas fa-search"></i>
-              </button>
+  <div class="row">
+    <div class="col-12">
+      <div class="card rounded-0">
+        <div class="card-header bg-gradient-navy rounded-0">
+          <h3 class="card-title text-warning">{$subtitle}</h3>
+          <div class="card-tools">
+            <div class="input-group input-group-sm" style="width: 150px;">
+              <input
+                type="text"
+                id="keyword"
+                name="keyword"
+                class="form-control float-right"
+                value="{$keyword}"
+                data-title="Cari Kode Lokasi"
+              />
+              <div class="input-group-append">
+                <button type="button" class="btn btn-default" id="searchBtn">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- /.card-header -->
-      <div class="card-body table-responsive p-0">
-        <table class="table table-bordered table-sm">
-          <thead>
-            <tr>
-              <th class="text-right align-middle" width="40px">#</th>
-              <th class="text-center align-middle" width="20%">
-                Kode Lokasi
-              </th>
-              <th class="text-center align-middle" width="*">Nama Lokasi</th>
-              <th width="20%">&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody id="result_data"></tbody>
-        </table>
-      </div>
-      <!-- /.card-body -->
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0">
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th class="text-right align-middle" width="40px">#</th>
+                <th class="text-center align-middle" width="20%">
+                  Kode Lokasi
+                </th>
+                <th class="text-center align-middle" width="*">Nama Lokasi</th>
+                <th width="120px">&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody id="result_data"></tbody>
+          </table>
+        </div>
+        <!-- /.card-body -->
 
-      <div class="card-footer clearfix">{block 'pagination'}{/block}</div>
+        <div class="card-footer clearfix">{block 'pagination'}{/block}</div>
+      </div>
+      <!-- /.card -->
     </div>
-    <!-- /.card -->
   </div>
 </div>
 <!-- prettier-ignore -->
