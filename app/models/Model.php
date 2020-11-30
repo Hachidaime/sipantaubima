@@ -123,14 +123,13 @@ class Model
                     : ($result = $this->db->update(
                         $this->table,
                         $data,
-                        $data['id'],
+                        $data['id']
                     ));
         } else {
             unset($data['id']);
             $result = $this->db->insert($this->table, $data);
         }
 
-        // var_dump($this->db);
         return $result;
     }
 
