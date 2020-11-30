@@ -3,68 +3,70 @@
 {include 'Templates/pagination.tpl'}
 
 {block name='content'}
-<div class="row mb-3">
-  <div class="col-12">
-    {include 'Templates/buttons/add.tpl'}
-    <a
-      href="javascript:void(0)"
-      class="btn btn-flat bg-gradient-light btn-spreadsheet"
-      style="width: 150px;"
-    >
-      <i class="fas fa-download mr-2"></i>
-      Unduh XLS
-    </a>
+<div class="container">
+  <div class="row mb-3">
+    <div class="col-12">
+      {include 'Templates/buttons/add.tpl'}
+      <a
+        href="javascript:void(0)"
+        class="btn btn-flat bg-gradient-light btn-spreadsheet"
+        style="width: 150px;"
+      >
+        <i class="fas fa-download mr-2"></i>
+        Unduh XLS
+      </a>
+    </div>
   </div>
-</div>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card rounded-0">
-      <div class="card-header bg-gradient-navy rounded-0">
-        <h3 class="card-title text-warning">{$subtitle}</h3>
-        <div class="card-tools">
-          <div class="input-group input-group-sm" style="width: 150px;">
-            <input
-              type="text"
-              id="keyword"
-              name="keyword"
-              class="form-control float-right"
-              value="{$keyword}"
-              data-title="Cari Tahun Anggaran"
-            />
-            <div class="input-group-append">
-              <button type="button" class="btn btn-default" id="searchBtn">
-                <i class="fas fa-search"></i>
-              </button>
+  <div class="row">
+    <div class="col-12">
+      <div class="card rounded-0">
+        <div class="card-header bg-gradient-navy rounded-0">
+          <h3 class="card-title text-warning">{$subtitle}</h3>
+          <div class="card-tools">
+            <div class="input-group input-group-sm" style="width: 150px;">
+              <input
+                type="text"
+                id="keyword"
+                name="keyword"
+                class="form-control float-right"
+                value="{$keyword}"
+                data-title="Cari Tahun Anggaran"
+              />
+              <div class="input-group-append">
+                <button type="button" class="btn btn-default" id="searchBtn">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- /.card-header -->
-      <div class="card-body table-responsive p-0">
-        <table class="table table-bordered table-sm">
-          <thead>
-            <tr>
-              <th class="align-middle text-right" width="50px">#</th>
-              <th class="align-middle text-center" width="*">
-                Tahun Anggaran
-              </th>
-              <th class="align-middle text-center" width="25%">Program</th>
-              <th class="align-middle text-center" width="25%">Kegiatan</th>
-              <th class="align-middle text-center" width="15%">
-                Pagu Anggaran<br />(Rp)
-              </th>
-              <th width="22%px">&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody id="result_data"></tbody>
-        </table>
-      </div>
-      <!-- /.card-body -->
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0">
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th class="align-middle text-right" width="50px">#</th>
+                <th class="align-middle text-center" width="*">
+                  Tahun Anggaran
+                </th>
+                <th class="align-middle text-center" width="25%">Program</th>
+                <th class="align-middle text-center" width="25%">Kegiatan</th>
+                <th class="align-middle text-center" width="15%">
+                  Pagu Anggaran<br />(Rp)
+                </th>
+                <th width="22%px">&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody id="result_data"></tbody>
+          </table>
+        </div>
+        <!-- /.card-body -->
 
-      <div class="card-footer clearfix">{block 'pagination'}{/block}</div>
+        <div class="card-footer clearfix">{block 'pagination'}{/block}</div>
+      </div>
+      <!-- /.card -->
     </div>
-    <!-- /.card -->
   </div>
 </div>
 
