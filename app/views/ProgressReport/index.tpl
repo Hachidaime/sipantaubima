@@ -378,9 +378,9 @@
               children: [
                 headNo,
                 headPackage,
+                headPkgdDebtCeiling,
                 headCntValue,
                 headCntValueEnd,
-                headPkgdDebtCeiling,
                 headWeek,
                 headDate,
                 headTarget,
@@ -586,9 +586,9 @@
                   children: [
                     bodyNo,
                     bodyPackage,
+                    bodyPkgdDebtCeiling,
                     bodyCntValue,
                     bodyCntValueEnd,
-                    bodyPkgdDebtCeiling,
                     bodyWeek,
                     bodyDate,
                     bodyTrgPhysical,
