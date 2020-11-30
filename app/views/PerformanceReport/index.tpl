@@ -2,118 +2,135 @@
 {extends file='Templates/mainlayout.tpl'}
 
 {block 'content'}
-<div class="card rounded-0">
-  <div class="card-header bg-gradient-navy rounded-0">
-    <h3 class="card-title text-warning">{$subtitle}</h3>
-  </div>
-  <!-- /.card-header -->
-  <div class="card-body">
-    <!-- form start -->
-    <form id="my_form" role="form" method="POST">
-      <div class="form-group row">
-        <label for="fiscal_year" class="col-lg-3 col-sm-4 col-form-label">
-          Tahun Anggaran
-          <sup class="fas fa-asterisk text-red"></sup>
-          <span class="float-sm-right d-sm-inline d-none">:</span>
-        </label>
-        <div class="col-lg-1 col-sm-2 col-3">
-          <input
-            type="text"
-            class="form-control rounded-0 text-center"
-            id="fiscal_year"
-            name="fiscal_year"
-            value="{$smarty.session.FISCAL_YEAR}"
-            autocomplete="off"
-            data-toggle="datetimepicker"
-            data-target="#fiscal_year"
-          />
-          <div class="invalid-feedback"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <div class="card rounded-0">
+        <div class="card-header bg-gradient-navy rounded-0">
+          <h3 class="card-title text-warning">{$subtitle}</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <!-- form start -->
+          <form id="my_form" role="form" method="POST">
+            <div class="form-group row">
+              <label for="fiscal_year" class="col-lg-3 col-sm-4 col-form-label">
+                Tahun Anggaran
+                <sup class="fas fa-asterisk text-red"></sup>
+                <span class="float-sm-right d-sm-inline d-none">:</span>
+              </label>
+              <div class="col-lg-1 col-sm-2 col-3">
+                <input
+                  type="text"
+                  class="form-control rounded-0 text-center"
+                  id="fiscal_year"
+                  name="fiscal_year"
+                  value="{$smarty.session.FISCAL_YEAR}"
+                  autocomplete="off"
+                  data-toggle="datetimepicker"
+                  data-target="#fiscal_year"
+                />
+                <div class="invalid-feedback"></div>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label
+                for="fiscal_month"
+                class="col-lg-3 col-sm-4 col-form-label"
+              >
+                Bulan
+                <sup class="fas fa-asterisk text-red"></sup>
+                <span class="float-sm-right d-sm-inline d-none">:</span>
+              </label>
+              <div class="col-lg-1 col-sm-2 col-3">
+                <input
+                  type="text"
+                  class="form-control rounded-0 text-center"
+                  id="fiscal_month"
+                  name="fiscal_month"
+                  value="{$smarty.now|date_format:'%m'}"
+                  autocomplete="off"
+                  data-toggle="datetimepicker"
+                  data-target="#fiscal_month"
+                />
+                <div class="invalid-feedback"></div>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="prg_code" class="col-lg-3 col-sm-4 col-form-label">
+                Program
+                <sup class="fas fa-asterisk text-red"></sup>
+                <span class="float-sm-right d-sm-inline d-none">:</span>
+              </label>
+              <div class="col-lg-9 col-sm-8">
+                <select
+                  class="custom-select rounded-0"
+                  name="prg_code"
+                  id="prg_code"
+                >
+                  <option value="">-- Pilih --</option>
+                  {section inner $program}
+                  <option value="{$program[inner].prg_code}">
+                    {$program[inner].prg_name}
+                  </option>
+                  {/section}
+                </select>
+                <div class="invalid-feedback"></div>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="act_code" class="col-lg-3 col-sm-4 col-form-label">
+                Kegiatan
+                <sup class="fas fa-asterisk text-red"></sup>
+                <span class="float-sm-right d-sm-inline d-none">:</span>
+              </label>
+              <div class="col-lg-9 col-sm-8">
+                <select
+                  class="custom-select rounded-0"
+                  name="act_code"
+                  id="act_code"
+                >
+                  <option value="">-- Pilih --</option>
+                  {section inner $activity}
+                  <option value="{$activity[inner].act_code}">
+                    {$activity[inner].act_name}
+                  </option>
+                  {/section}
+                </select>
+                <div class="invalid-feedback"></div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!-- /.card-body -->
+
+        <div class="card-footer">
+          <!-- prettier-ignore -->
+          {include 'Templates/buttons/search.tpl'}
         </div>
       </div>
 
-      <div class="form-group row">
-        <label for="fiscal_month" class="col-lg-3 col-sm-4 col-form-label">
-          Bulan
-          <sup class="fas fa-asterisk text-red"></sup>
-          <span class="float-sm-right d-sm-inline d-none">:</span>
-        </label>
-        <div class="col-lg-1 col-sm-2 col-3">
-          <input
-            type="text"
-            class="form-control rounded-0 text-center"
-            id="fiscal_month"
-            name="fiscal_month"
-            value="{$smarty.now|date_format:'%m'}"
-            autocomplete="off"
-            data-toggle="datetimepicker"
-            data-target="#fiscal_month"
-          />
-          <div class="invalid-feedback"></div>
-        </div>
+      <div class="card rounded-0 sr-only result-container">
+        <div class="card-body"></div>
       </div>
 
-      <div class="form-group row">
-        <label for="prg_code" class="col-lg-3 col-sm-4 col-form-label">
-          Program
-          <sup class="fas fa-asterisk text-red"></sup>
-          <span class="float-sm-right d-sm-inline d-none">:</span>
-        </label>
-        <div class="col-lg-9 col-sm-8">
-          <select class="custom-select rounded-0" name="prg_code" id="prg_code">
-            <option value="">-- Pilih --</option>
-            {section inner $program}
-            <option value="{$program[inner].prg_code}">
-              {$program[inner].prg_name}
-            </option>
-            {/section}
-          </select>
-          <div class="invalid-feedback"></div>
+      <div class="card rounded-0 sr-only chart-container">
+        <div class="card-body">
+          <canvas
+            id="canvas"
+            style="
+              min-height: 400px;
+              height: 400px;
+              max-height: 400px;
+              max-width: 100%;
+            "
+          ></canvas>
         </div>
       </div>
-
-      <div class="form-group row">
-        <label for="act_code" class="col-lg-3 col-sm-4 col-form-label">
-          Kegiatan
-          <sup class="fas fa-asterisk text-red"></sup>
-          <span class="float-sm-right d-sm-inline d-none">:</span>
-        </label>
-        <div class="col-lg-9 col-sm-8">
-          <select class="custom-select rounded-0" name="act_code" id="act_code">
-            <option value="">-- Pilih --</option>
-            {section inner $activity}
-            <option value="{$activity[inner].act_code}">
-              {$activity[inner].act_name}
-            </option>
-            {/section}
-          </select>
-          <div class="invalid-feedback"></div>
-        </div>
-      </div>
-    </form>
-  </div>
-  <!-- /.card-body -->
-
-  <div class="card-footer">
-    <!-- prettier-ignore -->
-    {include 'Templates/buttons/search.tpl'}
-  </div>
-</div>
-
-<div class="card rounded-0 sr-only result-container">
-  <div class="card-body"></div>
-</div>
-
-<div class="card rounded-0 sr-only chart-container">
-  <div class="card-body">
-    <canvas
-      id="canvas"
-      style="
-        min-height: 400px;
-        height: 400px;
-        max-height: 400px;
-        max-width: 100%;
-      "
-    ></canvas>
+    </div>
   </div>
 </div>
 <!-- prettier-ignore -->
