@@ -206,7 +206,7 @@
           title2 = createElement({
             element: 'h5',
             class: ['text-center'],
-            children: ['BINA MARGA KAB. SEMARANG'],
+            children: ['BIDANG BINA MARGA DPU KAB. SEMARANG'],
           })
 
           title3 = createElement({

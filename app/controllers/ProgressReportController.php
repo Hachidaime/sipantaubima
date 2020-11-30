@@ -14,7 +14,7 @@ class ProgressReportController extends Controller
     {
         parent::__construct();
         $this->setControllerAttribute(__CLASS__);
-        $this->title = 'Pekembangan Capaian Kinerja';
+        $this->title = 'Perkembangan Capaian Kinerja';
         $this->smarty->assign('title', $this->title);
         $this->ProgressReportModel = new ProgressReportModel();
 
@@ -30,7 +30,7 @@ class ProgressReportController extends Controller
 
         $activityModel = new ActivityModel();
         list($activity) = $activityModel->multiarray(null, [
-            ['act_name', 'ASC'],
+            ['act_name', 'ASC']
         ]);
 
         $packageModel = new PackageModel();
@@ -42,7 +42,7 @@ class ProgressReportController extends Controller
                 ',',
                 array_map(function ($val) {
                     return $val['id'];
-                }, $package),
+                }, $package)
             );
             $packageDetailModel = new PackageDetailModel();
             $query = "SELECT * FROM `{$packageDetailModel->getTable()}` 
@@ -53,7 +53,7 @@ class ProgressReportController extends Controller
 
         $this->smarty->assign('breadcrumb', [
             ['Laporan', ''],
-            [$this->title, ''],
+            [$this->title, '']
         ]);
 
         $this->smarty->assign('subtitle', "Laporan {$this->title}");
@@ -78,7 +78,7 @@ class ProgressReportController extends Controller
             'white' => 'FFFFFF',
             'red' => 'dc3545',
             'yellow' => 'ffc107',
-            'green' => '28a745',
+            'green' => '28a745'
         ];
 
         $ext = $_POST['ext'] ?? 'xls';
@@ -93,8 +93,8 @@ class ProgressReportController extends Controller
 
         $titles = [
             'LAPORAN PERKEMBANGAN CAPAIAN KINERJA',
-            'BINA MARGA KAB. SEMARANG',
-            "THN ANGGARAN: {$_POST['pkg_fiscal_year']}",
+            'BIDANG BINA MARGA DPU KAB. SEMARANG',
+            "THN ANGGARAN: {$_POST['pkg_fiscal_year']}"
         ];
 
         for ($i = 1; $i <= 3; $i++) {
@@ -104,14 +104,14 @@ class ProgressReportController extends Controller
 
         $sheet->getStyle('A1:A3')->applyFromArray([
             'font' => [
-                'bold' => true,
+                'bold' => true
             ],
             'alignment' => [
                 'horizontal' =>
                     \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                 'vertical' =>
-                    \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-            ],
+                    \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+            ]
         ]);
 
         $alphabet = range('A', $lastCol);
@@ -142,7 +142,7 @@ class ProgressReportController extends Controller
                 $cols1 = range('D', 'H');
                 foreach ($cols1 as $col) {
                     $sheet->mergeCells(
-                        "{$col}{$detail_head1}:{$col}{$detail_head2}",
+                        "{$col}{$detail_head1}:{$col}{$detail_head2}"
                     );
                 }
 
@@ -150,14 +150,14 @@ class ProgressReportController extends Controller
                 $cols3 = range('J', 'N', 2);
                 for ($i = 0; $i < 3; $i++) {
                     $sheet->mergeCells(
-                        "{$cols2[$i]}{$detail_head1}:{$cols3[$i]}{$detail_head1}",
+                        "{$cols2[$i]}{$detail_head1}:{$cols3[$i]}{$detail_head1}"
                     );
                 }
 
                 $cols1 = range('O', 'O');
                 foreach ($cols1 as $col) {
                     $sheet->mergeCells(
-                        "{$col}{$detail_head1}:{$col}{$detail_head2}",
+                        "{$col}{$detail_head1}:{$col}{$detail_head2}"
                     );
                 }
 
@@ -180,10 +180,10 @@ class ProgressReportController extends Controller
                         '',
                         'Deviasi',
                         '',
-                        "Indi-\nkator",
+                        "Indi-\nkator"
                     ],
                     null,
-                    "A{$detail_head1}",
+                    "A{$detail_head1}"
                 );
                 $sheet->fromArray(
                     [
@@ -192,30 +192,30 @@ class ProgressReportController extends Controller
                         "Fisik\n(%)",
                         "Keuangan\n(%)",
                         "Fisik\n(%)",
-                        "Keuangan\n(%)",
+                        "Keuangan\n(%)"
                     ],
                     null,
-                    "I{$detail_head2}",
+                    "I{$detail_head2}"
                 );
 
                 $sheet
                     ->getStyle("A{$detail_head1}:{$lastCol}{$detail_head2}")
                     ->applyFromArray([
                         'font' => [
-                            'bold' => true,
+                            'bold' => true
                         ],
                         'alignment' => [
                             'horizontal' =>
                                 \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                             'vertical' =>
-                                \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                                \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
                         ],
                         'borders' => [
                             'allBorders' => [
                                 'borderStyle' =>
-                                    \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                            ],
-                        ],
+                                    \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                            ]
+                        ]
                     ]);
 
                 $n = 1;
@@ -246,13 +246,13 @@ class ProgressReportController extends Controller
                             $row['prog_physical'],
                             $row['prog_finance_pct'],
                             $row['devn_physical'],
-                            $row['devn_finance_pct'],
+                            $row['devn_finance_pct']
                         ];
 
                         foreach ($alphabet as $key => $value) {
                             $sheet->setCellValue(
                                 "{$value}{$detail_body}",
-                                $content[$key],
+                                $content[$key]
                             );
                         }
 
@@ -260,7 +260,7 @@ class ProgressReportController extends Controller
                             ->getStyle("O{$detail_body}")
                             ->getFill()
                             ->setFillType(
-                                \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                                \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID
                             )
                             ->getStartColor()
                             ->setARGB($colors[$row['indicator']]);
@@ -270,8 +270,8 @@ class ProgressReportController extends Controller
                             ->applyFromArray([
                                 'alignment' => [
                                     'horizontal' =>
-                                        \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
-                                ],
+                                        \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT
+                                ]
                             ]);
 
                         $sheet
@@ -279,8 +279,8 @@ class ProgressReportController extends Controller
                             ->applyFromArray([
                                 'alignment' => [
                                     'horizontal' =>
-                                        \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                                ],
+                                        \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+                                ]
                             ]);
 
                         $sheet
@@ -288,8 +288,8 @@ class ProgressReportController extends Controller
                             ->applyFromArray([
                                 'alignment' => [
                                     'horizontal' =>
-                                        \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
-                                ],
+                                        \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT
+                                ]
                             ]);
                     }
                 }
@@ -300,9 +300,9 @@ class ProgressReportController extends Controller
                         'borders' => [
                             'allBorders' => [
                                 'borderStyle' =>
-                                    \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                            ],
-                        ],
+                                    \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                            ]
+                        ]
                     ]);
 
                 $prg_row = $detail_body + 2;
