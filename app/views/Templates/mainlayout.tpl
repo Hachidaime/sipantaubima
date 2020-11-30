@@ -67,7 +67,7 @@
         {/if}
 
         <!-- Main content -->
-        <div class="content pb-3 px-0">
+        <div class="content px-0">
           <!-- <div class="container"> -->
           {block name='content'}{/block}
           <!-- </div> -->

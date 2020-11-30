@@ -1,86 +1,101 @@
 <!-- prettier-ignore -->
-{extends 'Templates/blank.tpl'}
+{extends 'Templates/mainlayout.tpl'}
+
+{block 'style'}
+<style>
+  .login-container {
+    background-image: url(https://unsplash.com/photos/njnNtzJeUeQ/download?force=true&w=1920);
+    background-position: center;
+    height: 100vh;
+    background-size: cover;
+    width: 100%;
+  }
+</style>
+<!-- prettier-ignore -->
+{/block} 
 
 {block 'content'}
-<div class="login-box">
-  <div class="login-logo">
-    <a href="{$smarty.const.BASE_URL}">SIPANTAUBIMA <b>Console</b></a>
-  </div>
-  <!-- /.login-logo -->
-  <div class="card rounded-0">
-    <div class="card-header bg-gradient-navy rounded-0">
-      <h3 class="card-title text-warning">Log in to start your session</h3>
+<div class="login-container d-flex justify-content-center align-content-center">
+  <div class="login-box d-flex flex-column justify-content-center">
+    <div class="login-logo">
+      <a href="{$smarty.const.BASE_URL}">SIPANTAUBIMA <b>Console</b></a>
     </div>
-    <div class="card-body login-card-body">
-      <form
-        action="{$smarty.const.BASE_URL}/login"
-        method="post"
-        id="login_form"
-      >
-        <div class="form-group row">
-          <label for="fiscal_year" class="col-5 col-form-label">
-            Tahun Anggaran
-          </label>
-          <div class="col-4">
-            <input
-              type="text"
-              class="form-control rounded-0 text-center"
-              id="fiscal_year"
-              name="fiscal_year"
-              autocomplete="off"
-              data-toggle="datetimepicker"
-              data-target="#fiscal_year"
-            />
-            <div class="invalid-feedback"></div>
+    <!-- /.login-logo -->
+    <div class="card rounded-0">
+      <div class="card-header bg-gradient-navy rounded-0">
+        <h3 class="card-title text-warning">Log in to start your session</h3>
+      </div>
+      <div class="card-body login-card-body">
+        <form
+          action="{$smarty.const.BASE_URL}/login"
+          method="post"
+          id="login_form"
+        >
+          <div class="form-group row">
+            <label for="fiscal_year" class="col-5 col-form-label">
+              Tahun Anggaran
+            </label>
+            <div class="col-4">
+              <input
+                type="text"
+                class="form-control rounded-0 text-center"
+                id="fiscal_year"
+                name="fiscal_year"
+                autocomplete="off"
+                data-toggle="datetimepicker"
+                data-target="#fiscal_year"
+              />
+              <div class="invalid-feedback"></div>
+            </div>
           </div>
-        </div>
 
-        <div class="form-group row">
-          <label for="usr_username" class="col-5 col-form-label">
-            Username
-          </label>
-          <div class="col-7">
-            <input
-              type="text"
-              class="form-control rounded-0"
-              id="usr_username"
-              name="usr_username"
-            />
-            <div class="invalid-feedback"></div>
+          <div class="form-group row">
+            <label for="usr_username" class="col-5 col-form-label">
+              Username
+            </label>
+            <div class="col-7">
+              <input
+                type="text"
+                class="form-control rounded-0"
+                id="usr_username"
+                name="usr_username"
+              />
+              <div class="invalid-feedback"></div>
+            </div>
           </div>
-        </div>
 
-        <div class="form-group row">
-          <label for="usr_password" class="col-5 col-form-label">
-            Password
-          </label>
-          <div class="col-7">
-            <input
-              type="password"
-              class="form-control rounded-0"
-              id="usr_password"
-              name="usr_password"
-            />
-            <div class="invalid-feedback"></div>
+          <div class="form-group row">
+            <label for="usr_password" class="col-5 col-form-label">
+              Password
+            </label>
+            <div class="col-7">
+              <input
+                type="password"
+                class="form-control rounded-0"
+                id="usr_password"
+                name="usr_password"
+              />
+              <div class="invalid-feedback"></div>
+            </div>
           </div>
-        </div>
 
-        <div class="row">
-          <!-- /.col -->
-          <div class="col-12">
-            <button
-              type="button"
-              class="btn btn-block btn-flat bg-gradient-warning text-navy"
-              id="btn_login"
-            >
-              Log In
-            </button>
+          <div class="row">
+            <!-- /.col -->
+            <div class="col-12">
+              <button
+                type="button"
+                class="btn btn-block btn-flat bg-gradient-warning text-navy"
+                id="btn_login"
+              >
+                Log In
+              </button>
+            </div>
+            <!-- /.col -->
           </div>
-          <!-- /.col -->
-        </div>
-      </form>
+        </form>
+      </div>
+      <!-- /.login-card-body -->
     </div>
-    <!-- /.login-card-body -->
   </div>
 </div>
 <!-- /.login-box -->
