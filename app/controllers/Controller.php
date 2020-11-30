@@ -57,7 +57,7 @@ class Controller
         $pdo = new PDO(
             'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8',
             DB_USER,
-            DB_PASS,
+            DB_PASS
         );
         $this->validator->addValidator('unique', new UniqueRule($pdo));
         $this->validator->addValidator('login', new LoginRule());
@@ -76,7 +76,7 @@ class Controller
     public function setControllerAttribute(string $class)
     {
         $class_arr = Functions::splitCamelCase(
-            str_replace('Controller', '', $class),
+            str_replace('Controller', '', $class)
         );
         $this->title = implode(' ', $class_arr);
         $this->name = implode('', $class_arr);
@@ -123,13 +123,13 @@ class Controller
             Functions::getStringBetween(
                 rtrim($_SERVER['REQUEST_URI'], '/'),
                 BASE_PATH,
-                '/page',
+                '/page'
             );
 
         $this->smarty->assign('paging', $data);
         $this->smarty->assign(
             'pager',
-            $this->smarty->fetch('Templates/pagination.tpl'),
+            $this->smarty->fetch('Templates/pagination.tpl')
         );
     }
 
@@ -147,10 +147,10 @@ class Controller
         $data = array_merge(
             [
                 'log_type' => $type,
-                'log_description' => $description,
+                'log_description' => $description
             ],
             Functions::getCreated(),
-            Functions::getRemoteIp(),
+            Functions::getRemoteIp()
         );
         $this->logModel->save($data);
     }
@@ -179,7 +179,7 @@ class Controller
     public function change(string $slug)
     {
         list($system, $count) = $this->model('SystemModel')->get([
-            ['sys_slug', $slug],
+            ['sys_slug', $slug]
         ]);
 
         if ($count == 0) {
@@ -201,7 +201,7 @@ class Controller
                     'usr_is_master',
                     'usr_is_package',
                     'usr_is_progress',
-                    'usr_is_report',
+                    'usr_is_report'
                 ])
             ) {
                 unset($detail[$key]);

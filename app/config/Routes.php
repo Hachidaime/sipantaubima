@@ -4,15 +4,22 @@ $router->setBasePath(BASE_PATH);
 
 // Dashboard
 $router->addRoutes([
-    ['GET', '/', 'DashboardController::index'],
-    ['GET', '/dashboard', 'DashboardController::index', 'dashboard'],
+    [
+        'GET',
+        '/',
+        !empty($_SESSION['USER']['id'])
+            ? 'DashboardController::index'
+            : 'HomeController::index'
+    ],
+    ['GET', '/home', 'HomeController::index', 'home'],
+    ['GET', '/dashboard', 'DashboardController::index', 'dashboard']
 ]);
 
 // User Login & Logout
 $router->addRoutes([
     ['GET', '/login', 'LoginController::login', 'login'],
     ['POST', '/login/submit', 'LoginController::submit', 'login_action'],
-    ['GET', '/logout', 'LoginController::logout', 'logout'],
+    ['GET', '/logout', 'LoginController::logout', 'logout']
 ]);
 
 $master = [
@@ -28,7 +35,7 @@ $master = [
     'Progress',
     'ProgressReport',
     'PerformanceReport',
-    'Profile',
+    'Profile'
 ];
 
 foreach ($master as $value) {
@@ -46,19 +53,19 @@ foreach ($master as $value) {
         [
             'GET|POST',
             "/{$route}/spreadsheet",
-            "{$controller}Controller::downloadSpreadsheet",
-        ],
+            "{$controller}Controller::downloadSpreadsheet"
+        ]
     ]);
 }
 
 $router->addRoutes([
     ['POST', '/package/submitexpires', 'PackageController::submitExpires'],
-    ['GET', '/package/activity', 'ProfileController::activity'],
+    ['GET', '/package/activity', 'ProfileController::activity']
 ]);
 
 $router->map('POST', '/file/upload', 'FileController::upload');
 
 $router->addRoutes([
     ['GET', '/403', 'PageController::error403', '403'],
-    ['GET', '/404', 'PageController::error404', '404'],
+    ['GET', '/404', 'PageController::error404', '404']
 ]);

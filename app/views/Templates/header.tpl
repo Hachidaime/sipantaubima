@@ -1,26 +1,12 @@
-<div class="content-header">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-6">
-        <h1 class="m-0 text-dark">{$title}</h1>
-      </div>
-      <!-- /.col -->
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          {section 'inner' $breadcrumb}
-          <li class="breadcrumb-item">
-            {if $breadcrumb[inner][1] ne ''}
-            <a href="{$smarty.const.BASE_URL}/{$breadcrumb[inner][1]}">
-              {$breadcrumb[inner][0]}
-            </a>
-            {else} {$breadcrumb[inner][0]} {/if}
-          </li>
-          {/section}
-        </ol>
-      </div>
-      <!-- /.col -->
-    </div>
-    <!-- /.row -->
-  </div>
-  <!-- /.container-fluid -->
+<div class="main-banner">
+  <img
+    src="https://dummyimage.com/1600x300/000000/fff.png&text=header+16:3+(1600x300)"
+    alt="main-banner"
+  />
+</div>
+
+<div class="welcome bg-yellow py-1">
+  <marquee class="text-navy" behavior="scroll" direction="left">
+    Selamat Datang di Situs SIPANTAUBIMA
+  </marquee>
 </div>

@@ -1,6 +1,16 @@
 <nav
-  class="main-header navbar navbar-expand-md navbar-dark navbar-navy sticky-top"
+  class="main-header navbar navbar-expand-md navbar-dark navbar-indigo sticky-top d-flex flex-column p-0 border-0"
 >
+  <div
+    class="header sticky-top py-3 d-flex flex-column flex-sm-row bg-gradient-navy align-sm-center justify-content-between px-2 w-100"
+  >
+    <div class="main-title lead d-flex flex-column flex-sm-row">
+      <div class="mr-sm-1">SIPANTAUBIMA</div>
+      <div>(Sistem Pantauan Bina Marga)</div>
+    </div>
+    <div class="now-time text-right align-middle" id="ct">time</div>
+  </div>
+  {if $smarty.session.USER.id}
   <div class="container">
     <button
       class="navbar-toggler order-1"
@@ -168,4 +178,5 @@
       </li>
     </ul>
   </div>
+  {/if}
 </nav>

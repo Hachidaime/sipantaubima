@@ -1,4 +1,6 @@
 $(document).ready(function () {
+  displayCurrentTime()
+
   /* Sidebar Active Tree Menu */
   $('.active-child')
     .closest('.has-treeview')
@@ -230,6 +232,7 @@ let showFileAction = (id, data) => {
  * @description Fungsi ini akan membuat pagination
  * @function createPagination
  *
+ * @param {*} page Pagination info
  * @param {*} paging Pagination info
  * @param {*} pagination_id ID Pagination
  */
@@ -317,4 +320,66 @@ let createElement = (params) => {
     })
 
   return element
+}
+
+/* Display Clock: https://www.plus2net.com/javascript_tutorial/clock.php */
+
+/**
+ * @description this function refreshing clock
+ * @function displayClock
+ */
+let displayClock = () => {
+  let refresh = 1000 // Refresh rate in milli seconds
+  setTimeout('displayCurrentTime()', refresh)
+}
+
+/**
+ * @description this function showing current time
+ * @function displayCurrentTime
+ */
+let displayCurrentTime = () => {
+  var months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'Mei',
+    'Jun',
+    'Jul',
+    'Agu',
+    'Sep',
+    'Okt',
+    'Nov',
+    'Dec',
+  ]
+
+  let x = new Date()
+  let day = pad(x.getDate(), 2),
+    month = months[x.getMonth()],
+    year = x.getFullYear(),
+    hours = pad(x.getHours(), 2),
+    minutes = pad(x.getMinutes(), 2),
+    seconds = pad(x.getSeconds(), 2)
+
+  let datetime = `${day}-${month}-${year}  ${hours}:${minutes}:${seconds}`
+
+  document.getElementById('ct').innerHTML = datetime
+  displayClock()
+}
+
+/**
+ * @description add leading zero
+ * @function pad
+ *
+ * @param {*} number
+ * @param {*} length
+ * @returns
+ */
+function pad(number, size) {
+  var str = '' + number
+  while (str.length < size) {
+    str = '0' + str
+  }
+
+  return str
 }

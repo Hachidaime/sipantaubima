@@ -51,21 +51,26 @@
 
   <body class="hold-transition layout-top-nav layout-fixed">
     <div class="wrapper">
+      <!-- prettier-ignore -->
+      {include file='Templates/header.tpl'}
+
       <!-- Navbar -->
       {include file='Templates/navbar.tpl'}
       <!-- /.navbar -->
 
       <!-- Content Wrapper. Contains page content -->
       <div class="content-wrapper">
+        {if $smarty.session.USER.id}
         <!-- Content Header (Page header) -->
-        {include file='Templates/header.tpl'}
+        {include file='Templates/title.tpl'}
         <!-- /.content-header -->
+        {/if}
 
         <!-- Main content -->
-        <div class="content pb-3">
-          <div class="container">
-            {block name='content'}{/block}
-          </div>
+        <div class="content pb-3 px-0">
+          <!-- <div class="container"> -->
+          {block name='content'}{/block}
+          <!-- </div> -->
           <!-- /.container-fluid -->
         </div>
         <!-- /.content -->
