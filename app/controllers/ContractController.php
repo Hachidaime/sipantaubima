@@ -5,6 +5,7 @@ use app\helper\Functions;
 use app\models\PackageDetailModel;
 use app\models\ContractModel;
 use app\models\AddendumModel;
+use app\models\UserModel;
 
 class ContractController extends Controller
 {
@@ -17,6 +18,7 @@ class ContractController extends Controller
         $this->packageDetailModel = new PackageDetailModel();
         $this->contractModel = new ContractModel();
         $this->addendumModel = new AddendumModel();
+        $this->UserModel = new UserModel();
 
         if (!$_SESSION['USER']['usr_is_package']) {
             header('Location:' . BASE_URL . '/403');
@@ -27,7 +29,7 @@ class ContractController extends Controller
     {
         $pkgd_id = $_POST['pkgd_id'];
         list($detail) = $this->contractModel->singlearray([
-            ['pkgd_id', $pkgd_id],
+            ['pkgd_id', $pkgd_id]
         ]);
 
         $detail['cnt_date'] = !is_null($detail['cnt_date'])
@@ -42,12 +44,12 @@ class ContractController extends Controller
             ? Functions::dateFormat(
                 'Y-m-d',
                 'd/m/Y',
-                $detail['cnt_plan_pho_date'],
+                $detail['cnt_plan_pho_date']
             )
             : '';
 
         list($addendum, $addendum_c) = $this->addendumModel->multiarray([
-            ['pkgd_id', $pkgd_id],
+            ['pkgd_id', $pkgd_id]
         ]);
 
         $detail['addendum'] = [];
@@ -61,7 +63,7 @@ class ContractController extends Controller
                     ? Functions::dateFormat(
                         'Y-m-d',
                         'd/m/Y',
-                        $row['add_plan_pho_date'],
+                        $row['add_plan_pho_date']
                     )
                     : '';
 
@@ -96,12 +98,15 @@ class ContractController extends Controller
             ? Functions::dateFormat(
                 'd/m/Y',
                 'Y-m-d',
-                $data['cnt_plan_pho_date'],
+                $data['cnt_plan_pho_date']
             )
             : null;
         $data['cnt_value'] = !empty($data['cnt_value'])
             ? str_replace(',', '.', $data['cnt_value'])
             : 0;
+
+        list($user) = $this->UserModel->singlearray([['id', $data['usr_id']]]);
+        $data['cnt_contractor_name'] = $user['usr_consultant_name'];
 
         $addendum = [];
         foreach ($data as $key => $value) {
@@ -125,16 +130,16 @@ class ContractController extends Controller
                 $this->submitAddendum($addendum);
                 $this->writeLog(
                     "{$tag} {$this->title}",
-                    "{$tag} {$this->title} [{$id}] berhasil.",
+                    "{$tag} {$this->title} [{$id}] berhasil."
                 );
                 echo json_encode([
                     'success' => true,
-                    'msg' => "Berhasil {$tag} {$this->title}.",
+                    'msg' => "Berhasil {$tag} {$this->title}."
                 ]);
             } else {
                 echo json_encode([
                     'success' => false,
-                    'msg' => "Gagal {$tag} {$this->title}.",
+                    'msg' => "Gagal {$tag} {$this->title}."
                 ]);
             }
             exit();
@@ -151,7 +156,7 @@ class ContractController extends Controller
             'cnt_days' => 'required',
             'cnt_plan_pho_date' => 'required|date',
             'cnt_value' => 'required',
-            'cnt_consultant_name' => 'required',
+            'usr_id' => 'required'
         ]);
 
         $validation->setAliases([
@@ -162,13 +167,13 @@ class ContractController extends Controller
             'cnt_days' => 'Waktu Pelaksanaan',
             'cnt_plan_pho_date' => 'Tanggal Rencana PHO',
             'cnt_value' => 'Nilai Kontrak',
-            'cnt_consultant_name' => 'Nama Konsultan',
+            'usr_id' => 'Nama Konsultan'
         ]);
 
         $validation->setMessages([
             'required' => '<strong>:attribute</strong> harus diisi.',
             'max' => '<strong>:attribute</strong> maximum :max karakter.',
-            'date' => 'Format <strong>:attribute</strong> tidak valid.',
+            'date' => 'Format <strong>:attribute</strong> tidak valid.'
         ]);
 
         $validation->validate();
@@ -176,7 +181,7 @@ class ContractController extends Controller
         if ($validation->fails()) {
             echo json_encode([
                 'success' => false,
-                'msg' => $validation->errors()->firstOfAll(),
+                'msg' => $validation->errors()->firstOfAll()
             ]);
             exit();
         }
@@ -195,7 +200,7 @@ class ContractController extends Controller
                     ? Functions::dateFormat(
                         'd/m/Y',
                         'Y-m-d',
-                        $data['add_date'][$i],
+                        $data['add_date'][$i]
                     )
                     : '',
                 'add_days' => $data['add_days'][$i],
@@ -203,12 +208,12 @@ class ContractController extends Controller
                     ? Functions::dateFormat(
                         'd/m/Y',
                         'Y-m-d',
-                        $data['add_plan_pho_date'][$i],
+                        $data['add_plan_pho_date'][$i]
                     )
                     : '',
                 'add_value' => !empty($data['add_value'][$i])
                     ? str_replace(',', '.', $data['add_value'][$i])
-                    : '',
+                    : ''
             ];
 
             foreach ($addendum as $key => $value) {

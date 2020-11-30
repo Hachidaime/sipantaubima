@@ -35,13 +35,21 @@
               <sup class="fas fa-asterisk text-red"></sup>
             </label>
             <div class="col-lg-8 col-sm-6">
-              <input
+              <select class="custom-select rounded-0" name="usr_id" id="usr_id">
+                <option value="">-- Pilih --</option>
+                {section inner $contractor}
+                <option value="{$contractor[inner].id}">
+                  {$contractor[inner].usr_contractor_name}
+                </option>
+                {/section}
+              </select>
+              <!-- <input
                 type="text"
                 class="form-control rounded-0"
                 id="cnt_contractor_name"
                 name="cnt_contractor_name"
                 autocomplete="off"
-              />
+              /> -->
               <div class="invalid-feedback"></div>
             </div>
           </div>

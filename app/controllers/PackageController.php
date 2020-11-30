@@ -9,7 +9,7 @@ use app\models\PackageDetailModel;
 use app\models\PackageModel;
 use app\models\PackageSessionModel;
 use app\models\ProgramModel;
-
+use app\models\UserModel;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -41,7 +41,7 @@ class PackageController extends Controller
     {
         $this->smarty->assign('breadcrumb', [
             ['Paket Pekerjaan', ''],
-            [$this->title, ''],
+            [$this->title, '']
         ]);
 
         $this->smarty->assign('subtitle', "Daftar {$this->title}");
@@ -55,7 +55,7 @@ class PackageController extends Controller
 
         echo json_encode([
             'list' => $list,
-            'info' => $info,
+            'info' => $info
         ]);
         exit();
     }
@@ -75,7 +75,7 @@ class PackageController extends Controller
                 Flasher::setFlash(
                     'Data tidak ditemukan!',
                     $this->name,
-                    'error',
+                    'error'
                 );
                 header('Location: ' . BASE_URL . "/{$this->lowerName}");
             }
@@ -93,24 +93,36 @@ class PackageController extends Controller
 
         $activityModel = new ActivityModel();
         list($activity) = $activityModel->multiarray(null, [
-            ['act_code', 'ASC'],
+            ['act_code', 'ASC']
         ]);
 
         $locationModel = new LocationModel();
         list($location) = $locationModel->multiarray(null, [
-            ['loc_code', 'ASC'],
+            ['loc_code', 'ASC']
         ]);
+
+        $userModel = new UserModel();
+        $query = "SELECT
+            DISTINCT `{$userModel->getTable()}`.`usr_consultant_name` as `usr_contractor_name`,
+            `{$userModel->getTable()}`.`id`
+            FROM `{$userModel->getTable()}`
+            where `usr_consultant_name` != ''";
+        $contractor = $userModel->db->query($query);
+        $contractor = !empty($contractor)
+            ? $contractor->toArray()
+            : $contractor;
 
         $this->smarty->assign('breadcrumb', [
             ['Paket Pekerjaan', ''],
             [$this->title, $this->lowerName],
-            [$tag, ''],
+            [$tag, '']
         ]);
 
         $this->smarty->assign('subtitle', "{$tag} {$this->title}");
         $this->smarty->assign('program', $program);
         $this->smarty->assign('activity', $activity);
         $this->smarty->assign('location', $location);
+        $this->smarty->assign('contractor', $contractor);
         $this->smarty->display("{$this->directory}/form.tpl");
     }
 
@@ -152,22 +164,22 @@ class PackageController extends Controller
                 $packageDetailModel->db->update(
                     $packageDetailModel->getTable(),
                     ['pkg_id' => $id],
-                    [['pkgs_id', $data['pkgs_id']]],
+                    [['pkgs_id', $data['pkgs_id']]]
                 );
                 Flasher::setFlash(
                     "Berhasil {$tag} {$this->title}.",
                     $this->name,
-                    'success',
+                    'success'
                 );
                 $this->writeLog(
                     "{$tag} {$this->title}",
-                    "{$tag} {$this->title} [{$id}] berhasil.",
+                    "{$tag} {$this->title} [{$id}] berhasil."
                 );
                 echo json_encode(['success' => true]);
             } else {
                 echo json_encode([
                     'success' => false,
-                    'msg' => "Gagal {$tag} {$this->title}.",
+                    'msg' => "Gagal {$tag} {$this->title}."
                 ]);
             }
             exit();
@@ -180,14 +192,14 @@ class PackageController extends Controller
             'pkg_fiscal_year' => 'required|digits:4',
             'prg_code' => 'required',
             'act_code' => "required|uniq_pkg_act:{$data['pkg_fiscal_year']},{$data['prg_code']},{$data['id']}",
-            'pkg_debt_ceiling' => 'required',
+            'pkg_debt_ceiling' => 'required'
         ]);
 
         $validation->setAliases([
             'pkg_fiscal_year' => 'Tahun Anggaran',
             'prg_code' => 'Kode Program',
             'act_code' => 'Kode Kegiatan',
-            'pkg_debt_ceiling' => 'Pagu Anggaran (Rp)',
+            'pkg_debt_ceiling' => 'Pagu Anggaran (Rp)'
         ]);
 
         $validation->setMessages([
@@ -195,7 +207,7 @@ class PackageController extends Controller
             'act_code:uniq_pkg_act' =>
                 '<strong>Program</strong> dan <strong>:attribute</strong> sudah ada di database.',
             'pkg_fiscal_year:digits' =>
-                'Format <strong>:attribute</strong> salah.',
+                'Format <strong>:attribute</strong> salah.'
         ]);
 
         $validation->validate();
@@ -203,7 +215,7 @@ class PackageController extends Controller
         if ($validation->fails()) {
             echo json_encode([
                 'success' => false,
-                'msg' => $validation->errors()->firstOfAll(),
+                'msg' => $validation->errors()->firstOfAll()
             ]);
             exit();
         }
@@ -220,17 +232,17 @@ class PackageController extends Controller
             Flasher::setFlash(
                 "Berhasil {$tag} {$this->title}.",
                 $this->name,
-                'success',
+                'success'
             );
             $this->writeLog(
                 "{$tag} {$this->title}",
-                "{$tag} {$this->title} [{$id}] berhasil.",
+                "{$tag} {$this->title} [{$id}] berhasil."
             );
             echo json_encode(['success' => true]);
         } else {
             echo json_encode([
                 'success' => false,
-                'msg' => "Gagal {$tag} {$this->title}.",
+                'msg' => "Gagal {$tag} {$this->title}."
             ]);
         }
         exit();
@@ -251,10 +263,10 @@ class PackageController extends Controller
                 "Tahun\nAnggaran",
                 'Program',
                 'Kegiatan',
-                "Pagu Anggaran\n(Rp)",
+                "Pagu Anggaran\n(Rp)"
             ],
             null,
-            'A1',
+            'A1'
         );
 
         $sheet->getRowDimension('1')->setRowHeight(30);
@@ -264,14 +276,14 @@ class PackageController extends Controller
                 'horizontal' =>
                     \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                 'vertical' =>
-                    \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
             ],
             'borders' => [
                 'allBorders' => [
                     'borderStyle' =>
-                        \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                ],
-            ],
+                        \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                ]
+            ]
         ]);
 
         if ($list_count > 0) {
@@ -287,8 +299,8 @@ class PackageController extends Controller
                 $sheet->getStyle("E{$row}")->applyFromArray([
                     'alignment' => [
                         'horizontal' =>
-                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
-                    ],
+                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT
+                    ]
                 ]);
             }
 
@@ -299,9 +311,9 @@ class PackageController extends Controller
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' =>
-                                \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                        ],
-                    ],
+                                \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                        ]
+                    ]
                 ]);
         }
 
@@ -330,25 +342,25 @@ class PackageController extends Controller
         $programOptions = Functions::listToOptions(
             $program,
             'prg_code',
-            'prg_name',
+            'prg_name'
         );
 
         $activityModel = new ActivityModel();
         list($activity) = $activityModel->multiarray(null, [
-            ['act_code', 'ASC'],
+            ['act_code', 'ASC']
         ]);
 
         $activityOptions = Functions::listToOptions(
             $activity,
             'act_code',
-            'act_name',
+            'act_name'
         );
 
         $filter = [['pkg_fiscal_year', 'LIKE', "%{$keyword}%"]];
         $sort = [
             ['pkg_fiscal_year', 'DESC'],
             ['prg_code', 'ASC'],
-            ['act_code', 'ASC'],
+            ['act_code', 'ASC']
         ];
 
         list($list, $info) = $paginate
@@ -362,7 +374,7 @@ class PackageController extends Controller
                 $row['pkg_debt_ceiling'],
                 2,
                 ',',
-                '.',
+                '.'
             );
             $row['pkg_pho_date'] = !is_null($row['pkg_pho_date'])
                 ? Functions::dateFormat('Y-m-d', 'd/m/Y', $row['pkg_pho_date'])
@@ -398,16 +410,16 @@ class PackageController extends Controller
             if ($result) {
                 $this->writeLog(
                     "{$tag} {$this->title}",
-                    "{$tag} {$this->title} [{$id}], Kontrak Berakhir berhasil.",
+                    "{$tag} {$this->title} [{$id}], Kontrak Berakhir berhasil."
                 );
                 echo json_encode([
                     'success' => true,
-                    'msg' => 'Berhasil Kontrak Berakhir.',
+                    'msg' => 'Berhasil Kontrak Berakhir.'
                 ]);
             } else {
                 echo json_encode([
                     'success' => false,
-                    'msg' => 'Gagal Kontrak Berakhir.',
+                    'msg' => 'Gagal Kontrak Berakhir.'
                 ]);
             }
             exit();
@@ -418,17 +430,17 @@ class PackageController extends Controller
     {
         $validation = $this->validator->make($data, [
             'pkg_pho_date' => 'required|date',
-            'pkg_contract_fv' => 'required',
+            'pkg_contract_fv' => 'required'
         ]);
 
         $validation->setAliases([
             'pkg_pho_date' => 'Tanggal PHO',
-            'pkg_contract_fv' => 'Nilai Akhir Kontrak',
+            'pkg_contract_fv' => 'Nilai Akhir Kontrak'
         ]);
 
         $validation->setMessages([
             'required' => '<strong>:attribute</strong> harus diisi.',
-            'date' => 'Format <strong>:attribute</strong> tidak valid.',
+            'date' => 'Format <strong>:attribute</strong> tidak valid.'
         ]);
 
         $validation->validate();
@@ -436,7 +448,7 @@ class PackageController extends Controller
         if ($validation->fails()) {
             echo json_encode([
                 'success' => false,
-                'msg' => $validation->errors()->firstOfAll(),
+                'msg' => $validation->errors()->firstOfAll()
             ]);
             exit();
         }
