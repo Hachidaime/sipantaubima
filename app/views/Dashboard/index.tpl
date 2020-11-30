@@ -21,17 +21,23 @@
                   Nama Kegiatan
                 </th>
                 <th class="text-center align-middle" rowspan="2" width="75px">
-                  Semua
+                  Paket Kegiatan
                 </th>
                 <th class="text-center align-middle" colspan="3">Indikator</th>
                 <th class="text-center align-middle" rowspan="2" width="75px">
-                  Selesai
+                  Kontrak Selesai
                 </th>
               </tr>
               <tr>
-                <th class="bg-red" width="50px">&nbsp;</th>
-                <th class="bg-yellow" width="50px">&nbsp;</th>
-                <th class="bg-green" width="50px">&nbsp;</th>
+                <th class="text-center px-0" width="50px">
+                  <i class="fas fa-frown text-red"></i>
+                </th>
+                <th class="text-center px-0" width="50px">
+                  <i class="fas fa-meh text-yellow"></i>
+                </th>
+                <th class="text-center px-0" width="50px">
+                  <i class="fas fa-smile text-green"></i>
+                </th>
               </tr>
             </thead>
             <tbody id="result_data">
