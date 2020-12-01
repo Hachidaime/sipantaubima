@@ -198,8 +198,6 @@
 
           resultWrapper.append(downloadBtn)
 
-          console.log(titles)
-
           titles.forEach((title) => {
             resultWrapper.appendChild(
               createElement({
