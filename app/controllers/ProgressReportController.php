@@ -10,6 +10,12 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ProgressReportController extends Controller
 {
+    public array $pageHead = [
+        'LAPORAN PERKEMBANGAN CAPAIAN KINERJA',
+        'BIDANG BINA MARGA DPU KAB. SEMARANG',
+        'THN ANGGARAN:'
+    ];
+
     public function __construct()
     {
         parent::__construct();
@@ -17,6 +23,7 @@ class ProgressReportController extends Controller
         $this->title = 'Perkembangan Capaian Kinerja';
         $this->smarty->assign('title', $this->title);
         $this->ProgressReportModel = new ProgressReportModel();
+        $this->pageHead[2] = "{$this->pageHead[2]} {$_POST['pkg_fiscal_year']}";
 
         if (!$_SESSION['USER']['usr_is_report']) {
             header('Location:' . BASE_URL . '/403');
@@ -68,7 +75,7 @@ class ProgressReportController extends Controller
     {
         $list = $this->ProgressReportModel->getData($_POST);
 
-        echo json_encode($list);
+        echo json_encode([$list, $this->pageHead]);
         exit();
     }
 
@@ -91,11 +98,7 @@ class ProgressReportController extends Controller
 
         $lastCol = 'O';
 
-        $titles = [
-            'LAPORAN PERKEMBANGAN CAPAIAN KINERJA',
-            'BIDANG BINA MARGA DPU KAB. SEMARANG',
-            "THN ANGGARAN: {$_POST['pkg_fiscal_year']}"
-        ];
+        $titles = $this->pageHead;
 
         for ($i = 1; $i <= 3; $i++) {
             $sheet->setCellValue("A{$i}", $titles[$i - 1]);

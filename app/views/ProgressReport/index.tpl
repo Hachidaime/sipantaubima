@@ -172,11 +172,10 @@
       `${MAIN_URL}/search`,
       params,
       (res) => {
-        if (res.length > 0) {
-          let downloadBtn = null,
-            title1 = null,
-            title2 = null,
-            title3 = null
+        let [list, titles] = res
+
+        if (list.length > 0) {
+          let downloadBtn = null
 
           downloadBtn = createElement({
             element: 'a',
@@ -197,27 +196,21 @@
             ],
           })
 
-          title1 = createElement({
-            element: 'h5',
-            class: ['text-center'],
-            children: ['LAPORAN PERKEMBANGAN CAPAIAN KINERJA'],
+          resultWrapper.append(downloadBtn)
+
+          console.log(titles)
+
+          titles.forEach((title) => {
+            resultWrapper.appendChild(
+              createElement({
+                element: 'h5',
+                class: ['text-center'],
+                children: [title],
+              })
+            )
           })
 
-          title2 = createElement({
-            element: 'h5',
-            class: ['text-center'],
-            children: ['BIDANG BINA MARGA DPU KAB. SEMARANG'],
-          })
-
-          title3 = createElement({
-            element: 'h5',
-            class: ['text-center', 'mb-3'],
-            children: [`THN ANGGARAN: ${params.pkg_fiscal_year}`],
-          })
-
-          resultWrapper.append(downloadBtn, title1, title2, title3)
-
-          for (index in res) {
+          for (index in list) {
             //#region Program
             let progLabel = createElement({
               element: 'div',
@@ -228,7 +221,7 @@
             let progValue = createElement({
               element: 'div',
               class: ['col-lg-10', 'col-md-9', 'col-sm-8', 'col-6'],
-              children: [res[index].prg_name],
+              children: [list[index].prg_name],
             })
 
             let progContainer = createElement({
@@ -250,7 +243,7 @@
             let actValue = createElement({
               element: 'div',
               class: ['col-lg-10', 'col-md-9', 'col-sm-8', 'col-6'],
-              children: [res[index].act_name],
+              children: [list[index].act_name],
             })
 
             let actContainer = createElement({
@@ -477,8 +470,8 @@
             let progFinance = []
 
             let n = 1
-            for (idx in res[index].detail) {
-              let packageDetail = res[index].detail[idx]
+            for (idx in list[index].detail) {
+              let packageDetail = list[index].detail[idx]
               for (pkgd in packageDetail) {
                 n = packageDetail[pkgd].pkgd_no != '' ? n : n - 1
                 let bodyNo = createElement({
