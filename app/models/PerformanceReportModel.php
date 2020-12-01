@@ -33,21 +33,21 @@ class PerformanceReportModel extends Model
     public function getData($data = null)
     {
         list($program) = $this->programModel->multiarray(null, [
-            ['prg_code', 'ASC'],
+            ['prg_code', 'ASC']
         ]);
         $programOptions = Functions::listToOptions(
             $program,
             'prg_code',
-            'prg_name',
+            'prg_name'
         );
 
         list($activity) = $this->activityModel->multiarray(null, [
-            ['act_code', 'ASC'],
+            ['act_code', 'ASC']
         ]);
         $activityOptions = Functions::listToOptions(
             $activity,
             'act_code',
-            'act_name',
+            'act_name'
         );
 
         $where = [];
@@ -68,7 +68,7 @@ class PerformanceReportModel extends Model
                 ',',
                 array_map(function ($val) {
                     return $val['id'];
-                }, $package),
+                }, $package)
             );
 
             $packageDetail = $this->getPackageDetail($pkgIdList, $data);
@@ -98,37 +98,37 @@ class PerformanceReportModel extends Model
                                 (!empty($detail['trg_physical'])
                                     ? $detail['trg_physical']
                                     : 0) / $packageDetailCount,
-                                2,
+                                2
                             );
                             $avgTrgFinancePct += number_format(
                                 (!empty($detail['trg_finance_pct'])
                                     ? $detail['trg_finance_pct']
                                     : 0) / $packageDetailCount,
-                                2,
+                                2
                             );
                             $avgProgPhysical += number_format(
                                 (!empty($detail['prog_physical'])
                                     ? $detail['prog_physical']
                                     : 0) / $packageDetailCount,
-                                2,
+                                2
                             );
                             $avgProgFinancePct += number_format(
                                 (!empty($detail['prog_finance_pct'])
                                     ? $detail['prog_finance_pct']
                                     : 0) / $packageDetailCount,
-                                2,
+                                2
                             );
                             $avgDevnPhysical += number_format(
                                 (!empty($detail['devn_physical'])
                                     ? $detail['devn_physical']
                                     : 0) / $packageDetailCount,
-                                2,
+                                2
                             );
                             $avgDevnFinancePct += number_format(
                                 (!empty($detail['devn_finance_pct'])
                                     ? $detail['devn_finance_pct']
                                     : 0) / $packageDetailCount,
-                                2,
+                                2
                             );
                         }
 
@@ -144,7 +144,7 @@ class PerformanceReportModel extends Model
                                         $avgTrgPhysical,
                                         2,
                                         ',',
-                                        '.',
+                                        '.'
                                     )
                                     : '',
                                 'trg_finance_pct' => !empty($avgTrgFinancePct)
@@ -152,7 +152,7 @@ class PerformanceReportModel extends Model
                                         $avgTrgFinancePct,
                                         2,
                                         ',',
-                                        '.',
+                                        '.'
                                     )
                                     : '',
                                 'prog_physical' => !empty($avgProgPhysical)
@@ -160,7 +160,7 @@ class PerformanceReportModel extends Model
                                         $avgProgPhysical,
                                         2,
                                         ',',
-                                        '.',
+                                        '.'
                                     )
                                     : '',
                                 'prog_finance_pct' => !empty($avgProgFinancePct)
@@ -168,7 +168,7 @@ class PerformanceReportModel extends Model
                                         $avgProgFinancePct,
                                         2,
                                         ',',
-                                        '.',
+                                        '.'
                                     )
                                     : '',
                                 'devn_physical' => !empty($avgDevnPhysical)
@@ -176,7 +176,7 @@ class PerformanceReportModel extends Model
                                         $avgDevnPhysical,
                                         2,
                                         ',',
-                                        '.',
+                                        '.'
                                     )
                                     : '',
                                 'devn_finance_pct' => !empty($avgDevnFinancePct)
@@ -184,9 +184,9 @@ class PerformanceReportModel extends Model
                                         $avgDevnFinancePct,
                                         2,
                                         ',',
-                                        '.',
+                                        '.'
                                     )
-                                    : '',
+                                    : ''
                             ];
                         }
                     }
@@ -303,7 +303,7 @@ class PerformanceReportModel extends Model
                 !empty($progFinancePct)
                     ? number_format($devnFinancePct, 2, ',', '.')
                     : '',
-            'indicator' => $indicator,
+            'indicator' => $indicator
         ];
 
         return $result;

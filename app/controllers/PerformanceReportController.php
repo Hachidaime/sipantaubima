@@ -11,6 +11,13 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class PerformanceReportController extends Controller
 {
+    public array $pageHead = [
+        'LAPORAN CAPAIAN KINERJA BULANAN',
+        'BIDANG BINA MARGA DPU KAB. SEMARANG',
+        'THN ANGGARAN:',
+        'BULAN:'
+    ];
+
     public function __construct()
     {
         parent::__construct();
@@ -18,6 +25,8 @@ class PerformanceReportController extends Controller
         $this->title = 'Capaian Kinerja Bulanan';
         $this->smarty->assign('title', $this->title);
         $this->performanceReportModel = new PerformanceReportModel();
+        $this->pageHead[2] = "{$this->pageHead[2]} {$_POST['fiscal_year']}";
+        $this->pageHead[3] = "{$this->pageHead[3]} {$_POST['fiscal_month']}";
 
         if (!$_SESSION['USER']['usr_is_report']) {
             header('Location:' . BASE_URL . '/403');
@@ -31,12 +40,12 @@ class PerformanceReportController extends Controller
 
         $activityModel = new ActivityModel();
         list($activity) = $activityModel->multiarray(null, [
-            ['act_name', 'ASC'],
+            ['act_name', 'ASC']
         ]);
 
         $this->smarty->assign('breadcrumb', [
             ['Laporan', ''],
-            [$this->title, ''],
+            [$this->title, '']
         ]);
 
         $this->smarty->assign('subtitle', "Laporan {$this->title}");
@@ -50,13 +59,8 @@ class PerformanceReportController extends Controller
     {
         $list = $this->performanceReportModel->getData($_POST);
 
-        echo json_encode($list);
+        echo json_encode([$list, $this->pageHead]);
         exit();
-    }
-
-    private function validate($data)
-    {
-        # code...
     }
 
     public function downloadSpreadsheet()
@@ -65,7 +69,7 @@ class PerformanceReportController extends Controller
             'white' => 'FFFFFF',
             'red' => 'dc3545',
             'yellow' => 'ffc107',
-            'green' => '28a745',
+            'green' => '28a745'
         ];
 
         $ext = $_POST['ext'] ?? 'xls';
@@ -78,11 +82,7 @@ class PerformanceReportController extends Controller
 
         $lastCol = 'M';
 
-        $titles = [
-            'LAPORAN CAPAIAN KINERJA BULANAN',
-            'BINA MARGA KAB. SEMARANG',
-            "THN ANGGARAN: {$_POST['fiscal_year']}",
-        ];
+        $titles = $this->pageHead;
 
         for ($i = 1; $i <= 3; $i++) {
             $sheet->setCellValue("A{$i}", $titles[$i - 1]);
@@ -91,14 +91,14 @@ class PerformanceReportController extends Controller
 
         $sheet->getStyle('A1:A3')->applyFromArray([
             'font' => [
-                'bold' => true,
+                'bold' => true
             ],
             'alignment' => [
                 'horizontal' =>
                     \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                 'vertical' =>
-                    \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-            ],
+                    \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+            ]
         ]);
 
         $alphabet = range('A', $lastCol);
@@ -128,7 +128,7 @@ class PerformanceReportController extends Controller
                 $cols1 = range('C', 'F');
                 foreach ($cols1 as $col) {
                     $sheet->mergeCells(
-                        "{$col}{$detail_head1}:{$col}{$detail_head2}",
+                        "{$col}{$detail_head1}:{$col}{$detail_head2}"
                     );
                 }
 
@@ -136,14 +136,14 @@ class PerformanceReportController extends Controller
                 $cols3 = range('H', 'L', 2);
                 for ($i = 0; $i < 3; $i++) {
                     $sheet->mergeCells(
-                        "{$cols2[$i]}{$detail_head1}:{$cols3[$i]}{$detail_head1}",
+                        "{$cols2[$i]}{$detail_head1}:{$cols3[$i]}{$detail_head1}"
                     );
                 }
 
                 $cols1 = range('M', 'M');
                 foreach ($cols1 as $col) {
                     $sheet->mergeCells(
-                        "{$col}{$detail_head1}:{$col}{$detail_head2}",
+                        "{$col}{$detail_head1}:{$col}{$detail_head2}"
                     );
                 }
                 // $sheet->getRowDimension($detail_head1)->setRowHeight(30);
@@ -163,10 +163,10 @@ class PerformanceReportController extends Controller
                         '',
                         'Deviasi',
                         '',
-                        "Indi-\nkator",
+                        "Indi-\nkator"
                     ],
                     null,
-                    "A{$detail_head1}",
+                    "A{$detail_head1}"
                 );
                 $sheet->fromArray(
                     [
@@ -175,30 +175,30 @@ class PerformanceReportController extends Controller
                         "Fisik\n(%)",
                         "Keuangan\n(%)",
                         "Fisik\n(%)",
-                        "Keuangan\n(%)",
+                        "Keuangan\n(%)"
                     ],
                     null,
-                    "G{$detail_head2}",
+                    "G{$detail_head2}"
                 );
 
                 $sheet
                     ->getStyle("A{$detail_head1}:{$lastCol}{$detail_head2}")
                     ->applyFromArray([
                         'font' => [
-                            'bold' => true,
+                            'bold' => true
                         ],
                         'alignment' => [
                             'horizontal' =>
                                 \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                             'vertical' =>
-                                \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                                \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
                         ],
                         'borders' => [
                             'allBorders' => [
                                 'borderStyle' =>
-                                    \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                            ],
-                        ],
+                                    \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                            ]
+                        ]
                     ]);
 
                 $n = 1;
@@ -222,13 +222,13 @@ class PerformanceReportController extends Controller
                         $row['prog_physical'],
                         $row['prog_finance_pct'],
                         $row['devn_physical'],
-                        $row['devn_finance_pct'],
+                        $row['devn_finance_pct']
                     ];
 
                     foreach ($alphabet as $key => $value) {
                         $sheet->setCellValue(
                             "{$value}{$detail_body}",
-                            $content[$key],
+                            $content[$key]
                         );
                     }
 
@@ -236,7 +236,7 @@ class PerformanceReportController extends Controller
                         ->getStyle("M{$detail_body}")
                         ->getFill()
                         ->setFillType(
-                            \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                            \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID
                         )
                         ->getStartColor()
                         ->setARGB($colors[$row['indicator']]);
@@ -246,15 +246,15 @@ class PerformanceReportController extends Controller
                         ->applyFromArray([
                             'alignment' => [
                                 'horizontal' =>
-                                    \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
-                            ],
+                                    \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT
+                            ]
                         ]);
 
                     $sheet->getStyle("F{$detail_body}")->applyFromArray([
                         'alignment' => [
                             'horizontal' =>
-                                \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                        ],
+                                \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+                        ]
                     ]);
 
                     $sheet
@@ -262,8 +262,8 @@ class PerformanceReportController extends Controller
                         ->applyFromArray([
                             'alignment' => [
                                 'horizontal' =>
-                                    \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
-                            ],
+                                    \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT
+                            ]
                         ]);
                 }
 
@@ -273,9 +273,9 @@ class PerformanceReportController extends Controller
                         'borders' => [
                             'allBorders' => [
                                 'borderStyle' =>
-                                    \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                            ],
-                        ],
+                                    \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                            ]
+                        ]
                     ]);
 
                 $prg_row = $detail_body + 2;
