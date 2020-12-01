@@ -258,6 +258,15 @@
             //#region Table
             //#region Thead
             //#region Thead Row 1
+            let headNo = createElement({
+              element: 'th',
+              class: ['text-center', 'align-middle'],
+              attribute: {
+                rowspan: 2,
+                width: '50px',
+              },
+              children: ['No.'],
+            })
 
             let headPackage = createElement({
               element: 'th',
@@ -352,10 +361,11 @@
             let theadRow1 = createElement({
               element: 'tr',
               children: [
+                headNo,
                 headPackage,
+                headPkgdDebtCeiling,
                 headCntValue,
                 headCntValueEnd,
-                headPkgdDebtCeiling,
                 headDate,
                 headTarget,
                 headProgress,
@@ -446,8 +456,16 @@
 
             // let labels = []
             let detail = list[index].detail
-
+            console.log(detail.length)
+            let n = 1
             for (idx in detail) {
+              let bodyNo = createElement({
+                element: 'td',
+                class: ['text-right'],
+                children: [n < detail.length ? n : ''],
+              })
+              n++
+
               let bodyPackage = createElement({
                 element: 'td',
                 children: [
@@ -522,10 +540,11 @@
               let bodyRow = createElement({
                 element: 'tr',
                 children: [
+                  bodyNo,
                   bodyPackage,
+                  bodyPkgdDebtCeiling,
                   bodyCntValue,
                   bodyCntValueEnd,
-                  bodyPkgdDebtCeiling,
                   bodyDate,
                   bodyTrgPhysical,
                   bodyTrgFinance,
