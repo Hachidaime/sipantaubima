@@ -481,6 +481,9 @@
 
                 let bodyPackage = createElement({
                   element: 'td',
+                  attribute: {
+                    rowspan: packageDetail.length,
+                  },
                   children: [
                     packageDetail[pkgd].pkgd_no != ''
                       ? `${packageDetail[pkgd].pkgd_name}`
@@ -574,22 +577,39 @@
 
                 let bodyRow = createElement({
                   element: 'tr',
-                  children: [
-                    bodyNo,
-                    bodyPackage,
-                    bodyPkgdDebtCeiling,
-                    bodyCntValue,
-                    bodyCntValueEnd,
-                    bodyWeek,
-                    bodyDate,
-                    bodyTrgPhysical,
-                    bodyTrgFinance,
-                    bodyProgPhysical,
-                    bodyProgFinance,
-                    bodyDevnPhysical,
-                    bodyDevnFinance,
-                    bodyIndicator,
-                  ],
+                  children:
+                    packageDetail[pkgd].pkgd_no != ''
+                      ? [
+                          bodyNo,
+                          bodyPackage,
+                          bodyPkgdDebtCeiling,
+                          bodyCntValue,
+                          bodyCntValueEnd,
+                          bodyWeek,
+                          bodyDate,
+                          bodyTrgPhysical,
+                          bodyTrgFinance,
+                          bodyProgPhysical,
+                          bodyProgFinance,
+                          bodyDevnPhysical,
+                          bodyDevnFinance,
+                          bodyIndicator,
+                        ]
+                      : [
+                          bodyNo,
+                          bodyPkgdDebtCeiling,
+                          bodyCntValue,
+                          bodyCntValueEnd,
+                          bodyWeek,
+                          bodyDate,
+                          bodyTrgPhysical,
+                          bodyTrgFinance,
+                          bodyProgPhysical,
+                          bodyProgFinance,
+                          bodyDevnPhysical,
+                          bodyDevnFinance,
+                          bodyIndicator,
+                        ],
                 })
 
                 tbody.appendChild(bodyRow)

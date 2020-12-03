@@ -33,21 +33,21 @@ class ProgressReportModel extends Model
     public function getData($data)
     {
         list($program) = $this->programModel->multiarray(null, [
-            ['prg_code', 'ASC'],
+            ['prg_code', 'ASC']
         ]);
         $programOptions = Functions::listToOptions(
             $program,
             'prg_code',
-            'prg_name',
+            'prg_name'
         );
 
         list($activity) = $this->activityModel->multiarray(null, [
-            ['act_code', 'ASC'],
+            ['act_code', 'ASC']
         ]);
         $activityOptions = Functions::listToOptions(
             $activity,
             'act_code',
-            'act_name',
+            'act_name'
         );
 
         $where = [];
@@ -65,7 +65,7 @@ class ProgressReportModel extends Model
                 ',',
                 array_map(function ($val) {
                     return $val['id'];
-                }, $package),
+                }, $package)
             );
 
             $targetOpt = $this->getTargetOpt($pkgIdList, $data['pkgd_id']);
@@ -103,7 +103,7 @@ class ProgressReportModel extends Model
 
                             $detail = array_merge(
                                 $target[$i][$key],
-                                $progress[$i][$key],
+                                $progress[$i][$key]
                             );
 
                             $detail['last_key'] =
@@ -121,7 +121,7 @@ class ProgressReportModel extends Model
 
                             $detail = array_merge(
                                 $target[$i][$key],
-                                $progress[$i][$key],
+                                $progress[$i][$key]
                             );
 
                             $detail['last_key'] =
@@ -168,7 +168,7 @@ class ProgressReportModel extends Model
         $cntValueEnd =
             $this->db->getCount() > 0 ? $addendum['add_value'] : $cntValue;
 
-        $trgFinancePct = $cntValue > 0 ? ($trgFinance / $cntValue) * 100 : 0;
+        $trgFinancePct = $cntValue > 0 ? ($trgFinanceCum / $cntValue) * 100 : 0;
 
         $progFinancePct =
             $cntValueEnd > 0
@@ -263,7 +263,7 @@ class ProgressReportModel extends Model
                 !empty($progFinancePct)
                     ? number_format($devnFinancePct, 2, ',', '.')
                     : '',
-            'indicator' => $indicator,
+            'indicator' => !empty($progFinancePct) ? $indicator : 'white'
         ];
 
         if ($result['week'] > 1) {
@@ -318,7 +318,14 @@ class ProgressReportModel extends Model
         // echo nl2br($query);
 
         $targetOpt = [];
-        foreach ($target as $row) {
+        foreach ($target as $idx => $row) {
+            $row['trg_finance_cum'] =
+                $idx > 0
+                    ? $target[$idx - 1]['trg_finance_cum'] + $row['trg_finance']
+                    : $row['trg_finance'];
+
+            $target[$idx] = $row;
+
             $targetOpt[$row['pkg_id']][] = $row;
         }
 
