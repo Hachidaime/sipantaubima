@@ -54,11 +54,27 @@ class Controller
 
         $this->validator = new Validator();
 
-        $pdo = new PDO(
-            'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8',
-            DB_USER,
-            DB_PASS
-        );
+        $pdo =
+            ENVIRONMENT == 'development'
+                ? new PDO(
+                    'mysql:host=' .
+                        DB_HOST .
+                        ';dbname=' .
+                        DB_NAME .
+                        ';charset=utf8',
+                    DB_USER,
+                    DB_PASS
+                )
+                : new PDO(
+                    'mysql:host=' .
+                        DB_HOST_PROD .
+                        ';dbname=' .
+                        DB_NAME_PROD .
+                        ';charset=utf8',
+                    DB_USER_PROD,
+                    DB_PASS_PROD
+                );
+
         $this->validator->addValidator('unique', new UniqueRule($pdo));
         $this->validator->addValidator('login', new LoginRule());
         $this->validator->addValidator('uniq_pkg_act', new UniqPkgActRule());

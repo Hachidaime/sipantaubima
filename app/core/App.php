@@ -108,18 +108,6 @@ class App
         if ($match === false) {
             $this->notFound();
         } else {
-            // if (
-            //     !isset($_SESSION['USER']) and
-            //     !in_array($match['name'], [
-            //         'login',
-            //         'login_action',
-            //         '403',
-            //         '404'
-            //     ])
-            // ) {
-            //     header('Location: ' . BASE_URL . '/login');
-            // }
-
             return true;
         }
     }
