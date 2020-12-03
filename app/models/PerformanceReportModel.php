@@ -90,9 +90,25 @@ class PerformanceReportModel extends Model
                         $avgDevnPhysical = 0;
                         $avgDevnFinancePct = 0;
 
+                        $subCntValue = 0;
+                        $subCntValueEnd = 0;
+                        $subPkgdDebtCeiling = 0;
+
                         foreach ($packageDetail[$row['id']] as $key => $value) {
                             $detail = $this->getDetail($value);
                             $row['detail'][$key] = $detail;
+
+                            $subCntValue += !empty($detail['cnt_value'])
+                                ? $detail['cnt_value']
+                                : 0;
+                            $subCntValueEnd += !empty($detail['cnt_value_end'])
+                                ? $detail['cnt_value_end']
+                                : 0;
+                            $subPkgdDebtCeiling += !empty(
+                                $detail['pkgd_debt_ceiling']
+                            )
+                                ? $detail['pkgd_debt_ceiling']
+                                : 0;
 
                             $avgTrgPhysical += number_format(
                                 (!empty($detail['trg_physical'])
@@ -135,60 +151,60 @@ class PerformanceReportModel extends Model
                         if (!is_null($data)) {
                             $row['detail'][$key + 1] = [
                                 'pkgd_name' => 'Subtotal',
-                                'cnt_value' => '',
-                                'cnt_value_end' => '',
-                                'pkgd_debt_ceiling' => '',
+                                'cnt_value' => !empty($subCntValue)
+                                    ? $subCntValue
+                                    : 0,
+                                'cnt_value_end' => !empty($subCntValueEnd)
+                                    ? $subCntValueEnd
+                                    : 0,
+                                'pkgd_debt_ceiling' => !empty(
+                                    $subPkgdDebtCeiling
+                                )
+                                    ? $subPkgdDebtCeiling
+                                    : 0,
                                 'pkgd_last_prog_date' => '',
                                 'trg_physical' => !empty($avgTrgPhysical)
-                                    ? number_format(
-                                        $avgTrgPhysical,
-                                        2,
-                                        ',',
-                                        '.'
-                                    )
-                                    : '',
+                                    ? $avgTrgPhysical
+                                    : 0,
                                 'trg_finance_pct' => !empty($avgTrgFinancePct)
-                                    ? number_format(
-                                        $avgTrgFinancePct,
-                                        2,
-                                        ',',
-                                        '.'
-                                    )
-                                    : '',
+                                    ? $avgTrgFinancePct
+                                    : 0,
                                 'prog_physical' => !empty($avgProgPhysical)
-                                    ? number_format(
-                                        $avgProgPhysical,
-                                        2,
-                                        ',',
-                                        '.'
-                                    )
-                                    : '',
+                                    ? $avgProgPhysical
+                                    : 0,
                                 'prog_finance_pct' => !empty($avgProgFinancePct)
-                                    ? number_format(
-                                        $avgProgFinancePct,
-                                        2,
-                                        ',',
-                                        '.'
-                                    )
-                                    : '',
+                                    ? $avgProgFinancePct
+                                    : 0,
                                 'devn_physical' => !empty($avgDevnPhysical)
-                                    ? number_format(
-                                        $avgDevnPhysical,
-                                        2,
-                                        ',',
-                                        '.'
-                                    )
-                                    : '',
+                                    ? $avgDevnPhysical
+                                    : 0,
                                 'devn_finance_pct' => !empty($avgDevnFinancePct)
-                                    ? number_format(
-                                        $avgDevnFinancePct,
-                                        2,
-                                        ',',
-                                        '.'
-                                    )
-                                    : ''
+                                    ? $avgDevnFinancePct
+                                    : 0
                             ];
                         }
+                    }
+
+                    foreach ($row['detail'] as $i => $r) {
+                        foreach ($r as $k => $v) {
+                            $r[$k] = in_array($k, [
+                                'cnt_value',
+                                'cnt_value_end',
+                                'pkgd_debt_ceiling',
+                                'trg_physical',
+                                'trg_finance_pct',
+                                'prog_physical',
+                                'prog_finance_pct',
+                                'devn_physical',
+                                'devn_finance_pct'
+                            ])
+                                ? ($v > 0
+                                    ? number_format($v, 2, ',', '.')
+                                    : '')
+                                : $v;
+                        }
+
+                        $row['detail'][$i] = $r;
                     }
                 }
 
@@ -263,46 +279,19 @@ class PerformanceReportModel extends Model
         $result = [
             'pkgd_id' => $id,
             'pkgd_name' => $pkgdName,
-            'cnt_value' =>
-                $cntValue > 0 ? number_format($cntValue, 2, ',', '.') : '',
-            'cnt_value_end' =>
-                $cntValueEnd > 0
-                    ? number_format($cntValueEnd, 2, ',', '.')
-                    : '',
-            'pkgd_debt_ceiling' =>
-                $pkgdDebtCeiling > 0
-                    ? number_format($pkgdDebtCeiling, 2, ',', '.')
-                    : '',
+            'cnt_value' => $cntValue > 0 ? $cntValue : 0,
+            'cnt_value_end' => $cntValueEnd > 0 ? $cntValueEnd : 0,
+            'pkgd_debt_ceiling' => $pkgdDebtCeiling > 0 ? $pkgdDebtCeiling : 0,
             'week' => $week,
             'pkgd_last_prog_date' => !is_null($pkgdLastProgDate)
                 ? Functions::dateFormat('Y-m-d', 'd/m/Y', $pkgdLastProgDate)
                 : '',
-            'trg_physical' =>
-                $trgPhysical > 0
-                    ? number_format($trgPhysical, 2, ',', '.')
-                    : '',
-            'trg_finance_pct' =>
-                $trgFinancePct > 0
-                    ? number_format($trgFinancePct, 2, ',', '.')
-                    : '',
-            'prog_physical' =>
-                $progPhysical > 0
-                    ? number_format($progPhysical, 2, ',', '.')
-                    : '',
-            'prog_finance_pct' =>
-                $progFinancePct > 0
-                    ? number_format($progFinancePct, 2, ',', '.')
-                    : '',
-            'devn_physical' =>
-                // !empty($trgPhysical) ||
-                !empty($progPhysical)
-                    ? number_format($devnPhysical, 2, ',', '.')
-                    : '',
-            'devn_finance_pct' =>
-                // !empty($trgFinance) ||
-                !empty($progFinancePct)
-                    ? number_format($devnFinancePct, 2, ',', '.')
-                    : '',
+            'trg_physical' => $trgPhysical > 0 ? $trgPhysical : 0,
+            'trg_finance_pct' => $trgFinancePct > 0 ? $trgFinancePct : 0,
+            'prog_physical' => $progPhysical > 0 ? $progPhysical : 0,
+            'prog_finance_pct' => $progFinancePct > 0 ? $progFinancePct : 0,
+            'devn_physical' => !empty($progPhysical) ? $devnPhysical : 0,
+            'devn_finance_pct' => !empty($progFinancePct) ? $devnFinancePct : 0,
             'indicator' => $indicator
         ];
 
