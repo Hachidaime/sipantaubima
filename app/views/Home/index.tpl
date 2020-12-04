@@ -8,7 +8,7 @@
       <div class="text-center">
         <a href="{$smarty.const.BASE_URL}/login">
           <img
-            src="https://dummyimage.com/200x200/ff0000/fff.png&text=1:1+(200x200)"
+            src="{$smarty.const.IMG_LINK1}?t={$smarty.now}"
             class="rounded-circle"
             alt="..."
           />
@@ -20,7 +20,7 @@
       <div class="text-center">
         <a href="{$smarty.const.BASE_URL}/login">
           <img
-            src="https://dummyimage.com/200x200/00ff00/fff.png&text=1:1+(200x200)"
+            src="{$smarty.const.IMG_LINK2}?t={$smarty.now}"
             class="rounded-circle"
             alt="..."
           />
@@ -32,7 +32,7 @@
       <div class="text-center">
         <a href="{$smarty.const.BASE_URL}/login">
           <img
-            src="https://dummyimage.com/200x200/0000ff/fff.png&text=1:1+(200x200)"
+            src="{$smarty.const.IMG_LINK3}?t={$smarty.now}"
             class="rounded-circle"
             alt="..."
           />
@@ -60,21 +60,21 @@
   <div class="carousel-inner">
     <div class="carousel-item active">
       <img
-        src="https://dummyimage.com/960x300/ccc/666.png&text=16:5+(960x300)"
+        src="{$smarty.const.IMG_SLIDE1}?t={$smarty.now}"
         class="d-block w-100"
         alt="..."
       />
     </div>
     <div class="carousel-item">
       <img
-        src="https://dummyimage.com/960x300/aaa/666.png&text=16:5+(960x300)"
+        src="{$smarty.const.IMG_SLIDE2}?t={$smarty.now}"
         class="d-block w-100"
         alt="..."
       />
     </div>
     <div class="carousel-item">
       <img
-        src="https://dummyimage.com/960x300/999/666.png&text=16:5+(960x300)"
+        src="{$smarty.const.IMG_SLIDE3}?t={$smarty.now}"
         class="d-block w-100"
         alt="..."
       />
