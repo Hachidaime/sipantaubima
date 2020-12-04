@@ -90,7 +90,7 @@ hr.rounded {
 
 .triangle {
   position: relative;
-  background: var(--orange);
+  background: #f0d4a1;
   height: 50vh;
 }
 
@@ -102,7 +102,7 @@ hr.rounded {
   height: 0;
   border-style: solid;
   border-width: 25px 25px 0 25px;
-  border-color: var(--orange) transparent transparent transparent;
+  border-color: #f0d4a1 transparent transparent transparent;
   left: 50%;
   transform: translateX(-50%) translateY(100%);
 }
