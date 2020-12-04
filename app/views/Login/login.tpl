@@ -4,15 +4,17 @@
 {extends 'Templates/mainlayout.tpl'}
 
 {block 'style'}
+{literal}
 <style>
   .login-container {
-    background-image: url(https://unsplash.com/photos/njnNtzJeUeQ/download?force=true&w=1920);
+    background-image: url({/literal}{$smarty.const.LOGIN_BG}?t={$smarty.now}{literal});
     background-position: center;
     height: 100vh;
     background-size: cover;
     width: 100%;
   }
 </style>
+{/literal}
 <!-- prettier-ignore -->
 {/block} 
 
