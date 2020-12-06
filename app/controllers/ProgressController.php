@@ -91,9 +91,8 @@ class ProgressController extends Controller
             [$tag, '']
         ]);
 
-        list($packageDetail) = $this->packageDetailModel->multiarray(
-            [['pkg_id >', 0], ['usr_id', $_SERVER['USER']['id']]],
-            [['pkgd_no', 'ASC']]
+        $packageDetail = $this->packageDetailModel->packageByUser(
+            $_SESSION['USER']['id']
         );
 
         $this->smarty->assign('subtitle', "{$tag} {$this->title}");

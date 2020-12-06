@@ -44,6 +44,7 @@ class ProgressModel extends Model
         $activityTable = $this->activityModel->getTable();
         $packageTable = $this->packageModel->getTable();
         $packageDetailTable = $this->packageDetailModel->getTable();
+        $contractTable = $this->contractModel->getTable();
 
         $count = $this->db
             ->query(
@@ -52,6 +53,8 @@ class ProgressModel extends Model
                 FROM `{$this->table}`
                 LEFT JOIN `{$packageDetailTable}`
                     ON `{$packageDetailTable}`.`id` = `{$this->table}`.`pkgd_id`
+                RIGHT JOIN `{$contractTable}`
+                    ON `{$packageDetailTable}`.`id` = `{$contractTable}`.`pkgd_id`
                 LEFT JOIN `{$packageTable}`
                     ON `{$packageTable}`.`id` = `{$packageDetailTable}`.`pkg_id`
                 LEFT JOIN `{$programTable}`
