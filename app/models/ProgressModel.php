@@ -1,10 +1,5 @@
 <?php
 namespace app\models;
-use app\models\Model;
-use app\models\ProgramModel;
-use app\models\ActivityModel;
-use app\models\PackageModel;
-use app\models\PackageDetailModel;
 
 /**
  * @desc this class will handle Program model
@@ -29,6 +24,7 @@ class ProgressModel extends Model
         $this->activityModel = new ActivityModel();
         $this->packageModel = new PackageModel();
         $this->packageDetailModel = new PackageDetailModel();
+        $this->contractModel = new ContractModel();
     }
 
     public function getData($data, $paginage = false)
@@ -37,8 +33,12 @@ class ProgressModel extends Model
         $keyword = $data['keyword'] ?? null;
 
         $filter = !empty($keyword)
-            ? "WHERE `{$this->table}`.`prog_fiscal_year` = '{$keyword}'"
+            ? [
+                "WHERE `{$this->table}`.`prog_fiscal_year` = '{$keyword}'",
+                "AND `{$this->contractModel->getTable()}`.`usr_id` = '{$_SESSION['USER']['id']}'"
+            ]
             : '';
+        $filter = implode(' ', $filter);
 
         $programTable = $this->programModel->getTable();
         $activityTable = $this->activityModel->getTable();
@@ -58,7 +58,7 @@ class ProgressModel extends Model
                     ON `{$programTable}`.`prg_code` = `{$packageTable}`.`prg_code`
                 LEFT JOIN `{$activityTable}`
                     ON `{$activityTable}`.`act_code` = `{$packageTable}`.`act_code`
-                {$filter}",
+                {$filter}"
             )
             ->toArray();
 
@@ -78,7 +78,7 @@ class ProgressModel extends Model
             'currentPage' => $currentPage,
             'nextPage' => $nextPage,
             'lastPage' => $lastPage,
-            'totalRows' => $totalRows,
+            'totalRows' => $totalRows
         ];
 
         $limit = $paginage ? "LIMIT {$limit} OFFSET {$offset}" : '';

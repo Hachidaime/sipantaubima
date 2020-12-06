@@ -8,7 +8,7 @@ use app\models\ProgressModel;
 use app\models\PackageDetailModel;
 use app\models\ProgramModel;
 use app\models\ActivityModel;
-
+use app\models\UserModel;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -31,6 +31,7 @@ class ProgressController extends Controller
 
         $this->progressModel = new ProgressModel();
         $this->packageDetailModel = new PackageDetailModel();
+        $this->UserModel = new UserModel();
 
         if (!$_SESSION['USER']['usr_is_progress']) {
             header('Location:' . BASE_URL . '/403');
@@ -41,7 +42,7 @@ class ProgressController extends Controller
     {
         $this->smarty->assign('breadcrumb', [
             ['Paket Pekerjaan', ''],
-            [$this->title, ''],
+            [$this->title, '']
         ]);
 
         $this->smarty->assign('subtitle', "Daftar {$this->title}");
@@ -55,7 +56,7 @@ class ProgressController extends Controller
 
         echo json_encode([
             'list' => $list,
-            'info' => $info,
+            'info' => $info
         ]);
         exit();
     }
@@ -75,7 +76,7 @@ class ProgressController extends Controller
                 Flasher::setFlash(
                     'Data tidak ditemukan!',
                     $this->name,
-                    'error',
+                    'error'
                 );
                 header('Location: ' . BASE_URL . "/{$this->lowerName}");
             }
@@ -87,12 +88,12 @@ class ProgressController extends Controller
         $this->smarty->assign('breadcrumb', [
             ['Paket Pekerjaan', ''],
             [$this->title, $this->lowerName],
-            [$tag, ''],
+            [$tag, '']
         ]);
 
         list($packageDetail) = $this->packageDetailModel->multiarray(
-            [['pkg_id >', 0]],
-            [['pkgd_no', 'ASC']],
+            [['pkg_id >', 0], ['usr_id', $_SERVER['USER']['id']]],
+            [['pkgd_no', 'ASC']]
         );
 
         $this->smarty->assign('subtitle', "{$tag} {$this->title}");
@@ -107,7 +108,7 @@ class ProgressController extends Controller
         $detail['prog_date'] = Functions::dateFormat(
             'Y-m-d',
             'd/m/Y',
-            $detail['prog_date'],
+            $detail['prog_date']
         );
 
         echo json_encode($detail);
@@ -141,7 +142,7 @@ class ProgressController extends Controller
                         $imgdir,
                         $data['prog_img'],
                         false,
-                        true,
+                        true
                     );
                     $update['prog_img'] = $prog_img
                         ? $prog_img
@@ -154,7 +155,7 @@ class ProgressController extends Controller
                         $docdir,
                         $data['prog_doc'],
                         false,
-                        true,
+                        true
                     );
                     $update['prog_doc'] = $prog_doc
                         ? $prog_doc
@@ -168,22 +169,22 @@ class ProgressController extends Controller
                 Flasher::setFlash(
                     "Berhasil {$tag} {$this->title}.",
                     $this->name,
-                    'success',
+                    'success'
                 );
 
                 list($packageDetail) = $this->packageDetailModel->singlearray(
-                    $data['pkgd_id'],
+                    $data['pkgd_id']
                 );
 
                 $this->writeLog(
                     "{$tag} {$this->title}",
-                    "{$tag} {$this->title} [{$packageDetail['pkgd_no']} - {$packageDetail['pkgd_name']}] berhasil.",
+                    "{$tag} {$this->title} [{$packageDetail['pkgd_no']} - {$packageDetail['pkgd_name']}] berhasil."
                 );
                 echo json_encode(['success' => true]);
             } else {
                 echo json_encode([
                     'success' => false,
-                    'msg' => "Gagal {$tag} {$this->title}.",
+                    'msg' => "Gagal {$tag} {$this->title}."
                 ]);
             }
             exit();
@@ -198,7 +199,7 @@ class ProgressController extends Controller
             'prog_date' => 'required|date',
             'pkgd_id' => 'required',
             'prog_physical' => 'required|numeric',
-            'prog_img' => 'required',
+            'prog_img' => 'required'
         ]);
 
         $validation->setAliases([
@@ -207,7 +208,7 @@ class ProgressController extends Controller
             'prog_date' => 'Tanggal Progres',
             'pkgd_id' => 'Nama Paket',
             'prog_physical' => 'Progres Fisik',
-            'prog_img' => 'Foto',
+            'prog_img' => 'Foto'
         ]);
 
         $validation->setMessages([
@@ -216,7 +217,7 @@ class ProgressController extends Controller
             'date' => 'Format <strong>:attribute</strong> tidak valid.',
             'numeric' => '<strong>:attribute</strong> tidak valid.',
             'prog_week:uniq_prog' =>
-                '<strong>:attribute:value</strong> telah ada di database.',
+                '<strong>:attribute:value</strong> telah ada di database.'
         ]);
 
         $validation->validate();
@@ -224,7 +225,7 @@ class ProgressController extends Controller
         if ($validation->fails()) {
             echo json_encode([
                 'success' => false,
-                'msg' => $validation->errors()->firstOfAll(),
+                'msg' => $validation->errors()->firstOfAll()
             ]);
             exit();
         }
@@ -244,21 +245,21 @@ class ProgressController extends Controller
             Flasher::setFlash(
                 "Berhasil {$tag} {$this->title}.",
                 $this->name,
-                'success',
+                'success'
             );
 
             list($packageDetail) = $this->packageDetailModel->singlearray(
-                $data['pkgd_id'],
+                $data['pkgd_id']
             );
             $this->writeLog(
                 "{$tag} {$this->title}",
-                "{$tag} {$this->title} [{$packageDetail['pkgd_no']} - {$packageDetail['pkgd_name']}] berhasil.",
+                "{$tag} {$this->title} [{$packageDetail['pkgd_no']} - {$packageDetail['pkgd_name']}] berhasil."
             );
             echo json_encode(['success' => true]);
         } else {
             echo json_encode([
                 'success' => false,
-                'msg' => "Gagal {$tag} {$this->title}.",
+                'msg' => "Gagal {$tag} {$this->title}."
             ]);
         }
         exit();
@@ -313,10 +314,10 @@ class ProgressController extends Controller
                     'Nama Paket',
                     "Tanggal\nPeriode",
                     "Progres Fisik\n(%)",
-                    "Progres Keuangan\n(Rp)",
+                    "Progres Keuangan\n(Rp)"
                 ],
                 null,
-                'A1',
+                'A1'
             );
 
         $spreadsheet
@@ -332,14 +333,14 @@ class ProgressController extends Controller
                     'horizontal' =>
                         \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                     'vertical' =>
-                        \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                        \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
                 ],
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' =>
-                            \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    ],
-                ],
+                            \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                    ]
+                ]
             ]);
 
         if ($list_count > 0) {
@@ -359,29 +360,29 @@ class ProgressController extends Controller
                 $sheet->getStyle("B{$row}")->applyFromArray([
                     'alignment' => [
                         'horizontal' =>
-                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                    ],
+                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+                    ]
                 ]);
 
                 $sheet->getStyle("E{$row}")->applyFromArray([
                     'alignment' => [
                         'horizontal' =>
-                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                    ],
+                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+                    ]
                 ]);
 
                 $sheet->getStyle("G{$row}")->applyFromArray([
                     'alignment' => [
                         'horizontal' =>
-                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                    ],
+                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+                    ]
                 ]);
 
                 $sheet->getStyle("H{$row}:I{$row}")->applyFromArray([
                     'alignment' => [
                         'horizontal' =>
-                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
-                    ],
+                            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT
+                    ]
                 ]);
             }
 
@@ -392,9 +393,9 @@ class ProgressController extends Controller
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' =>
-                                \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                        ],
-                    ],
+                                \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                        ]
+                    ]
                 ]);
         }
 
@@ -451,13 +452,13 @@ class ProgressController extends Controller
             $list[$idx]['prog_date'] = Functions::dateFormat(
                 'Y-m-d',
                 'd/m/Y',
-                $row['prog_date'],
+                $row['prog_date']
             );
             $list[$idx]['prog_finance'] = number_format(
                 $row['prog_finance'],
                 2,
                 ',',
-                '.',
+                '.'
             );
         }
 
