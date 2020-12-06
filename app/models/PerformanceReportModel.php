@@ -286,6 +286,9 @@ class PerformanceReportModel extends Model
             'pkgd_last_prog_date' => !is_null($pkgdLastProgDate)
                 ? Functions::dateFormat('Y-m-d', 'd/m/Y', $pkgdLastProgDate)
                 : '',
+            'pkgd_pho_date' => !is_null($pkgdPhoDate)
+                ? Functions::dateFormat('Y-m-d', 'd/m/Y', $pkgdPhoDate)
+                : '',
             'trg_physical' => $trgPhysical > 0 ? $trgPhysical : 0,
             'trg_finance_pct' => $trgFinancePct > 0 ? $trgFinancePct : 0,
             'prog_physical' => $progPhysical > 0 ? $progPhysical : 0,
@@ -311,6 +314,7 @@ class PerformanceReportModel extends Model
             `{$packageDetailTable}`.`pkgd_name`,
             `{$packageDetailTable}`.`pkgd_debt_ceiling`,
             `{$packageDetailTable}`.`pkgd_sum_prog_finance` as `prog_finance_cum`,
+            `{$packageDetailTable}`.`pkgd_pho_date`,
             `{$contractTable}`.`cnt_value`
             FROM `{$packageDetailTable}`
             LEFT JOIN `{$contractTable}` 

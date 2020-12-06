@@ -46,7 +46,7 @@ class DashboardModel extends Model
                             $green += 1;
                             break;
                     }
-                    if ($value['prog_physical'] == 100) {
+                    if (!empty($value['pkgd_pho_date'])) {
                         $finish += 1;
                     }
                 }
@@ -59,7 +59,7 @@ class DashboardModel extends Model
                 'yellow' => $yellow,
                 'green' => $green,
                 'finish' => $finish,
-                'all' => !empty($row['detail']) ? count($row['detail']) : 0,
+                'all' => !empty($row['detail']) ? count($row['detail']) : 0
             ];
         }
 
