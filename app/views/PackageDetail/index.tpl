@@ -174,7 +174,8 @@
               progressBtn = null,
               imgBtn = null,
               editBtn = null,
-              deleteBtn = null
+              deleteBtn = null,
+              expiresBtn = null
 
             contractBtn = createElement({
               element: 'a',
@@ -263,6 +264,18 @@
               children: ['Hapus'],
             })
 
+            expiresBtn = createElement({
+              element: 'a',
+              class: ['badge', 'badge-pill', 'badge-light', 'btn-expires'],
+              data: {
+                id: list[index].id,
+              },
+              attribute: {
+                href: `javascript:void(0)`,
+              },
+              children: ['Kontrak Berakhir'],
+            })
+
             actionBtns = createElement({
               element: 'div',
               class: ['btn-group'],
@@ -271,7 +284,7 @@
 
             action = createElement({
               element: 'td',
-              children: [actionBtns, editBtn, deleteBtn],
+              children: [actionBtns, editBtn, deleteBtn, expiresBtn],
             })
 
             detail = createElement({

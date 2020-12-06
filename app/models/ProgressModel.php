@@ -32,12 +32,13 @@ class ProgressModel extends Model
         $page = $data['page'] ?? 1;
         $keyword = $data['keyword'] ?? null;
 
-        $filter = !empty($keyword)
-            ? [
-                "WHERE `{$this->table}`.`prog_fiscal_year` = '{$keyword}'",
-                "AND `{$this->contractModel->getTable()}`.`usr_id` = '{$_SESSION['USER']['id']}'"
-            ]
-            : '';
+        $filter = [
+            "WHERE `{$this->contractModel->getTable()}`.`usr_id` = '{$_SESSION['USER']['id']}'"
+        ];
+        if (!empty($keyword)) {
+            $filter[] = "WHERE `{$this->table}`.`prog_fiscal_year` = '{$keyword}'";
+        }
+
         $filter = implode(' ', $filter);
 
         $programTable = $this->programModel->getTable();
@@ -93,6 +94,8 @@ class ProgressModel extends Model
             FROM `{$this->table}`
             LEFT JOIN `{$packageDetailTable}`
                 ON `{$packageDetailTable}`.`id` = `{$this->table}`.`pkgd_id`
+            RIGHT JOIN `{$contractTable}`
+                ON `{$packageDetailTable}`.`id` = `{$contractTable}`.`pkgd_id`
             LEFT JOIN `{$packageTable}`
                 ON `{$packageTable}`.`id` = `{$packageDetailTable}`.`pkg_id`
             LEFT JOIN `{$programTable}`
@@ -108,6 +111,7 @@ class ProgressModel extends Model
             `{$this->table}`.`prog_week` ASC
             {$limit}
             ";
+        // echo nl2br($query);
         $list = $this->db->query($query)->toArray();
 
         return [$list, $info];
