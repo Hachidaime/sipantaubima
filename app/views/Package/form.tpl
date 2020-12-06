@@ -21,9 +21,9 @@
         </div>
         <!-- /.card-header -->
         <!-- form start -->
-        <form id="my_form" role="form" method="POST">
-          <input type="hidden" id="id" name="id" value="{$id}" />
-          <div class="card-body">
+        <div class="card-body">
+          <form id="my_form" role="form" method="POST">
+            <input type="hidden" id="id" name="id" value="{$id}" />
             <div class="form-group row">
               <label
                 for="pkg_fiscal_year"
@@ -115,17 +115,16 @@
                 <div class="invalid-feedback"></div>
               </div>
             </div>
+          </form>
+          {block 'detailList'}{/block}
+        </div>
+        <!-- /.card-body -->
 
-            {block 'detailList'}{/block}
-          </div>
-          <!-- /.card-body -->
-
-          <div class="card-footer">
-            <!-- prettier-ignore -->
-            {include 'Templates/buttons/submit.tpl'}
+        <div class="card-footer">
+          <!-- prettier-ignore -->
+          {include 'Templates/buttons/submit.tpl'}
             {include 'Templates/buttons/back.tpl'}
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   </div>

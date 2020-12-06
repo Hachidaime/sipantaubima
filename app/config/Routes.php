@@ -59,7 +59,11 @@ foreach ($master as $value) {
 }
 
 $router->addRoutes([
-    ['POST', '/package/submitexpires', 'PackageController::submitExpires'],
+    [
+        'POST',
+        '/package/submitexpires',
+        'PackageDetailController::submitExpires'
+    ],
     ['GET', '/package/activity', 'ProfileController::activity']
 ]);
 

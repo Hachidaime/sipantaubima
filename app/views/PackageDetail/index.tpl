@@ -45,6 +45,91 @@
     </div>
   </div>
 </div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="expiresFormModal"
+  data-backdrop="static"
+  data-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="expiresFormModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="expiresFormModalLabel"></h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="expires_form" role="form" method="POST">
+          <input type="hidden" id="id" name="id" value="" />
+          <div class="form-group row">
+            <label for="pkgd_pho_date" class="col-5 col-form-label">
+              Tanggal PHO
+              <sup class="fas fa-asterisk text-red"></sup>
+            </label>
+            <div class="col-4">
+              <input
+                type="text"
+                class="form-control rounded-0"
+                id="pkgd_pho_date"
+                name="pkgd_pho_date"
+                autocomplete="off"
+                data-toggle="datetimepicker"
+                data-target="#pkgd_pho_date"
+              />
+              <div class="invalid-feedback"></div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="pkgd_contract_fv" class="col-5 col-form-label">
+              Nilai Akhir Kontrak
+              <sup class="fas fa-asterisk text-red"></sup>
+            </label>
+            <div class="col-7">
+              <input
+                class="form-control rounded-0 money-format"
+                id="pkgd_contract_fv"
+                name="pkgd_contract_fv"
+                autocomplete="off"
+                placeholder="0,00"
+              />
+              <div class="invalid-feedback"></div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-light btn-flat"
+          data-dismiss="modal"
+          style="width: 125px;"
+        >
+          Batal
+        </button>
+        <button
+          type="button"
+          class="btn btn-success btn-flat"
+          id="btn_save_expires"
+          style="width: 125px;"
+        >
+          Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- prettier-ignore -->
 {/block}
 
@@ -88,6 +173,19 @@
 
     $(document).on('click', '#detailList .btn-delete', function () {
       deleteDetail(this.dataset.id)
+    })
+
+    $('#pkgd_pho_date').datetimepicker({
+      format: 'DD/MM/YYYY',
+      locale: 'id',
+    })
+
+    $(document).on('click', '.btn-expires', function () {
+      showExpiresForm(this.dataset.id)
+    })
+
+    $('#btn_save_expires').click(() => {
+      saveExpires()
     })
   })
 
@@ -266,7 +364,14 @@
 
             expiresBtn = createElement({
               element: 'a',
-              class: ['badge', 'badge-pill', 'badge-light', 'btn-expires'],
+              class: [
+                'badge',
+                'badge-pill',
+                list[index].pkgd_pho_date != null
+                  ? 'badge-success'
+                  : 'badge-light',
+                'btn-expires',
+              ],
               data: {
                 id: list[index].id,
               },
@@ -445,6 +550,44 @@
     $('#target_form #pkgd_id').val(id)
 
     searchTarget(id)
+  }
+
+  let showExpiresForm = (id) => {
+    $('#expiresFormModal').modal('show')
+    $('#expiresFormModalLabel').text('Kontrak Berakhir')
+
+    let data = $(`#result_data input[data-id=${id}]`).data()
+
+    $.each(data, (key, value) => {
+      key = key
+        .replace(/\.?([A-Z]+)/g, function (x, y) {
+          return '_' + y.toLowerCase()
+        })
+        .replace(/^_/, '')
+
+      $(`#expires_form #${key}`).val(value)
+    })
+  }
+
+  let saveExpires = () => {
+    $.post(
+      `${MAIN_URL}/submitexpires`,
+      $('#expires_form').serialize(),
+      (res) => {
+        if (!res.success) {
+          if (typeof res.msg === 'object') {
+            $.each(res.msg, (id, message) => {
+              showErrorMessage(id, message)
+            })
+          } else flash(res.msg, 'error')
+        } else {
+          flash(res.msg, 'success')
+          $('#expiresFormModal').modal('hide')
+          pkgdSearch()
+        }
+      },
+      'JSON'
+    )
   }
 </script>
 {/literal} {/block}

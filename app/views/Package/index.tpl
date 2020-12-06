@@ -47,15 +47,15 @@
             <thead>
               <tr>
                 <th class="align-middle text-right" width="50px">#</th>
-                <th class="align-middle text-center" width="*">
+                <th class="align-middle text-center" width="80px">
                   Tahun Anggaran
                 </th>
                 <th class="align-middle text-center" width="25%">Program</th>
-                <th class="align-middle text-center" width="25%">Kegiatan</th>
+                <th class="align-middle text-center" width="*">Kegiatan</th>
                 <th class="align-middle text-center" width="15%">
                   Pagu Anggaran<br />(Rp)
                 </th>
-                <th width="22%px">&nbsp;</th>
+                <th width="150px">&nbsp;</th>
               </tr>
             </thead>
             <tbody id="result_data"></tbody>
@@ -70,91 +70,6 @@
   </div>
 </div>
 
-<!-- Modal -->
-<div
-  class="modal fade"
-  id="expiresFormModal"
-  data-backdrop="static"
-  data-keyboard="false"
-  tabindex="-1"
-  aria-labelledby="expiresFormModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="expiresFormModalLabel"></h5>
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close"
-        >
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="expires_form" role="form" method="POST">
-          <input type="hidden" id="id" name="id" value="" />
-
-          <div class="form-group row">
-            <label for="pkg_pho_date" class="col-5 col-form-label">
-              Tanggal Periode
-              <sup class="fas fa-asterisk text-red"></sup>
-            </label>
-            <div class="col-4">
-              <input
-                type="text"
-                class="form-control rounded-0"
-                id="pkg_pho_date"
-                name="pkg_pho_date"
-                autocomplete="off"
-                data-toggle="datetimepicker"
-                data-target="#pkg_pho_date"
-              />
-              <div class="invalid-feedback"></div>
-            </div>
-          </div>
-
-          <div class="form-group row">
-            <label for="pkg_contract_fv" class="col-5 col-form-label">
-              Keuangan
-              <sup class="fas fa-asterisk text-red"></sup>
-            </label>
-            <div class="col-7">
-              <input
-                class="form-control rounded-0 money-format"
-                id="pkg_contract_fv"
-                name="pkg_contract_fv"
-                autocomplete="off"
-                placeholder="0,00"
-              />
-              <div class="invalid-feedback"></div>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-light btn-flat"
-          data-dismiss="modal"
-          style="width: 125px;"
-        >
-          Batal
-        </button>
-        <button
-          type="button"
-          class="btn btn-success btn-flat"
-          id="btn_save"
-          style="width: 125px;"
-        >
-          Simpan
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 <!-- prettier-ignore -->
 {/block} 
 
@@ -182,10 +97,6 @@
       deleteData($(this).data('id'))
     })
 
-    $(document).on('click', '.btn-expires', function () {
-      showExpiresForm(this.dataset.id)
-    })
-
     $('#pkg_pho_date').datetimepicker({
       format: 'DD/MM/YYYY',
       locale: 'id',
@@ -199,10 +110,6 @@
       numericInput: true,
       autoGroup: true,
       autoUnmask: true,
-    })
-
-    $('#btn_save').click(() => {
-      saveExpires()
     })
   })
 
@@ -261,8 +168,7 @@
           })
 
           let editBtn = null,
-            deleteBtn = null,
-            expiresBtn = null
+            deleteBtn = null
 
           editBtn = createElement({
             element: 'a',
@@ -291,21 +197,9 @@
             children: ['Hapus'],
           })
 
-          expiresBtn = createElement({
-            element: 'a',
-            class: ['badge', 'badge-pill', 'badge-light', 'btn-expires'],
-            data: {
-              id: list[index].id,
-            },
-            attribute: {
-              href: `javascript:void(0)`,
-            },
-            children: ['Kontrak Berakhir'],
-          })
-
           action = createElement({
             element: 'td',
-            children: [editBtn, deleteBtn, expiresBtn],
+            children: [editBtn, deleteBtn],
           })
 
           detail = createElement({
@@ -331,10 +225,6 @@
             ],
           })
 
-          if (list[index].pkg_pho_date != null) {
-            tRow.classList.add('bg-success')
-          }
-
           tBody.appendChild(tRow)
         }
         reArrange('#result_data tr', paging.currentPage)
@@ -352,43 +242,6 @@
       params,
       (res) => {
         download(res)
-      },
-      'JSON'
-    )
-  }
-
-  let showExpiresForm = (id) => {
-    $('#expiresFormModal').modal('show')
-    $('#expiresFormModalLabel').text('Kontrak Berakhir')
-
-    let data = $(`#result_data input[data-id=${id}]`).data()
-    $.each(data, (key, value) => {
-      key = key
-        .replace(/\.?([A-Z]+)/g, function (x, y) {
-          return '_' + y.toLowerCase()
-        })
-        .replace(/^_/, '')
-
-      $(`#expires_form #${key}`).val(value)
-    })
-  }
-
-  let saveExpires = () => {
-    $.post(
-      `${MAIN_URL}/submitexpires`,
-      $('#expires_form').serialize(),
-      (res) => {
-        if (!res.success) {
-          if (typeof res.msg === 'object') {
-            $.each(res.msg, (id, message) => {
-              showErrorMessage(id, message)
-            })
-          } else flash(res.msg, 'error')
-        } else {
-          flash(res.msg, 'success')
-          $('#expiresFormModal').modal('hide')
-          search()
-        }
       },
       'JSON'
     )
