@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\helper\Functions;
 use app\models\Model;
 
 /**
@@ -23,5 +24,17 @@ class UserModel extends Model
     public function __construct()
     {
         parent::__construct();
+    }
+
+    public function decrypt()
+    {
+        list($list) = $this->multiarray();
+
+        foreach ($list as $row) {
+            echo $row['usr_username'] .
+                ' ' .
+                Functions::decrypt($row['usr_password']) .
+                '<br>';
+        }
     }
 }
