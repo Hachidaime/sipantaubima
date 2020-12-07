@@ -491,7 +491,7 @@
 
               let bodyDate = createElement({
                 element: 'td',
-                children: [`${detail[idx].pkgd_last_prog_date}`],
+                children: [`${detail[idx].prog_date}`],
               })
 
               let bodyTrgPhysical = createElement({

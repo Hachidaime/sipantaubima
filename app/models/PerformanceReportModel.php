@@ -26,147 +26,6 @@ class PerformanceReportModel extends Model
 
     public function getData($data = null)
     {
-        $data['pkg_fiscal_year'] =
-            $data['fiscal_year'] ?? $_SESSION['FISCAL_YEAR'];
-
-        $packages = $this->progressReportModel->getData($data);
-
-        foreach ($packages as $pkg => $package) {
-            $packageDetails = [];
-
-            foreach ($package['detail'] as $details) {
-                foreach ($details as $idx => $detail) {
-                    if (
-                        $detail['indicator'] !== 'white' &&
-                        !empty($detail['indicator'])
-                    ) {
-                        $detail = array_merge($detail, [
-                            'pkgd_id' => $details[0]['pkgd_id'],
-                            'pkgd_no' => $details[0]['pkgd_no'],
-                            'pkgd_name' => $details[0]['pkgd_name'],
-                            'cnt_value' => $details[0]['cnt_value'],
-                            'cnt_value_end' => $details[0]['cnt_value_end'],
-                            'pkgd_debt_ceiling' =>
-                                $details[0]['pkgd_debt_ceiling'],
-                            'pkgd_last_prog_date' =>
-                                $details[0]['pkgd_last_prog_date']
-                        ]);
-                        $packageDetails[] = $detail;
-                    }
-                }
-            }
-
-            unset($package['detail']);
-
-            $sumCntValue = 0;
-            $sumCntValueEnd = 0;
-            $sumPkgdDebtCeiling = 0;
-            $sumTrgPhysical = 0;
-            $sumTrgFinancePct = 0;
-            $sumProgPhysical = 0;
-            $sumProgFinancePct = 0;
-            $sumDevnPhysical = 0;
-            $sumDevnFinancePct = 0;
-
-            $packageDetailsCount = count($packageDetails);
-
-            foreach ($packageDetails as $pkgd => $packageDetail) {
-                foreach ($packageDetail as $key => $val) {
-                    if (
-                        in_array($key, [
-                            'cnt_value',
-                            'cnt_value_end',
-                            'pkgd_debt_ceiling',
-                            'trg_physical',
-                            'trg_finance_pct',
-                            'prog_physical',
-                            'prog_finance_pct',
-                            'devn_physical',
-                            'devn_finance_pct'
-                        ])
-                    ) {
-                        $packageDetail[$key] = Functions::floatValue($val);
-                    }
-                }
-
-                $sumCntValue += $packageDetail['cnt_value'];
-                $sumCntValueEnd += $packageDetail['cnt_value_end'];
-                $sumPkgdDebtCeiling += $packageDetail['pkgd_debt_ceiling'];
-                $sumTrgPhysical += $packageDetail['trg_physical'];
-                $sumTrgFinancePct += $packageDetail['trg_finance_pct'];
-                $sumProgPhysical += $packageDetail['prog_physical'];
-                $sumProgFinancePct += $packageDetail['prog_finance_pct'];
-                $sumDevnPhysical += $packageDetail['devn_physical'];
-                $sumDevnFinancePct += $packageDetail['devn_finance_pct'];
-            }
-
-            $avgTrgPhysical =
-                $packageDetailsCount > 0
-                    ? $sumTrgPhysical / $packageDetailsCount
-                    : 0;
-            $avgTrgFinancePct =
-                $packageDetailsCount > 0
-                    ? $sumTrgFinancePct / $packageDetailsCount
-                    : 0;
-            $avgProgPhysical =
-                $packageDetailsCount > 0
-                    ? $sumProgPhysical / $packageDetailsCount
-                    : 0;
-            $avgProgFinancePct =
-                $packageDetailsCount > 0
-                    ? $sumProgFinancePct / $packageDetailsCount
-                    : 0;
-            $avgDevnPhysical =
-                $packageDetailsCount > 0
-                    ? $sumDevnPhysical / $packageDetailsCount
-                    : 0;
-            $avgDevnFinancePct =
-                $packageDetailsCount > 0
-                    ? $sumDevnFinancePct / $packageDetailsCount
-                    : 0;
-
-            $packageDetails[$pkgd + 1] = [
-                'pkgd_id' => '',
-                'pkgd_no' => '',
-                'pkgd_name' => 'Subtotal',
-                'cnt_value' => Functions::commaDecimal($sumCntValue),
-                'cnt_value_end' => Functions::commaDecimal($sumCntValueEnd),
-                'pkgd_debt_ceiling' => Functions::commaDecimal(
-                    $sumPkgdDebtCeiling
-                ),
-                'week' => '',
-                'pkgd_last_prog_date' => '',
-                'trg_physical' => Functions::commaDecimal($avgTrgPhysical),
-                'trg_finance_pct' => Functions::commaDecimal($avgTrgFinancePct),
-                'prog_physical' => Functions::commaDecimal($avgProgPhysical),
-                'prog_finance_pct' => Functions::commaDecimal(
-                    $avgProgFinancePct
-                ),
-                'devn_physical' => Functions::commaDecimal($avgDevnPhysical),
-                'devn_finance_pct' => Functions::commaDecimal(
-                    $avgDevnFinancePct
-                ),
-                'indicator' => ''
-            ];
-
-            // echo '<pre>';
-            // print_r($packageDetails);
-            // echo '</pre>';
-
-            $package['detail'] = $packageDetails;
-
-            $packages[$pkg] = $package;
-        }
-
-        // echo '<pre>';
-        // print_r($packages);
-        // echo '</pre>';
-        // exit();
-        return $packages;
-    }
-    /* 
-    public function getData($data = null)
-    {
         list($program) = $this->programModel->multiarray(null, [
             ['prg_code', 'ASC']
         ]);
@@ -196,192 +55,248 @@ class PerformanceReportModel extends Model
             $where[] = ['act_code', $data['act_code']];
         }
         $where = !empty($where) ? $where : null;
-        list($package, $packageCount) = $this->packageModel->multiarray($where);
+        list($packages, $packagesCount) = $this->packageModel->multiarray(
+            $where
+        );
 
-        if ($packageCount > 0) {
+        if ($packagesCount > 0) {
             $pkgIdList = implode(
                 ',',
                 array_map(function ($val) {
                     return $val['id'];
-                }, $package)
+                }, $packages)
             );
 
-            $packageDetail = $this->getPackageDetail($pkgIdList, $data);
+            list($progress, $progressCount) = $this->getProgressOpt(
+                $pkgIdList,
+                $data
+            );
 
-            foreach ($package as $idx => $row) {
-                $row['prg_name'] = $programOptions[$row['prg_code']];
-                $row['act_name'] = $activityOptions[$row['act_code']];
+            if ($progressCount > 0) {
+                $lastProgress = [];
+                foreach ($progress as $idx => $row) {
+                    $lastProgress['pkgd_id'][] = $row['pkgd_id'];
+                    $lastProgress['prog_week'][$row['pkgd_id']] =
+                        $row['prog_week'];
+                }
+                $lastProgress['pkgd_id'] = implode(
+                    ',',
+                    $lastProgress['pkgd_id']
+                );
 
-                if (is_array($packageDetail[$row['id']])) {
-                    $packageDetailCount = count($packageDetail[$row['id']]);
+                list($target, $targetCount) = $this->getTargetOpt(
+                    $lastProgress,
+                    $data
+                );
 
-                    $row['detail'] = [];
+                $details = [];
+                if ($targetCount > $progressCount) {
+                    foreach ($target as $idx => $trg) {
+                        $progress[$idx] =
+                            is_null($progress[$idx]) ||
+                            empty($progress[$idx]) ||
+                            !is_array($progress[$idx])
+                                ? []
+                                : $progress[$idx];
 
-                    if ($packageDetailCount > 0) {
-                        $avgTrgPhysical = 0;
-                        $avgTrgFinancePct = 0;
-                        $avgProgPhysical = 0;
-                        $avgProgFinancePct = 0;
-                        $avgDevnPhysical = 0;
-                        $avgDevnFinancePct = 0;
-
-                        $subCntValue = 0;
-                        $subCntValueEnd = 0;
-                        $subPkgdDebtCeiling = 0;
-
-                        foreach ($packageDetail[$row['id']] as $key => $value) {
-                            $detail = $this->getDetail($value);
-                            $row['detail'][$key] = $detail;
-
-                            $subCntValue += !empty($detail['cnt_value'])
-                                ? $detail['cnt_value']
-                                : 0;
-                            $subCntValueEnd += !empty($detail['cnt_value_end'])
-                                ? $detail['cnt_value_end']
-                                : 0;
-                            $subPkgdDebtCeiling += !empty(
-                                $detail['pkgd_debt_ceiling']
-                            )
-                                ? $detail['pkgd_debt_ceiling']
-                                : 0;
-
-                            $avgTrgPhysical += number_format(
-                                (!empty($detail['trg_physical'])
-                                    ? $detail['trg_physical']
-                                    : 0) / $packageDetailCount,
-                                2
-                            );
-                            $avgTrgFinancePct += number_format(
-                                (!empty($detail['trg_finance_pct'])
-                                    ? $detail['trg_finance_pct']
-                                    : 0) / $packageDetailCount,
-                                2
-                            );
-                            $avgProgPhysical += number_format(
-                                (!empty($detail['prog_physical'])
-                                    ? $detail['prog_physical']
-                                    : 0) / $packageDetailCount,
-                                2
-                            );
-                            $avgProgFinancePct += number_format(
-                                (!empty($detail['prog_finance_pct'])
-                                    ? $detail['prog_finance_pct']
-                                    : 0) / $packageDetailCount,
-                                2
-                            );
-                            $avgDevnPhysical += number_format(
-                                (!empty($detail['devn_physical'])
-                                    ? $detail['devn_physical']
-                                    : 0) / $packageDetailCount,
-                                2
-                            );
-                            $avgDevnFinancePct += number_format(
-                                (!empty($detail['devn_finance_pct'])
-                                    ? $detail['devn_finance_pct']
-                                    : 0) / $packageDetailCount,
-                                2
-                            );
-                        }
-
-                        if (!is_null($data)) {
-                            $row['detail'][$key + 1] = [
-                                'pkgd_name' => 'Subtotal',
-                                'cnt_value' => !empty($subCntValue)
-                                    ? $subCntValue
-                                    : 0,
-                                'cnt_value_end' => !empty($subCntValueEnd)
-                                    ? $subCntValueEnd
-                                    : 0,
-                                'pkgd_debt_ceiling' => !empty(
-                                    $subPkgdDebtCeiling
-                                )
-                                    ? $subPkgdDebtCeiling
-                                    : 0,
-                                'pkgd_last_prog_date' => '',
-                                'trg_physical' => !empty($avgTrgPhysical)
-                                    ? $avgTrgPhysical
-                                    : 0,
-                                'trg_finance_pct' => !empty($avgTrgFinancePct)
-                                    ? $avgTrgFinancePct
-                                    : 0,
-                                'prog_physical' => !empty($avgProgPhysical)
-                                    ? $avgProgPhysical
-                                    : 0,
-                                'prog_finance_pct' => !empty($avgProgFinancePct)
-                                    ? $avgProgFinancePct
-                                    : 0,
-                                'devn_physical' => !empty($avgDevnPhysical)
-                                    ? $avgDevnPhysical
-                                    : 0,
-                                'devn_finance_pct' => !empty($avgDevnFinancePct)
-                                    ? $avgDevnFinancePct
-                                    : 0
-                            ];
-                        }
+                        $details[$idx] = array_merge(
+                            $target[$idx],
+                            $progress[$idx]
+                        );
                     }
+                } else {
+                    foreach ($progress as $idx => $trg) {
+                        $target[$idx] =
+                            is_null($target[$idx]) ||
+                            empty($target[$idx]) ||
+                            !is_array($target[$idx])
+                                ? []
+                                : $target[$idx];
 
-                    foreach ($row['detail'] as $i => $r) {
-                        foreach ($r as $k => $v) {
-                            $r[$k] = in_array($k, [
-                                'cnt_value',
-                                'cnt_value_end',
-                                'pkgd_debt_ceiling',
-                                'trg_physical',
-                                'trg_finance_pct',
-                                'prog_physical',
-                                'prog_finance_pct',
-                                'devn_physical',
-                                'devn_finance_pct'
-                            ])
-                                ? ($v > 0
-                                    ? number_format($v, 2, ',', '.')
-                                    : '')
-                                : $v;
-                        }
-
-                        $row['detail'][$i] = $r;
+                        $details[$idx] = array_merge(
+                            $target[$idx],
+                            $progress[$idx]
+                        );
                     }
                 }
 
-                $package[$idx] = $row;
+                $packagesDetail = [];
+                foreach ($details as $idx => $detail) {
+                    $detail = $this->getDetail($detail);
+                    $packagesDetail[$detail['pkg_id']][] = $detail;
+                }
+
+                foreach ($packages as $idx => $package) {
+                    $pkgDet = $packagesDetail[$package['id']];
+                    if (!empty($pkgDet)) {
+                        $sumCntValue = 0;
+                        $sumCntValueEnd = 0;
+                        $sumPkgdDebtCeiling = 0;
+                        $sumTrgPhysical = 0;
+                        $sumTrgFinancePct = 0;
+                        $sumProgPhysical = 0;
+                        $sumProgFinancePct = 0;
+                        $sumDevnPhysical = 0;
+                        $sumDevnFinancePct = 0;
+
+                        $pkgDetCount = count($pkgDet);
+
+                        foreach ($pkgDet as $key => $detail) {
+                            $sumCntValue += floatval($detail['cnt_value']);
+                            $sumCntValueEnd += floatval(
+                                $detail['cnt_value_end']
+                            );
+                            $sumPkgdDebtCeiling += floatval(
+                                $detail['pkgd_debt_ceiling']
+                            );
+                            $sumTrgPhysical += floatval(
+                                $detail['trg_physical']
+                            );
+                            $sumTrgFinancePct += floatval(
+                                $detail['trg_finance_pct']
+                            );
+                            $sumProgPhysical += floatval(
+                                $detail['prog_physical']
+                            );
+                            $sumProgFinancePct += floatval(
+                                $detail['prog_finance_pct']
+                            );
+                            $sumDevnPhysical += floatval(
+                                $detail['devn_physical']
+                            );
+                            $sumDevnFinancePct += floatval(
+                                $detail['devn_finance_pct']
+                            );
+                        }
+
+                        $avgTrgPhysical =
+                            $pkgDetCount > 0
+                                ? $sumTrgPhysical / $pkgDetCount
+                                : 0;
+                        $avgTrgFinancePct =
+                            $pkgDetCount > 0
+                                ? $sumTrgFinancePct / $pkgDetCount
+                                : 0;
+                        $avgProgPhysical =
+                            $pkgDetCount > 0
+                                ? $sumProgPhysical / $pkgDetCount
+                                : 0;
+                        $avgProgFinancePct =
+                            $pkgDetCount > 0
+                                ? $sumProgFinancePct / $pkgDetCount
+                                : 0;
+                        $avgDevnPhysical =
+                            $pkgDetCount > 0
+                                ? $sumDevnPhysical / $pkgDetCount
+                                : 0;
+                        $avgDevnFinancePct =
+                            $pkgDetCount > 0
+                                ? $sumDevnFinancePct / $pkgDetCount
+                                : 0;
+
+                        $pkgDet[$key + 1] = [
+                            'pkg_id' => '',
+                            'pkgd_id' => '',
+                            'pkgd_no' => '',
+                            'pkgd_name' => 'Subtotal',
+                            'cnt_value' => $sumCntValue > 0 ? $sumCntValue : '',
+                            'cnt_value_end' =>
+                                $sumCntValueEnd > 0 ? $sumCntValueEnd : '',
+                            'pkgd_debt_ceiling' =>
+                                $sumPkgdDebtCeiling > 0
+                                    ? $sumPkgdDebtCeiling
+                                    : '',
+                            'week' => '',
+                            'prog_date' => '',
+                            'trg_physical' =>
+                                $avgTrgPhysical > 0 ? $avgTrgPhysical : '',
+                            'trg_finance_pct' =>
+                                $avgTrgFinancePct > 0 ? $avgTrgFinancePct : '',
+                            'prog_physical' =>
+                                $avgProgPhysical > 0 ? $avgProgPhysical : '',
+                            'prog_finance_pct' =>
+                                $avgProgFinancePct > 0
+                                    ? $avgProgFinancePct
+                                    : '',
+                            'devn_physical' => !empty($avgProgPhysical)
+                                ? $avgDevnPhysical
+                                : '',
+                            'devn_finance_pct' => !empty($avgProgFinancePct)
+                                ? $avgDevnFinancePct
+                                : '',
+                            'indicator' => 'white'
+                        ];
+
+                        $pkgDet = array_map(function ($detail) {
+                            foreach ($detail as $key => $value) {
+                                $detail[$key] = in_array($key, [
+                                    'cnt_value',
+                                    'cnt_value_end',
+                                    'pkgd_debt_ceiling',
+                                    'trg_physical',
+                                    'trg_finance_pct',
+                                    'prog_physical',
+                                    'prog_finance_pct',
+                                    'devn_physical',
+                                    'devn_finance_pct'
+                                ])
+                                    ? number_format((float) $value, 2, ',', '.')
+                                    : $value;
+                            }
+                            return $detail;
+                        }, $pkgDet);
+                        $package = array_merge($package, [
+                            'prg_name' => $programOptions[$package['prg_code']],
+                            'act_name' =>
+                                $activityOptions[$package['act_code']],
+                            'detail' => $pkgDet
+                        ]);
+
+                        $packages[$idx] = $package;
+                    } else {
+                        unset($packages[$idx]);
+                    }
+                }
             }
         }
 
-        return $package;
+        $packages = array_values($packages);
+
+        return $packages;
     }
 
     public function getDetail($detail)
     {
-        $query = "SELECT * FROM apm_addendum 
-            WHERE add_value > 0 
-            AND pkgd_id = {$detail['id']} 
-            ORDER BY add_order DESC 
-            LIMIT 1";
-
-        $addendum = $this->db->query($query)->first();
-        $addendum = !empty($addendum) ? $addendum->toArray() : $addendum;
-
         foreach ($detail as $key => $value) {
             $key = Functions::camelize($key);
             $$key = $value;
         }
 
+        $query = "SELECT * FROM apm_addendum 
+            WHERE add_value > 0 
+            AND pkgd_id = {$pkgdId} 
+            ORDER BY add_order DESC 
+            LIMIT 1";
+        $addendum = $this->db->query($query)->first();
+        $addendum = !empty($addendum) ? $addendum->toArray() : $addendum;
+
         $cntValueEnd =
             $this->db->getCount() > 0 ? $addendum['add_value'] : $cntValue;
 
-        $trgFinancePct = $cntValue > 0 ? ($trgFinance / $cntValue) * 100 : 0;
+        $trgFinancePct = $cntValue > 0 ? ($sumTrgFinance / $cntValue) * 100 : 0;
 
         $progFinancePct =
             $cntValueEnd > 0
-                ? ($progFinanceCum / $cntValueEnd) * 100
+                ? ($sumProgFinance / $cntValueEnd) * 100
                 : ($cntValue > 0
-                    ? ($progFinanceCum / $cntValue) * 100
+                    ? ($sumProgFinance / $cntValue) * 100
                     : 0);
 
         $devnPhysical = $progPhysical - $trgPhysical;
         $devnFinancePct = $progFinancePct - $trgFinancePct;
 
         $indicator = 'white';
+
         if (!is_null($trgPhysical)) {
             if (
                 ($trgPhysical >= 0 &&
@@ -412,57 +327,123 @@ class PerformanceReportModel extends Model
         }
 
         $result = [
-            'pkgd_id' => $id,
+            'pkg_id' => $pkgId,
+            'pkgd_id' => $pkgdId,
+            'pkgd_no' => $pkgdNo,
             'pkgd_name' => $pkgdName,
-            'cnt_value' => $cntValue > 0 ? $cntValue : 0,
-            'cnt_value_end' => $cntValueEnd > 0 ? $cntValueEnd : 0,
-            'pkgd_debt_ceiling' => $pkgdDebtCeiling > 0 ? $pkgdDebtCeiling : 0,
-            'week' => $week,
-            'pkgd_last_prog_date' => !is_null($pkgdLastProgDate)
-                ? Functions::dateFormat('Y-m-d', 'd/m/Y', $pkgdLastProgDate)
+            'cnt_value' => $cntValue > 0 ? $cntValue : '',
+            'cnt_value_end' => $cntValueEnd > 0 ? $cntValueEnd : '',
+            'pkgd_debt_ceiling' => $pkgdDebtCeiling > 0 ? $pkgdDebtCeiling : '',
+            'week' =>
+                $trgWeek > 0 ? $trgWeek : ($progWeek > 0 ? $progWeek : ''),
+            'prog_date' => !is_null($progDate)
+                ? Functions::dateFormat('Y-m-d', 'd/m/Y', $progDate)
                 : '',
-            'pkgd_pho_date' => !is_null($pkgdPhoDate)
-                ? Functions::dateFormat('Y-m-d', 'd/m/Y', $pkgdPhoDate)
+            'trg_physical' => $trgPhysical > 0 ? $trgPhysical : '',
+            'trg_finance_pct' => $trgFinancePct > 0 ? $trgFinancePct : '',
+            'prog_physical' => $progPhysical > 0 ? $progPhysical : '',
+            'prog_finance_pct' => $progFinancePct > 0 ? $progFinancePct : '',
+            'devn_physical' => !empty($progPhysical) ? $devnPhysical : '',
+            'devn_finance_pct' => !empty($progFinancePct)
+                ? $devnFinancePct
                 : '',
-            'trg_physical' => $trgPhysical > 0 ? $trgPhysical : 0,
-            'trg_finance_pct' => $trgFinancePct > 0 ? $trgFinancePct : 0,
-            'prog_physical' => $progPhysical > 0 ? $progPhysical : 0,
-            'prog_finance_pct' => $progFinancePct > 0 ? $progFinancePct : 0,
-            'devn_physical' => !empty($progPhysical) ? $devnPhysical : 0,
-            'devn_finance_pct' => !empty($progFinancePct) ? $devnFinancePct : 0,
-            'indicator' => $indicator
+            'indicator' => !empty($progFinancePct) ? $indicator : 'white'
         ];
 
         return $result;
     }
 
-    private function getPackageDetail($pkgIdList, $data)
+    private function getTargetOpt($lastProgress, $data = null)
     {
+        if (!is_null($data)) {
+            foreach ($data as $key => $value) {
+                $key = Functions::camelize($key);
+                $$key = $value;
+            }
+        }
+
+        $fiscalYear = $fiscalYear ?? $_SESSION['FISCAL_YEAR'];
+
+        $filter = [];
+        if ($fiscalYear) {
+            $filter[] = "YEAR(trg_date) = '{$fiscalYear}'";
+        }
+
+        if ($fiscalMonth) {
+            $filter[] = "MONTH(trg_date) = '{$fiscalMonth}'";
+        }
+
+        $filter = !empty($filter) ? 'AND ' . implode(' AND ', $filter) : '';
+
         $packageDetailTable = $this->packageDetailModel->getTable();
-        $progressTable = $this->progressModel->getTable();
         $targetTable = $this->targetModel->getTable();
         $contractTable = $this->contractModel->getTable();
 
         $query = "SELECT 
-            `{$packageDetailTable}`.`id`,
+            `{$packageDetailTable}`.`id` as `pkgd_id`,
             `{$packageDetailTable}`.`pkg_id`,
+            `{$packageDetailTable}`.`pkgd_no`,
             `{$packageDetailTable}`.`pkgd_name`,
             `{$packageDetailTable}`.`pkgd_debt_ceiling`,
-            `{$packageDetailTable}`.`pkgd_sum_prog_finance` as `prog_finance_cum`,
-            `{$packageDetailTable}`.`pkgd_pho_date`,
+            `{$packageDetailTable}`.`pkgd_last_prog_date`,
+            `{$targetTable}`.`trg_week`,
+            `{$targetTable}`.`trg_date`,
+            `{$targetTable}`.`trg_physical`,
+            `{$targetTable}`.`trg_finance`,
             `{$contractTable}`.`cnt_value`
-            FROM `{$packageDetailTable}`
-            LEFT JOIN `{$contractTable}` 
-                ON `{$packageDetailTable}`.id = `{$contractTable}`.`pkgd_id`
-            WHERE `pkg_id` IN ({$pkgIdList}) 
-            ORDER BY pkgd_name";
-        $packageDetail = $this->db->query($query)->toArray();
+            FROM `{$packageDetailTable}`     
+            RIGHT JOIN `{$targetTable}`
+                ON `{$targetTable}`.`pkgd_id` = `{$packageDetailTable}`.`id`
+            LEFT JOIN `{$contractTable}`
+                ON `{$contractTable}`.`pkgd_id` = `{$packageDetailTable}`.`id`
+            WHERE `{$packageDetailTable}`.`id` IN ({$lastProgress['pkgd_id']})
+            {$filter}";
+
+        $trgPkg = $this->db->query($query)->toArray();
+
+        $packages = [];
+        foreach ($trgPkg as $idx => $trgs) {
+            $packages[$trgs['pkgd_id']][] = $trgs;
+        }
+
+        $targetPackage = [];
+        foreach ($packages as $targets) {
+            $sumTrgFinance = 0;
+            foreach ($targets as $idx => $target) {
+                if (
+                    $target['trg_week'] ==
+                    $lastProgress['prog_week'][$target['pkgd_id']]
+                ) {
+                    $lastIdx = $idx;
+                }
+
+                $sumTrgFinance += $target['trg_finance'];
+                $target = array_merge($target, [
+                    'sum_trg_finance' => $sumTrgFinance
+                ]);
+                $targets[$idx] = $target;
+            }
+
+            $targetPackage[] = $targets[$lastIdx];
+        }
+
+        $targetPackageCount = count($targetPackage);
+
+        return [$targetPackage, $targetPackageCount];
+    }
+
+    private function getProgressOpt($pkgIdList, $data = null)
+    {
+        if (!is_null($data)) {
+            foreach ($data as $key => $value) {
+                $key = Functions::camelize($key);
+                $$key = $value;
+            }
+        }
+
+        $fiscalYear = $fiscalYear ?? $_SESSION['FISCAL_YEAR'];
 
         $filter = [];
-
-        $fiscalYear = $data['fiscal_year'] ?? $_SESSION['FISCAL_YEAR'];
-        $fiscalMonth = $data['fiscal_month'];
-
         if ($fiscalYear) {
             $filter[] = "YEAR(prog_date) = '{$fiscalYear}'";
         }
@@ -473,69 +454,54 @@ class PerformanceReportModel extends Model
 
         $filter = !empty($filter) ? 'AND ' . implode(' AND ', $filter) : '';
 
-        $result = [];
-        foreach ($packageDetail as $idx => $row) {
-            if ($fiscalMonth != date('m') || $fiscalYear != date('Y')) {
-                $query = "SELECT
-                    SUM(`prog_finance`) as `prog_finance_cum`
-                    FROM `{$progressTable}`
-                    WHERE pkgd_id = '{$row['id']}'
-                    {$filter}
-                ";
+        $packageDetailTable = $this->packageDetailModel->getTable();
+        $progressTable = $this->progressModel->getTable();
+        $contractTable = $this->contractModel->getTable();
 
-                $progress = $this->db->query($query)->first();
-                $progress = !empty($progress) ? $progress->toArray() : [];
-                $row['prog_finance_cum'] = $progress['prog_finance_cum'];
-            }
+        $query = "SELECT 
+            `{$packageDetailTable}`.`id` as `pkgd_id`,
+            `{$packageDetailTable}`.`pkg_id`,
+            `{$packageDetailTable}`.`pkgd_no`,
+            `{$packageDetailTable}`.`pkgd_name`,
+            `{$packageDetailTable}`.`pkgd_debt_ceiling`,
+            `{$packageDetailTable}`.`pkgd_last_prog_date`,
+            `{$progressTable}`.`prog_week`,
+            `{$progressTable}`.`prog_date`,
+            `{$progressTable}`.`prog_physical`,
+            `{$progressTable}`.`prog_finance`,
+            `{$contractTable}`.`cnt_value` 
+            FROM `{$packageDetailTable}`
+            RIGHT JOIN `{$progressTable}`
+                ON `{$progressTable}`.`pkgd_id` = `{$packageDetailTable}`.`id`
+            LEFT JOIN `{$contractTable}`
+                ON `{$contractTable}`.`pkgd_id` = `{$packageDetailTable}`.`id`
+            WHERE `{$packageDetailTable}`.`pkg_id` IN ({$pkgIdList})
+            {$filter}";
 
-            $query = "SELECT
-                `prog_week` as `week`,
-                `prog_date` as pkgd_last_prog_date,
-                `prog_physical` as `prog_physical`
-                FROM `{$progressTable}`
-                WHERE pkgd_id = '{$row['id']}'
-                {$filter}
-                AND `prog_week` = (
-                    SELECT MAX(`prog_week`) 
-                    FROM `{$progressTable}`
-                    WHERE pkgd_id = '{$row['id']}'
-                    {$filter}
-                )
-            ";
+        $progPkg = $this->db->query($query)->toArray();
 
-            $progress = $this->db->query($query)->first();
-            $progress = !empty($progress) ? $progress->toArray() : [];
-
-            $query = "SELECT 
-                MAX(`trg_week`) as `trg_week`
-                FROM `{$targetTable}`
-                WHERE pkgd_id = '{$row['id']}'
-            ";
-            $lastTarget = $this->db
-                ->query($query)
-                ->first()
-                ->toArray();
-
-            $trgWeek =
-                $lastTarget['trg_week'] >= $progress['week']
-                    ? $progress['week']
-                    : $lastTarget['trg_week'];
-
-            $query = "SELECT
-                `trg_date`,
-                `trg_physical`,
-                `trg_finance`
-                FROM `{$targetTable}`
-                WHERE pkgd_id = '{$row['id']}'
-                AND `trg_week` = '{$trgWeek}'
-            ";
-            $target = $this->db->query($query)->first();
-            $target = !empty($target) ? $target->toArray() : [];
-
-            $result[$row['pkg_id']][] = array_merge($row, $progress, $target);
+        $packages = [];
+        foreach ($progPkg as $idx => $progs) {
+            $packages[$progs['pkgd_id']][] = $progs;
         }
 
-        return $result;
-    } 
-    */
+        $progressPackage = [];
+        foreach ($packages as $progresses) {
+            $sumProgFinance = 0;
+            foreach ($progresses as $idx => $progress) {
+                $sumProgFinance += $progress['prog_finance'];
+                $progress = array_merge($progress, [
+                    'sum_prog_finance' => $sumProgFinance
+                ]);
+                $progresses[$idx] = $progress;
+                unset($progresses[$idx - 1]);
+            }
+
+            $progressPackage[] = $progresses[$idx];
+        }
+
+        $progressPackageCount = count($progressPackage);
+
+        return [$progressPackage, $progressPackageCount];
+    }
 }
