@@ -109,6 +109,9 @@ class PerformanceReportController extends Controller
 
         if ($list_count > 0) {
             foreach ($list as $rows) {
+                if (is_null($rows['detail'])) {
+                    continue;
+                }
                 $prg_row = $prg_row ?? 5;
                 $act_row = $prg_row + 1;
 
@@ -153,9 +156,9 @@ class PerformanceReportController extends Controller
                     [
                         'Paket Kegiatan',
                         '',
+                        "Pagu Anggaran\n(Rp)",
                         "Nilai Awal Kontrak\n(Rp)",
                         "Nilai Kontrak Akhir\n(Rp)",
-                        "Pagu Anggaran\n(Rp)",
                         "Tanggal Periode\nTerakhir",
                         'Target',
                         '',
@@ -213,10 +216,10 @@ class PerformanceReportController extends Controller
 
                     $content = [
                         $row['pkgd_name'],
+                        $row['pkgd_debt_ceiling'],
                         $row['cnt_value'],
                         $row['cnt_value_end'],
-                        $row['pkgd_debt_ceiling'],
-                        $row['pkgd_last_prog_date'],
+                        $row['prog_date'],
                         $row['trg_physical'],
                         $row['trg_finance_pct'],
                         $row['prog_physical'],
