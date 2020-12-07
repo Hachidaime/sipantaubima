@@ -2,16 +2,9 @@
 namespace app\models;
 
 use app\helper\Functions;
-use app\models\Model;
-use app\models\PackageDetailModel;
-use app\models\PackageModel;
-use app\models\TargetModel;
-use app\models\ProgressModel;
-use app\models\ProgramModel;
-use app\models\ActivityModel;
 
 /**
- * @desc this class will handle Program model
+ * @desc this class will handle Performance Report model
  *
  * @class UserModel
  * @author Hachidaime
@@ -28,8 +21,150 @@ class PerformanceReportModel extends Model
         $this->contractModel = new ContractModel();
         $this->programModel = new ProgramModel();
         $this->activityModel = new ActivityModel();
+        $this->progressReportModel = new ProgressReportModel();
     }
 
+    public function getData($data = null)
+    {
+        $data['pkg_fiscal_year'] =
+            $data['fiscal_year'] ?? $_SESSION['FISCAL_YEAR'];
+
+        $packages = $this->progressReportModel->getData($data);
+
+        foreach ($packages as $pkg => $package) {
+            $packageDetails = [];
+
+            foreach ($package['detail'] as $details) {
+                foreach ($details as $idx => $detail) {
+                    if (
+                        $detail['indicator'] !== 'white' &&
+                        !empty($detail['indicator'])
+                    ) {
+                        $detail = array_merge($detail, [
+                            'pkgd_id' => $details[0]['pkgd_id'],
+                            'pkgd_no' => $details[0]['pkgd_no'],
+                            'pkgd_name' => $details[0]['pkgd_name'],
+                            'cnt_value' => $details[0]['cnt_value'],
+                            'cnt_value_end' => $details[0]['cnt_value_end'],
+                            'pkgd_debt_ceiling' =>
+                                $details[0]['pkgd_debt_ceiling'],
+                            'pkgd_last_prog_date' =>
+                                $details[0]['pkgd_last_prog_date']
+                        ]);
+                        $packageDetails[] = $detail;
+                    }
+                }
+            }
+
+            unset($package['detail']);
+
+            $sumCntValue = 0;
+            $sumCntValueEnd = 0;
+            $sumPkgdDebtCeiling = 0;
+            $sumTrgPhysical = 0;
+            $sumTrgFinancePct = 0;
+            $sumProgPhysical = 0;
+            $sumProgFinancePct = 0;
+            $sumDevnPhysical = 0;
+            $sumDevnFinancePct = 0;
+
+            $packageDetailsCount = count($packageDetails);
+
+            foreach ($packageDetails as $pkgd => $packageDetail) {
+                foreach ($packageDetail as $key => $val) {
+                    if (
+                        in_array($key, [
+                            'cnt_value',
+                            'cnt_value_end',
+                            'pkgd_debt_ceiling',
+                            'trg_physical',
+                            'trg_finance_pct',
+                            'prog_physical',
+                            'prog_finance_pct',
+                            'devn_physical',
+                            'devn_finance_pct'
+                        ])
+                    ) {
+                        $packageDetail[$key] = Functions::floatValue($val);
+                    }
+                }
+
+                $sumCntValue += $packageDetail['cnt_value'];
+                $sumCntValueEnd += $packageDetail['cnt_value_end'];
+                $sumPkgdDebtCeiling += $packageDetail['pkgd_debt_ceiling'];
+                $sumTrgPhysical += $packageDetail['trg_physical'];
+                $sumTrgFinancePct += $packageDetail['trg_finance_pct'];
+                $sumProgPhysical += $packageDetail['prog_physical'];
+                $sumProgFinancePct += $packageDetail['prog_finance_pct'];
+                $sumDevnPhysical += $packageDetail['devn_physical'];
+                $sumDevnFinancePct += $packageDetail['devn_finance_pct'];
+            }
+
+            $avgTrgPhysical =
+                $packageDetailsCount > 0
+                    ? $sumTrgPhysical / $packageDetailsCount
+                    : 0;
+            $avgTrgFinancePct =
+                $packageDetailsCount > 0
+                    ? $sumTrgFinancePct / $packageDetailsCount
+                    : 0;
+            $avgProgPhysical =
+                $packageDetailsCount > 0
+                    ? $sumProgPhysical / $packageDetailsCount
+                    : 0;
+            $avgProgFinancePct =
+                $packageDetailsCount > 0
+                    ? $sumProgFinancePct / $packageDetailsCount
+                    : 0;
+            $avgDevnPhysical =
+                $packageDetailsCount > 0
+                    ? $sumDevnPhysical / $packageDetailsCount
+                    : 0;
+            $avgDevnFinancePct =
+                $packageDetailsCount > 0
+                    ? $sumDevnFinancePct / $packageDetailsCount
+                    : 0;
+
+            $packageDetails[$pkgd + 1] = [
+                'pkgd_id' => '',
+                'pkgd_no' => '',
+                'pkgd_name' => 'Subtotal',
+                'cnt_value' => Functions::commaDecimal($sumCntValue),
+                'cnt_value_end' => Functions::commaDecimal($sumCntValueEnd),
+                'pkgd_debt_ceiling' => Functions::commaDecimal(
+                    $sumPkgdDebtCeiling
+                ),
+                'week' => '',
+                'pkgd_last_prog_date' => '',
+                'trg_physical' => Functions::commaDecimal($avgTrgPhysical),
+                'trg_finance_pct' => Functions::commaDecimal($avgTrgFinancePct),
+                'prog_physical' => Functions::commaDecimal($avgProgPhysical),
+                'prog_finance_pct' => Functions::commaDecimal(
+                    $avgProgFinancePct
+                ),
+                'devn_physical' => Functions::commaDecimal($avgDevnPhysical),
+                'devn_finance_pct' => Functions::commaDecimal(
+                    $avgDevnFinancePct
+                ),
+                'indicator' => ''
+            ];
+
+            // echo '<pre>';
+            // print_r($packageDetails);
+            // echo '</pre>';
+
+            $package['detail'] = $packageDetails;
+
+            $packages[$pkg] = $package;
+        }
+
+        // echo '<pre>';
+        // print_r($packages);
+        // echo '</pre>';
+        // exit();
+        return $packages;
+    }
+    /* 
     public function getData($data = null)
     {
         list($program) = $this->programModel->multiarray(null, [
@@ -401,5 +536,6 @@ class PerformanceReportModel extends Model
         }
 
         return $result;
-    }
+    } 
+    */
 }

@@ -79,7 +79,7 @@ class Functions
     {
         return [
             'created_by' => self::getUserId(),
-            'created_at' => self::getNowDatetime(),
+            'created_at' => self::getNowDatetime()
         ];
     }
 
@@ -95,7 +95,7 @@ class Functions
     {
         return [
             'updated_by' => self::getUserId(),
-            'updated_at' => self::getNowDatetime(),
+            'updated_at' => self::getNowDatetime()
         ];
     }
 
@@ -111,7 +111,7 @@ class Functions
     {
         return [
             'deleted_by' => self::getUserId(),
-            'deleted_at' => self::getNowDatetime(),
+            'deleted_at' => self::getNowDatetime()
         ];
     }
 
@@ -168,7 +168,7 @@ class Functions
         $encryption_key = base64_decode($key);
         // TODO: Generate an initialization vector
         $iv = openssl_random_pseudo_bytes(
-            openssl_cipher_iv_length('aes-256-cbc'),
+            openssl_cipher_iv_length('aes-256-cbc')
         );
         // TODO: Encrypt the data using AES 256 encryption in CBC mode using our encryption key and initialization vector.
         $encrypted = openssl_encrypt(
@@ -176,7 +176,7 @@ class Functions
             'aes-256-cbc',
             $encryption_key,
             0,
-            $iv,
+            $iv
         );
         // TODO: The $iv is just as important as the key for decrypting, so save it with our encrypted data using a unique separator (::)
         return base64_encode($encrypted . '::' . $iv);
@@ -193,7 +193,7 @@ class Functions
             'aes-256-cbc',
             $encryption_key,
             0,
-            $iv,
+            $iv
         );
     }
 
@@ -208,7 +208,7 @@ class Functions
             }, array_keys($array)),
             array_map(function ($el) use ($array, $value) {
                 return $array[$el][$value];
-            }, array_keys($array)),
+            }, array_keys($array))
         );
     }
 
@@ -217,5 +217,17 @@ class Functions
         $datetime = DateTime::createFromFormat($orig, $param);
 
         return $datetime->format($new);
+    }
+
+    public static function floatValue($val)
+    {
+        $val = str_replace(',', '.', $val);
+        $val = preg_replace('/\.(?=.*\.)/', '', $val);
+        return floatval($val);
+    }
+
+    public static function commaDecimal($val)
+    {
+        return number_format($val, 2, ',', '.');
     }
 }

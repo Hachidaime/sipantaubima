@@ -468,9 +468,7 @@
 
               let bodyPackage = createElement({
                 element: 'td',
-                children: [
-                  detail[idx].pkgd_no != '' ? `${detail[idx].pkgd_name}` : '',
-                ],
+                children: [detail[idx].pkgd_name],
               })
 
               let bodyCntValue = createElement({

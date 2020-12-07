@@ -30,7 +30,7 @@ class ProgressReportModel extends Model
         $this->activityModel = new ActivityModel();
     }
 
-    public function getData($data)
+    public function getData($data = null)
     {
         list($program) = $this->programModel->multiarray(null, [
             ['prg_code', 'ASC']
@@ -58,6 +58,7 @@ class ProgressReportModel extends Model
         if ($data['act_code'] != '') {
             $where[] = ['act_code', $data['act_code']];
         }
+
         list($package, $packageCount) = $this->packageModel->multiarray($where);
 
         if ($packageCount > 0) {
@@ -234,6 +235,9 @@ class ProgressReportModel extends Model
                     : '',
             'week' =>
                 $trgWeek > 0 ? $trgWeek : ($progWeek > 0 ? $progWeek : ''),
+            'pkgd_last_prog_date' => !is_null($pkgdLastProgDate)
+                ? Functions::dateFormat('Y-m-d', 'd/m/Y', $pkgdLastProgDate)
+                : '',
             'trg_date' => !is_null($trgDate)
                 ? Functions::dateFormat('Y-m-d', 'd/m/Y', $trgDate)
                 : '',
@@ -292,6 +296,7 @@ class ProgressReportModel extends Model
             `{$table_left}`.`pkgd_no`,
             `{$table_left}`.`pkgd_name`,
             `{$table_left}`.`pkgd_debt_ceiling`,
+            `{$table_left}`.`pkgd_last_prog_date`,
             `{$table_right}`.`trg_week`,
             `{$table_right}`.`trg_date`,
             `{$table_right}`.`trg_physical`,
@@ -348,6 +353,7 @@ class ProgressReportModel extends Model
             `{$table_left}`.`pkgd_no`,
             `{$table_left}`.`pkgd_name`,
             `{$table_left}`.`pkgd_debt_ceiling`,
+            `{$table_left}`.`pkgd_last_prog_date`,
             `{$table_right}`.`prog_week`,
             `{$table_right}`.`prog_physical`,
             `{$table_right}`.`prog_finance`,
