@@ -212,6 +212,8 @@
           })
 
           for (index in list) {
+            let detail = list[index].detail
+            if (detail == null) continue
             //#region Program
             let progLabel = createElement({
               element: 'div',
@@ -455,8 +457,6 @@
             })
 
             // let labels = []
-            let detail = list[index].detail
-            console.log(detail.length)
             let n = 1
             for (idx in detail) {
               let bodyNo = createElement({

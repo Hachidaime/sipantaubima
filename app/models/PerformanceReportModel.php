@@ -245,17 +245,17 @@ class PerformanceReportModel extends Model
                             }
                             return $detail;
                         }, $pkgDet);
-                        $package = array_merge($package, [
-                            'prg_name' => $programOptions[$package['prg_code']],
-                            'act_name' =>
-                                $activityOptions[$package['act_code']],
-                            'detail' => $pkgDet
-                        ]);
-
-                        $packages[$idx] = $package;
-                    } else {
+                    } /* else {
                         unset($packages[$idx]);
-                    }
+                    } */
+
+                    $package = array_merge($package, [
+                        'prg_name' => $programOptions[$package['prg_code']],
+                        'act_name' => $activityOptions[$package['act_code']],
+                        'detail' => $pkgDet
+                    ]);
+
+                    $packages[$idx] = $package;
                 }
             }
         }
@@ -398,7 +398,6 @@ class PerformanceReportModel extends Model
                 ON `{$contractTable}`.`pkgd_id` = `{$packageDetailTable}`.`id`
             WHERE `{$packageDetailTable}`.`id` IN ({$lastProgress['pkgd_id']})
             {$filter}";
-
         $trgPkg = $this->db->query($query)->toArray();
 
         $packages = [];
@@ -424,7 +423,9 @@ class PerformanceReportModel extends Model
                 $targets[$idx] = $target;
             }
 
-            $targetPackage[] = $targets[$lastIdx];
+            $targetPackage[] = !is_null($targets[$lastIdx])
+                ? $targets[$lastIdx]
+                : $targets[$idx];
         }
 
         $targetPackageCount = count($targetPackage);
