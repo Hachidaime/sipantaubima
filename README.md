@@ -12,7 +12,7 @@ git clone https://github.com/Hachidaime/sipantaubima.git
 ```
 
 - Update Composer
-  Dari folder projek jalankan:
+  - Dari folder projek jalankan:
 
 ```
 composer update
