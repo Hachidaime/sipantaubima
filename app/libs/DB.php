@@ -12,15 +12,15 @@ $db_config = [
         'host' => DB_HOST,
         'database' => DB_NAME,
         'username' => DB_USER,
-        'password' => DB_PASS,
+        'password' => DB_PASS
     ],
     //Server
     'production' => [
         'host' => DB_HOST_PROD,
         'database' => DB_NAME_PROD,
         'username' => DB_USER_PROD,
-        'password' => DB_PASS_PROD,
-    ],
+        'password' => DB_PASS_PROD
+    ]
 ];
 
 class DB
@@ -47,7 +47,7 @@ class DB
         'currentPage' => 1,
         'nextPage' => null,
         'lastPage' => null,
-        'totalRows' => null,
+        'totalRows' => null
     ];
 
     private function __construct()
@@ -66,12 +66,12 @@ class DB
             $this->dbh = new PDO(
                 "mysql:host={$config['host']};dbname={$config['database']};charset=utf8",
                 $config['username'],
-                $config['password'],
+                $config['password']
             );
 
             $this->dbh->setAttribute(
                 PDO::ATTR_DEFAULT_FETCH_MODE,
-                PDO::FETCH_OBJ,
+                PDO::FETCH_OBJ
             );
             $db_config = null;
         } catch (Exception $e) {
