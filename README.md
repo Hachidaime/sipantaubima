@@ -5,7 +5,7 @@
 - Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - Install [Composer](https://getcomposer.org/doc/00-intro.md#installation-windows)
 - Clone dari repositori
-  -- Buka Git Bash, jalankan:
+  - Buka Git Bash, jalankan:
 
 ```
 git clone https://github.com/Hachidaime/sipantaubima.git
