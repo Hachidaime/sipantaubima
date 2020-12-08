@@ -31,7 +31,7 @@ class LoginController extends Controller
     {
         if ($this->validate()) {
             list($detail) = $this->userModel->singlearray([
-                ['usr_username', $_POST['usr_username']],
+                ['usr_username', $_POST['usr_username']]
             ]);
 
             $this->setUserSession($detail);
@@ -42,7 +42,7 @@ class LoginController extends Controller
             Flasher::setFlash(
                 "Selamat Datang {$detail['usr_name']}",
                 'LoginController',
-                'success',
+                'success'
             );
 
             echo json_encode(['success' => true]);
@@ -55,17 +55,17 @@ class LoginController extends Controller
         $validation = $this->validator->make($_POST, [
             'fiscal_year' => 'required',
             'usr_username' => 'required',
-            'usr_password' => 'required|login:' . $_POST['usr_username'],
+            'usr_password' => 'required|login:' . $_POST['usr_username']
         ]);
 
         $validation->setAliases([
             'fiscal_year' => 'Tahun Anggaran',
             'usr_username' => 'Username',
-            'usr_password' => 'Password',
+            'usr_password' => 'Password'
         ]);
 
         $validation->setMessages([
-            'required' => '<strong>:attribute</strong> harus diisi.',
+            'required' => '<strong>:attribute</strong> harus diisi.'
         ]);
 
         $validation->validate();
@@ -73,7 +73,7 @@ class LoginController extends Controller
         if ($validation->fails()) {
             $result = [
                 'success' => false,
-                'msg' => $validation->errors()->firstOfAll(),
+                'msg' => $validation->errors()->firstOfAll()
             ];
             echo json_encode($result);
             exit();
@@ -85,7 +85,7 @@ class LoginController extends Controller
     {
         $this->writeLog(
             'User Logout',
-            "User {$_SESSION['USER']['usr_name']} logout.",
+            "User {$_SESSION['USER']['usr_name']} logout."
         );
         session_destroy();
         header('Location: ' . BASE_URL);
