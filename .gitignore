@@ -135,7 +135,7 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/node,composer,visualstudiocode
 
 # Site Configuration
-app/config/Config.php
+app/config/Local.php
 
 # Upload Data
 upload/*

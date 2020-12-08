@@ -2,7 +2,12 @@
 use app\core\App;
 
 /**
- * Menyertakan konfigurasi
+ * Menyertakan konfigurasi Local
+ */
+require_once 'config/Local.php';
+
+/**
+ * Menyertakan konfigurasi Global
  */
 require_once 'config/Config.php';
 
