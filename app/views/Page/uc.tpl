@@ -1,5 +1,5 @@
 <!-- prettier-ignore -->
-{extends 'Templates/mainlayout.tpl'}
+{extends 'Templates/blank.tpl'}
 
 {block 'style'}
 {literal}
@@ -10,8 +10,8 @@
       90deg,
       var(--yellow),
       var(--yellow) 50px,
-      var(--dark) 50px,
-      var(--dark) 100px
+      #001f3f 50px,
+      #001f3f 100px
     );
     background-position: center;
     height: 100vh;
@@ -26,14 +26,17 @@
 {block 'content'}
 <div class="uc-container d-flex justify-content-center align-content-center">
   <div class="d-flex flex-column justify-content-center">
-    <div class="card rounded-0">
-      <div class="card-body p-3 bg-gradient-dark">
-        <div class="jumbotron m-0 bg-light text-center">
+    <div class="card">
+      <div class="card-body p-3 bg-gradient-dark border border-yellow">
+        <div class="jumbotron m-0 bg-warning text-center">
           <h1 class="display-4">
-            <i class="fas fa-tools"></i><br />UNDER CONSTRUCTION
+            <i class="fas fa-exclamation-triangle"></i><br />UNDER CONSTRUCTION
           </h1>
-          <a href="{$smarty.const.BASE_URL}" class="btn bg-gradient-yellow">
-            Back
+          <a
+            href="{$smarty.const.BASE_URL}"
+            class="btn btn-flat bg-gradient-warning"
+          >
+            Back to Home
           </a>
         </div>
       </div>
