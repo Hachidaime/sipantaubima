@@ -30,7 +30,10 @@
       <div class="card-body p-3 bg-gradient-dark border border-yellow">
         <div class="jumbotron m-0 bg-warning text-center">
           <h1 class="display-4">
-            <i class="fas fa-exclamation-triangle"></i><br />UNDER CONSTRUCTION
+            <i class="fas fa-exclamation-triangle"></i>
+          </h1>
+          <h1 class="display-4">
+            <b>UNDER CONSTRUCTION</b>
           </h1>
           <a
             href="{$smarty.const.BASE_URL}"
