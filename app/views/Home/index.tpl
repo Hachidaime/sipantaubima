@@ -26,7 +26,7 @@
           />
         </a>
       </div>
-      <div class="text-center py-3">Pemeliharaan<br />Talut & Jembatan</div>
+      <div class="text-center py-3">Pemeliharaan<br />Talud & Jembatan</div>
     </div>
     <div class="flex-fill px-2 py-5">
       <div class="text-center">
