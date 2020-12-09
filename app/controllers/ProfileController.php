@@ -33,7 +33,7 @@ class ProfileController extends Controller
             $row['created_at'] = Functions::dateFormat(
                 'Y-m-d H:i:s',
                 'd/m/Y H.i.s',
-                $row['created_at'],
+                $row['created_at']
             );
 
             $list[$idx] = $row;
@@ -41,7 +41,7 @@ class ProfileController extends Controller
 
         echo json_encode([
             'list' => $list,
-            'info' => $info,
+            'info' => $info
         ]);
         exit();
     }
@@ -103,17 +103,17 @@ class ProfileController extends Controller
                 Flasher::setFlash(
                     "Berhasil {$tag} {$this->title}.",
                     $this->name,
-                    'success',
+                    'success'
                 );
                 $this->writeLog(
                     "{$tag} {$this->title}",
-                    "{$tag} {$this->title} [{$id}] berhasil.",
+                    "{$tag} {$this->title} [{$id}] berhasil."
                 );
                 echo json_encode(['success' => true]);
             } else {
                 echo json_encode([
                     'success' => false,
-                    'msg' => "Gagal {$tag} {$this->title}.",
+                    'msg' => "Gagal {$tag} {$this->title}."
                 ]);
             }
             exit();
@@ -124,7 +124,7 @@ class ProfileController extends Controller
     {
         $rules = [
             'usr_name' => 'required',
-            'usr_username' => "required|max:20|min:3|unique:{$this->userModel->getTable()},id,{$data['id']}",
+            'usr_username' => "required|max:20|min:3|unique:{$this->userModel->getTable()},id,{$data['id']}"
         ];
 
         if (empty($data['id'])) {
@@ -136,14 +136,14 @@ class ProfileController extends Controller
         $validation->setAliases([
             'usr_name' => 'Nama',
             'usr_username' => 'Username',
-            'usr_password' => 'Password',
+            'usr_password' => 'Password'
         ]);
 
         $validation->setMessages([
             'required' => '<strong>:attribute</strong> harus diisi.',
             'unique' => '<strong>:attribute</strong> sudah ada di database.',
             'min' => '<strong>:attribute</strong> minimum :min karakter.',
-            'max' => '<strong>:attribute</strong> maximum :max karakter.',
+            'max' => '<strong>:attribute</strong> maximum :max karakter.'
         ]);
 
         $validation->validate();
@@ -151,7 +151,7 @@ class ProfileController extends Controller
         if ($validation->fails()) {
             echo json_encode([
                 'success' => false,
-                'msg' => $validation->errors()->firstOfAll(),
+                'msg' => $validation->errors()->firstOfAll()
             ]);
             exit();
         }
