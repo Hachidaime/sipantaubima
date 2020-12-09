@@ -18,7 +18,7 @@
     </div>
     <div class="flex-fill px-2 py-5">
       <div class="text-center">
-        <a href="{$smarty.const.BASE_URL}/login">
+        <a href="{$smarty.const.BASE_URL}/uc">
           <img
             src="{$smarty.const.IMG_LINK2}?t={$smarty.now}"
             class="rounded-circle"
@@ -30,7 +30,7 @@
     </div>
     <div class="flex-fill px-2 py-5">
       <div class="text-center">
-        <a href="{$smarty.const.BASE_URL}/login">
+        <a href="{$smarty.const.BASE_URL}/uc">
           <img
             src="{$smarty.const.IMG_LINK3}?t={$smarty.now}"
             class="rounded-circle"

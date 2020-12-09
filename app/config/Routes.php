@@ -71,5 +71,6 @@ $router->map('POST', '/file/upload', 'FileController::upload');
 
 $router->addRoutes([
     ['GET', '/403', 'PageController::error403', '403'],
-    ['GET', '/404', 'PageController::error404', '404']
+    ['GET', '/404', 'PageController::error404', '404'],
+    ['GET', '/uc', 'PageController::UnderConstruction', 'uc']
 ]);

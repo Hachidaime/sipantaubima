@@ -23,6 +23,7 @@ class PageController extends Controller
         $this->smarty->assign('title', 'Not Found');
         $this->smarty->display("{$this->directory}/404.tpl");
     }
+
     public function actionResult()
     {
         $data = Flasher::getFlash();
@@ -55,5 +56,11 @@ class PageController extends Controller
 
         $this->smarty->assign('data', $data);
         return $this->smarty->display('Page/result.php');
+    }
+
+    public function underConstruction()
+    {
+        $this->smarty->assign('title', 'Not Found');
+        $this->smarty->display("{$this->directory}/uc.tpl");
     }
 }
