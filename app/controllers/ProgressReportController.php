@@ -10,7 +10,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ProgressReportController extends Controller
 {
-    public array $pageHead = [
+    public $pageHead = [
         'LAPORAN PERKEMBANGAN CAPAIAN KINERJA',
         'BIDANG BINA MARGA DPU KAB. SEMARANG',
         'THN ANGGARAN:'
