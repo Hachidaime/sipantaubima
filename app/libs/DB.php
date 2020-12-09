@@ -16,10 +16,10 @@ $db_config = [
     ],
     //Server
     'production' => [
-        'host' => DB_HOST_PROD,
-        'database' => DB_NAME_PROD,
-        'username' => DB_USER_PROD,
-        'password' => DB_PASS_PROD
+        'host' => '',
+        'database' => '',
+        'username' => '',
+        'password' => ''
     ]
 ];
 
