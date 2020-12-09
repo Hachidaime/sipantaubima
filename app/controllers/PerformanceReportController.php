@@ -11,7 +11,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class PerformanceReportController extends Controller
 {
-    public array $pageHead = [
+    public $pageHead = [
         'LAPORAN CAPAIAN KINERJA BULANAN',
         'BIDANG BINA MARGA DPU KAB. SEMARANG',
         'THN ANGGARAN:',
