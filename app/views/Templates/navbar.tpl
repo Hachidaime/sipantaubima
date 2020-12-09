@@ -6,7 +6,9 @@
   >
     <div class="main-title lead d-flex flex-column flex-sm-row">
       <div class="mr-sm-1">SIPANTAUBIMA</div>
-      <div>(Sistem Pantauan Bina Marga)</div>
+      <div>
+        (Sistem Informasi Pengendalian Kontrak Pembangunan Bina Marga)
+      </div>
     </div>
     <div class="now-time text-right align-middle" id="ct">time</div>
   </div>
