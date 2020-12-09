@@ -16,6 +16,10 @@ class ProfileController extends Controller
 
         $this->userModel = new UserModel();
         $this->logModel = new LogModel();
+
+        if (!$_SESSION['USER']['usr_is_master']) {
+            header('Location:' . BASE_URL . '/403');
+        }
     }
 
     public function index()
