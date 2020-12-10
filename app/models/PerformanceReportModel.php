@@ -105,7 +105,7 @@ class PerformanceReportModel extends Model
                         );
                     }
                 } else {
-                    foreach ($progress as $idx => $trg) {
+                    foreach ($progress as $idx => $prog) {
                         $target[$idx] =
                             is_null($target[$idx]) ||
                             empty($target[$idx]) ||
@@ -339,6 +339,9 @@ class PerformanceReportModel extends Model
             'prog_date' => !is_null($progDate)
                 ? Functions::dateFormat('Y-m-d', 'd/m/Y', $progDate)
                 : '',
+            'pkgd_pho_date' => !is_null($pkgdPhoDate)
+                ? Functions::dateFormat('Y-m-d', 'd/m/Y', $pkgdPhoDate)
+                : '',
             'trg_physical' => $trgPhysical > 0 ? $trgPhysical : '',
             'trg_finance_pct' => $trgFinancePct > 0 ? $trgFinancePct : '',
             'prog_physical' => $progPhysical > 0 ? $progPhysical : '',
@@ -347,7 +350,7 @@ class PerformanceReportModel extends Model
             'devn_finance_pct' => !empty($progFinancePct)
                 ? $devnFinancePct
                 : '',
-            'indicator' => !empty($progFinancePct) ? $indicator : 'white'
+            'indicator' => !empty($progPhysical) ? $indicator : 'white'
         ];
 
         return $result;
@@ -386,6 +389,7 @@ class PerformanceReportModel extends Model
             `{$packageDetailTable}`.`pkgd_name`,
             `{$packageDetailTable}`.`pkgd_debt_ceiling`,
             `{$packageDetailTable}`.`pkgd_last_prog_date`,
+            `{$packageDetailTable}`.`pkgd_pho_date`,
             `{$targetTable}`.`trg_week`,
             `{$targetTable}`.`trg_date`,
             `{$targetTable}`.`trg_physical`,
@@ -466,11 +470,12 @@ class PerformanceReportModel extends Model
             `{$packageDetailTable}`.`pkgd_name`,
             `{$packageDetailTable}`.`pkgd_debt_ceiling`,
             `{$packageDetailTable}`.`pkgd_last_prog_date`,
+            `{$packageDetailTable}`.`pkgd_pho_date`,
             `{$progressTable}`.`prog_week`,
             `{$progressTable}`.`prog_date`,
             `{$progressTable}`.`prog_physical`,
             `{$progressTable}`.`prog_finance`,
-            `{$contractTable}`.`cnt_value` 
+            `{$contractTable}`.`cnt_value`
             FROM `{$packageDetailTable}`
             RIGHT JOIN `{$progressTable}`
                 ON `{$progressTable}`.`pkgd_id` = `{$packageDetailTable}`.`id`

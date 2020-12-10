@@ -59,7 +59,7 @@ class DashboardModel extends Model
                 'yellow' => $yellow,
                 'green' => $green,
                 'finish' => $finish,
-                'all' => !empty($row['detail']) ? count($row['detail']) : 0
+                'all' => $red + $yellow + $green
             ];
         }
 
