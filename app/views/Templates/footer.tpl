@@ -1,6 +1,6 @@
 <footer class="main-footer text-sm">
   <strong>
-    Copyright &copy; 2020 G3Dev.
+    Copyright © 2020 NS (RAK).
   </strong>
-  Made with love by Hachidaime. All rights reserved.
+  All rights reserved.
 </footer>
