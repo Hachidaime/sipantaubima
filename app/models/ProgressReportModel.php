@@ -166,8 +166,7 @@ class ProgressReportModel extends Model
         $addendum = $this->db->query($query)->first();
         $addendum = !empty($addendum) ? $addendum->toArray() : $addendum;
 
-        $cntValueEnd =
-            $this->db->getCount() > 0 ? $addendum['add_value'] : $cntValue;
+        $cntValueEnd = $this->db->getCount() > 0 ? $addendum['add_value'] : 0;
 
         $trgFinancePct = $cntValue > 0 ? ($trgFinanceCum / $cntValue) * 100 : 0;
 
