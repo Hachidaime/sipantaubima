@@ -5,22 +5,9 @@
  * @link: https://github.com/mareimorsy
  */
 $db_config = [
-    //current development environment
-    'env' => ENVIRONMENT,
-    //Localhost
-    'development' => [
-        'host' => DB_HOST,
-        'database' => DB_NAME,
-        'username' => DB_USER,
-        'password' => DB_PASS
-    ],
-    //Server
-    'production' => [
-        'host' => '',
-        'database' => '',
-        'username' => '',
-        'password' => ''
-    ]
+    'env' => ENVIRONMENT, // ? current development environment
+    'development' => DEVELOPMENT_DB, // ? Localhost
+    'production' => PRODUCTION_DB // ? Server
 ];
 
 class DB
