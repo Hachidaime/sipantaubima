@@ -103,14 +103,14 @@ class PackageController extends Controller
 
         $userModel = new UserModel();
         $query = "SELECT
-            DISTINCT `{$userModel->getTable()}`.`usr_consultant_name` as `usr_contractor_name`,
+            DISTINCT `{$userModel->getTable()}`.`usr_consultant_name` ,
             `{$userModel->getTable()}`.`id`
             FROM `{$userModel->getTable()}`
             where `usr_consultant_name` != ''";
-        $contractor = $userModel->db->query($query);
-        $contractor = !empty($contractor)
-            ? $contractor->toArray()
-            : $contractor;
+        $consultant = $userModel->db->query($query);
+        $consultant = !empty($consultant)
+            ? $consultant->toArray()
+            : $consultant;
 
         $this->smarty->assign('breadcrumb', [
             ['Paket Pekerjaan', ''],
@@ -122,7 +122,7 @@ class PackageController extends Controller
         $this->smarty->assign('program', $program);
         $this->smarty->assign('activity', $activity);
         $this->smarty->assign('location', $location);
-        $this->smarty->assign('contractor', $contractor);
+        $this->smarty->assign('consultant', $consultant);
         $this->smarty->display("{$this->directory}/form.tpl");
     }
 

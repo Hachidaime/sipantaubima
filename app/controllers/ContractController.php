@@ -106,7 +106,7 @@ class ContractController extends Controller
             : 0;
 
         list($user) = $this->UserModel->singlearray([['id', $data['usr_id']]]);
-        $data['cnt_contractor_name'] = $user['usr_consultant_name'];
+        $data['cnt_consultant_name'] = $user['usr_consultant_name'];
 
         $addendum = [];
         foreach ($data as $key => $value) {
