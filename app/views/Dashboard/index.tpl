@@ -67,3 +67,91 @@
 </div>
 <!-- prettier-ignore -->
 {/block}
+
+{block 'script'}
+{literal}
+<script>
+  $(document).ready(function () {
+    searchActivityInfo()
+  })
+
+  let displayActivityInfo = () => {
+    let refresh = 5000
+    setTimeout('searchActivityInfo()', refresh)
+  }
+
+  let searchActivityInfo = () => {
+    $.get(
+      '{/literal}{$smarty.const.BASE_URL}{literal}/activityinfo',
+      (list) => {
+        let tBody = document.querySelector('#result_data')
+        tBody.innerHTML = ''
+
+        for (index in list) {
+          let tRow = null,
+            no = null,
+            actName = null,
+            all = null,
+            red = null,
+            yellow = null,
+            green = null,
+            finish = null
+
+          no = createElement({
+            element: 'td',
+            class: ['text-right'],
+          })
+
+          actName = createElement({
+            element: 'td',
+            children: [list[index].act_name],
+          })
+
+          all = createElement({
+            element: 'td',
+            class: ['text-right'],
+            children: [list[index].all],
+          })
+
+          red = createElement({
+            element: 'td',
+            class: ['text-right'],
+            children: [list[index].red],
+          })
+
+          yellow = createElement({
+            element: 'td',
+            class: ['text-right'],
+            children: [list[index].yellow],
+          })
+
+          green = createElement({
+            element: 'td',
+            class: ['text-right'],
+            children: [list[index].green],
+          })
+
+          finish = createElement({
+            element: 'td',
+            class: ['text-right'],
+            children: [list[index].finish],
+          })
+
+          tRow = createElement({
+            element: 'tr',
+            children: [no, actName, all, red, yellow, green, finish],
+          })
+
+          tBody.appendChild(tRow)
+        }
+
+        reArrange('#result_data tr')
+        displayActivityInfo()
+      },
+      'JSON'
+    )
+  }
+</script>
+<!-- prettier-ignore -->
+{/literal}
+{/block}

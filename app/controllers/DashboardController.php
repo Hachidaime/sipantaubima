@@ -23,6 +23,7 @@ class DashboardController extends Controller
         $this->dashboardModel = new DashboardModel();
         $this->logModel = new LogModel();
     }
+
     /**
      * function index
      *
@@ -32,9 +33,24 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        // $activityInfo = $this->dashboardModel->activityInfo();
+
+        // $this->smarty->assign('activityInfo', $activityInfo);
+        $this->smarty->display('Dashboard/index.tpl');
+    }
+
+    /**
+     * fucntion searchActivityInfo
+     *
+     * This method will search Activity Information
+     *
+     * @return void
+     */
+    public function searchActivityInfo()
+    {
         $activityInfo = $this->dashboardModel->activityInfo();
 
-        $this->smarty->assign('activityInfo', $activityInfo);
-        $this->smarty->display('Dashboard/index.tpl');
+        echo json_encode($activityInfo);
+        exit();
     }
 }

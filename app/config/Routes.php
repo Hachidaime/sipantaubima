@@ -12,7 +12,13 @@ $router->addRoutes([
             : 'HomeController::index'
     ],
     ['GET', '/home', 'HomeController::index', 'home'],
-    ['GET', '/dashboard', 'DashboardController::index', 'dashboard']
+    ['GET', '/dashboard', 'DashboardController::index', 'dashboard'],
+    [
+        'GET',
+        '/activityinfo',
+        'DashboardController::searchActivityInfo',
+        'activityinfo'
+    ]
 ]);
 
 // User Login & Logout
