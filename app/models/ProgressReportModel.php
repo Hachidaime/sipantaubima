@@ -134,7 +134,57 @@ class ProgressReportModel extends Model
                         }
                     }
 
-                    // var_dump($packageDetail[$i]);
+                    $trgFinanceCum = 0;
+                    $progFinanceCum = 0;
+                    foreach ($packageDetail[$i] as $key => $detail) {
+                        $cntValue = Functions::floatValue($detail['cnt_value']);
+                        $cntValueEnd = Functions::floatValue(
+                            $detail['cnt_value_end']
+                        );
+
+                        $trgFinanceCum += Functions::floatValue(
+                            $detail['trg_finance']
+                        );
+
+                        $trgFinancePct =
+                            $cntValue > 0
+                                ? ($trgFinanceCum / $cntValue) * 100
+                                : 0;
+
+                        $progFinanceCum += Functions::floatValue(
+                            $detail['prog_finance']
+                        );
+
+                        $progFinancePct = !empty($cntValueEnd)
+                            ? ($progFinanceCum / $cntValueEnd) * 100
+                            : (!empty($cntValue)
+                                ? ($progFinanceCum / $cntValue) * 100
+                                : 0);
+
+                        $devnFinancePct = $progFinancePct - $trgFinancePct;
+
+                        $detail = array_merge($detail, [
+                            'trg_finance_pct' => Functions::commaDecimal(
+                                $trgFinancePct
+                            ),
+                            'prog_finance_pct' => Functions::commaDecimal(
+                                $progFinancePct
+                            ),
+                            'devn_finance_pct' => Functions::commaDecimal(
+                                $devnFinancePct
+                            )
+                        ]);
+
+                        if ($detail['week'] > 1) {
+                            $detail['pkgd_no'] = '';
+                            $detail['pkgd_name'] = '';
+                            $detail['cnt_value'] = '';
+                            $detail['cnt_value_end'] = '';
+                            $detail['pkgd_debt_ceiling'] = '';
+                        }
+
+                        $packageDetail[$i][$key] = $detail;
+                    }
                 }
 
                 $row['detail'] = $packageDetail;
@@ -168,20 +218,10 @@ class ProgressReportModel extends Model
 
         $cntValueEnd = $this->db->getCount() > 0 ? $addendum['add_value'] : 0;
 
-        $trgFinancePct = $cntValue > 0 ? ($trgFinanceCum / $cntValue) * 100 : 0;
-
-        $progFinancePct =
-            $cntValueEnd > 0
-                ? ($progFinanceCum / $cntValueEnd) * 100
-                : ($cntValue > 0
-                    ? ($progFinanceCum / $cntValue) * 100
-                    : 0);
-
         $devnPhysical = $progPhysical - $trgPhysical;
-        $devnFinancePct = $progFinancePct - $trgFinancePct;
 
         $indicator = 'white';
-        // var_dump($lastKey);
+
         if ($lastKey) {
             if (!is_null($trgPhysical)) {
                 if (
@@ -216,7 +256,6 @@ class ProgressReportModel extends Model
                 }
             }
         }
-        // var_dump($detail);
 
         $result = [
             'pkgd_id' => $id,
@@ -241,40 +280,20 @@ class ProgressReportModel extends Model
                 ? Functions::dateFormat('Y-m-d', 'd/m/Y', $trgDate)
                 : '',
             'trg_physical' => number_format((float) $trgPhysical, 2, ',', '.'),
-            'trg_finance_pct' => number_format(
-                (float) $trgFinancePct,
-                2,
-                ',',
-                '.'
-            ),
+            'trg_finance' => $trgFinance,
             'prog_physical' => number_format(
                 (float) $progPhysical,
                 2,
                 ',',
                 '.'
             ),
-            'prog_finance_pct' => number_format(
-                (float) $progFinancePct,
-                2,
-                ',',
-                '.'
-            ),
+            'prog_finance' => $progFinance,
             'devn_physical' => !empty($progPhysical)
                 ? number_format($devnPhysical, 2, ',', '.')
                 : '',
-            'devn_finance_pct' => !empty($progFinancePct)
-                ? number_format($devnFinancePct, 2, ',', '.')
-                : '',
-            'indicator' => !empty($progFinancePct) ? $indicator : 'white'
+            'indicator' => !empty($progPhysical) ? $indicator : 'white'
         ];
 
-        if ($result['week'] > 1) {
-            $result['pkgd_no'] = '';
-            $result['pkgd_name'] = '';
-            $result['cnt_value'] = '';
-            $result['cnt_value_end'] = '';
-            $result['pkgd_debt_ceiling'] = '';
-        }
         return $result;
     }
 
@@ -322,13 +341,6 @@ class ProgressReportModel extends Model
 
         $targetOpt = [];
         foreach ($target as $idx => $row) {
-            $row['trg_finance_cum'] =
-                $idx > 0
-                    ? $target[$idx - 1]['trg_finance_cum'] + $row['trg_finance']
-                    : $row['trg_finance'];
-
-            $target[$idx] = $row;
-
             $targetOpt[$row['pkg_id']][] = $row;
         }
 
@@ -377,13 +389,6 @@ class ProgressReportModel extends Model
 
         $progressOpt = [];
         foreach ($progress as $idx => $row) {
-            $row['prog_finance_cum'] =
-                $idx > 0
-                    ? $progress[$idx - 1]['prog_finance_cum'] +
-                        $row['prog_finance']
-                    : $row['prog_finance'];
-
-            $progress[$idx] = $row;
             $progressOpt[$row['pkg_id']][] = $row;
         }
 
