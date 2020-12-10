@@ -32,37 +32,42 @@ class ProgressModel extends Model
         $page = $data['page'] ?? 1;
         $keyword = $data['keyword'] ?? null;
 
-        $filter = [
-            "WHERE `{$this->contractModel->getTable()}`.`usr_id` = '{$_SESSION['USER']['id']}'"
-        ];
-        if (!empty($keyword)) {
-            $filter[] = "WHERE `{$this->table}`.`prog_fiscal_year` = '{$keyword}'";
-        }
-
-        $filter = implode(' ', $filter);
-
         $programTable = $this->programModel->getTable();
         $activityTable = $this->activityModel->getTable();
         $packageTable = $this->packageModel->getTable();
         $packageDetailTable = $this->packageDetailModel->getTable();
         $contractTable = $this->contractModel->getTable();
 
+        $joins = [
+            "LEFT JOIN `{$packageDetailTable}`
+            ON `{$packageDetailTable}`.`id` = `{$this->table}`.`pkgd_id`",
+            "LEFT JOIN `{$packageTable}`
+            ON `{$packageTable}`.`id` = `{$packageDetailTable}`.`pkg_id`",
+            "LEFT JOIN `{$programTable}`
+            ON `{$programTable}`.`prg_code` = `{$packageTable}`.`prg_code`",
+            "LEFT JOIN `{$activityTable}`
+            ON `{$activityTable}`.`act_code` = `{$packageTable}`.`act_code`"
+        ];
+
+        if (!empty($_SESSION['USER']['usr_consultant_name'])) {
+            $filter[] = [
+                "`{$this->contractModel->getTable()}`.`usr_id` = '{$_SESSION['USER']['id']}'"
+            ];
+
+            $joins[] = "RIGHT JOIN `{$contractTable}`
+            ON `{$packageDetailTable}`.`id` = `{$contractTable}`.`pkgd_id`";
+        }
+        if (!empty($keyword)) {
+            $filter[] = "`{$this->table}`.`prog_fiscal_year` = '{$keyword}'";
+        }
+
+        $filter = !is_null($filter) ? 'WHERE ' . implode(' ', $filter) : '';
+
+        $joins = implode('', $joins);
+
         $count = $this->db
             ->query(
-                "SELECT 
-                COUNT(*) as total_rows
-                FROM `{$this->table}`
-                LEFT JOIN `{$packageDetailTable}`
-                    ON `{$packageDetailTable}`.`id` = `{$this->table}`.`pkgd_id`
-                RIGHT JOIN `{$contractTable}`
-                    ON `{$packageDetailTable}`.`id` = `{$contractTable}`.`pkgd_id`
-                LEFT JOIN `{$packageTable}`
-                    ON `{$packageTable}`.`id` = `{$packageDetailTable}`.`pkg_id`
-                LEFT JOIN `{$programTable}`
-                    ON `{$programTable}`.`prg_code` = `{$packageTable}`.`prg_code`
-                LEFT JOIN `{$activityTable}`
-                    ON `{$activityTable}`.`act_code` = `{$packageTable}`.`act_code`
-                {$filter}"
+                "SELECT COUNT(*) as total_rows FROM `{$this->table}` {$joins} {$filter}"
             )
             ->toArray();
 
@@ -92,16 +97,7 @@ class ProgressModel extends Model
             `{$packageDetailTable}`.`pkgd_name`,
             `{$this->table}`.*
             FROM `{$this->table}`
-            LEFT JOIN `{$packageDetailTable}`
-                ON `{$packageDetailTable}`.`id` = `{$this->table}`.`pkgd_id`
-            RIGHT JOIN `{$contractTable}`
-                ON `{$packageDetailTable}`.`id` = `{$contractTable}`.`pkgd_id`
-            LEFT JOIN `{$packageTable}`
-                ON `{$packageTable}`.`id` = `{$packageDetailTable}`.`pkg_id`
-            LEFT JOIN `{$programTable}`
-                ON `{$programTable}`.`prg_code` = `{$packageTable}`.`prg_code`
-            LEFT JOIN `{$activityTable}`
-                ON `{$activityTable}`.`act_code` = `{$packageTable}`.`act_code`
+            {$joins}
             {$filter}
             ORDER BY
             `{$packageTable}`.`pkg_fiscal_year` ASC,
@@ -111,7 +107,6 @@ class ProgressModel extends Model
             `{$this->table}`.`prog_week` ASC
             {$limit}
             ";
-        // echo nl2br($query);
         $list = $this->db->query($query)->toArray();
 
         return [$list, $info];

@@ -289,7 +289,6 @@ class ProgressController extends Controller
         unset($data['prog_id']);
 
         $this->packageDetailModel->save($data);
-        // var_dump($this->packageDetailModel->db);
     }
 
     public function downloadSpreadsheet()
