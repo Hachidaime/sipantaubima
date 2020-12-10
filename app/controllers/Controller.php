@@ -208,6 +208,7 @@ class Controller
                 !in_array($key, [
                     'id',
                     'usr_name',
+                    'usr_consultant_name',
                     'usr_is_master',
                     'usr_is_package',
                     'usr_is_progress',
