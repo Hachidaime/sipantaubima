@@ -241,32 +241,31 @@ class ProgressReportModel extends Model
             'trg_date' => !is_null($trgDate)
                 ? Functions::dateFormat('Y-m-d', 'd/m/Y', $trgDate)
                 : '',
-            'trg_physical' =>
-                $trgPhysical > 0
-                    ? number_format($trgPhysical, 2, ',', '.')
-                    : '',
-            'trg_finance_pct' =>
-                $trgFinancePct > 0
-                    ? number_format($trgFinancePct, 2, ',', '.')
-                    : '',
-            'prog_physical' =>
-                $progPhysical > 0
-                    ? number_format($progPhysical, 2, ',', '.')
-                    : '',
-            'prog_finance_pct' =>
-                $progFinancePct > 0
-                    ? number_format($progFinancePct, 2, ',', '.')
-                    : '',
-            'devn_physical' =>
-                // !empty($trgPhysical) ||
-                !empty($progPhysical)
-                    ? number_format($devnPhysical, 2, ',', '.')
-                    : '',
-            'devn_finance_pct' =>
-                // !empty($trgFinance) ||
-                !empty($progFinancePct)
-                    ? number_format($devnFinancePct, 2, ',', '.')
-                    : '',
+            'trg_physical' => number_format((float) $trgPhysical, 2, ',', '.'),
+            'trg_finance_pct' => number_format(
+                (float) $trgFinancePct,
+                2,
+                ',',
+                '.'
+            ),
+            'prog_physical' => number_format(
+                (float) $progPhysical,
+                2,
+                ',',
+                '.'
+            ),
+            'prog_finance_pct' => number_format(
+                (float) $progFinancePct,
+                2,
+                ',',
+                '.'
+            ),
+            'devn_physical' => !empty($progPhysical)
+                ? number_format($devnPhysical, 2, ',', '.')
+                : '',
+            'devn_finance_pct' => !empty($progFinancePct)
+                ? number_format($devnFinancePct, 2, ',', '.')
+                : '',
             'indicator' => !empty($progFinancePct) ? $indicator : 'white'
         ];
 
