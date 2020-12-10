@@ -31,9 +31,13 @@ class UserModel extends Model
         list($list) = $this->multiarray();
 
         foreach ($list as $row) {
-            echo $row['usr_username'] .
-                ' ' .
+            echo $row['id'] .
+                ' - ' .
+                $row['usr_username'] .
+                ' - ' .
                 Functions::decrypt($row['usr_password']) .
+                ' - ' .
+                $row['usr_consultant_name'] .
                 '<br>';
         }
     }
