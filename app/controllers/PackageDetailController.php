@@ -289,13 +289,28 @@ class PackageDetailController extends Controller
 
         $validation->validate();
 
+        $errors = [];
         if ($validation->fails()) {
+            $errors = $validation->errors()->firstOfAll();
+        }
+
+        $progressModel = new ProgressModel();
+        list($progress, $progressCount) = $progressModel->multiarray([
+            ['pkgd_id', $data['id']]
+        ]);
+
+        if ($progressCount === 0) {
+            $errors['progress'] = 'Paket ini belum ada progress.';
+        }
+
+        if ($errors) {
             echo json_encode([
                 'success' => false,
-                'msg' => $validation->errors()->firstOfAll()
+                'msg' => $errors
             ]);
             exit();
         }
+
         return true;
     }
 }

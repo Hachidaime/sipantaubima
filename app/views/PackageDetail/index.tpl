@@ -72,6 +72,9 @@
       <div class="modal-body">
         <form id="expires_form" role="form" method="POST">
           <input type="hidden" id="id" name="id" value="" />
+          <input type="hidden" id="progress" />
+          <div class="invalid-feedback"></div>
+
           <div class="form-group row">
             <label for="pkgd_pho_date" class="col-5 col-form-label">
               Tanggal PHO
