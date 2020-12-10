@@ -24,11 +24,19 @@ class PackageDetailModel extends Model
     {
         $contractModel = new ContractModel();
 
+        if (!empty($_SESSION['USER']['usr_consultant_name'])) {
+            $filter[] = [
+                "`{$contractModel->getTable()}`.`usr_id` = '{$usr_id}'"
+            ];
+        }
+
+        $filter = !is_null($filter) ? 'WHERE ' . implode(' ', $filter) : '';
+
         $query = "SELECT `{$this->table}`.*, `{$contractModel->getTable()}`.`usr_id`
             FROM `{$this->table}`
             JOIN `{$contractModel->getTable()}`
                 ON `{$contractModel->getTable()}`.`pkgd_id` = `{$this->table}`.`id`
-            WHERE `{$contractModel->getTable()}`.`usr_id` = '{$usr_id}'
+            {$filter}
         ";
 
         $list = $this->db->query($query);
