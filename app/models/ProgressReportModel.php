@@ -161,7 +161,7 @@ class ProgressReportModel extends Model
                                 ? ($progFinanceCum / $cntValue) * 100
                                 : 0);
 
-                        $devnFinancePct = $progFinancePct - $trgFinancePct;
+                        $devnFinancePct = $trgFinancePct - $progFinancePct;
 
                         $detail = array_merge($detail, [
                             'trg_finance_pct' => Functions::commaDecimal(
@@ -218,7 +218,7 @@ class ProgressReportModel extends Model
 
         $cntValueEnd = $this->db->getCount() > 0 ? $addendum['add_value'] : 0;
 
-        $devnPhysical = $progPhysical - $trgPhysical;
+        $devnPhysical = $trgPhysical - $progPhysical;
 
         $indicator = 'white';
 
