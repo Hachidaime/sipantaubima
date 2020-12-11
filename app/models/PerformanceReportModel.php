@@ -292,8 +292,8 @@ class PerformanceReportModel extends Model
                     ? ($sumProgFinance / $cntValue) * 100
                     : 0);
 
-        $devnPhysical = $trgPhysical - $progPhysical;
-        $devnFinancePct = $trgFinancePct - $progFinancePct;
+        $devnPhysical = $progPhysical - $trgPhysical;
+        $devnFinancePct = $progFinancePct - $trgFinancePct;
 
         $indicator = 'white';
 
@@ -301,19 +301,19 @@ class PerformanceReportModel extends Model
             if (
                 ($trgPhysical >= 0 &&
                     $trgPhysical <= 70 &&
-                    $devnPhysical < -10) ||
-                ($trgPhysical > 70 && $trgPhysical <= 100 && $devnPhysical < -5)
+                    $devnPhysical > -10) ||
+                ($trgPhysical > 70 && $trgPhysical <= 100 && $devnPhysical > -5)
             ) {
                 $indicator = 'red';
             } elseif (
                 ($trgPhysical >= 0 &&
                     $trgPhysical <= 70 &&
-                    $devnPhysical >= 0 &&
-                    $devnPhysical <= 10) ||
+                    $devnPhysical >= -10 &&
+                    $devnPhysical <= 0) ||
                 ($trgPhysical > 70 &&
                     $trgPhysical <= 100 &&
-                    $devnPhysical >= 0 &&
-                    $devnPhysical <= 5)
+                    $devnPhysical >= -5 &&
+                    $devnPhysical <= 0)
             ) {
                 $indicator = 'yellow';
             } elseif (
