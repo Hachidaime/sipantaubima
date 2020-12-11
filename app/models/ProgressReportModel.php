@@ -227,10 +227,10 @@ class ProgressReportModel extends Model
                 if (
                     ($trgPhysical >= 0 &&
                         $trgPhysical <= 70 &&
-                        $devnPhysical > -10) ||
+                        $devnPhysical < -10) ||
                     ($trgPhysical > 70 &&
                         $trgPhysical <= 100 &&
-                        $devnPhysical > -5)
+                        $devnPhysical < -5)
                 ) {
                     $indicator = 'red';
                 } elseif (
@@ -256,6 +256,8 @@ class ProgressReportModel extends Model
                 }
             }
         }
+
+        var_dump($indicator);
 
         $result = [
             'pkgd_id' => $id,
