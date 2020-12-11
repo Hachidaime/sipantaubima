@@ -292,8 +292,8 @@ class PerformanceReportModel extends Model
                     ? ($sumProgFinance / $cntValue) * 100
                     : 0);
 
-        $devnPhysical = $progPhysical - $trgPhysical;
-        $devnFinancePct = $progFinancePct - $trgFinancePct;
+        $devnPhysical = $trgPhysical - $progPhysical;
+        $devnFinancePct = $trgFinancePct - $progFinancePct;
 
         $indicator = 'white';
 
