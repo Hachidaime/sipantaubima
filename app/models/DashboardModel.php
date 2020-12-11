@@ -15,39 +15,65 @@ class DashboardModel extends Model
     public function __construct()
     {
         parent::__construct();
+        $this->progressReportModel = new ProgressReportModel();
         $this->performanceReportModel = new PerformanceReportModel();
     }
 
     public function activityInfo()
     {
-        $performance = $this->performanceReportModel->getData();
+        // $performance = $this->performanceReportModel->getData();
+        $progressReport = $this->progressReportModel->getData([
+            'pkg_fiscal_year' => $_SESSION['FISCAL_YEAR']
+        ]);
+
         // print '<pre>';
         // print_r($performance);
         // print '</pre>';
 
         $activityOpt = [];
-        foreach ($performance as $row) {
+        foreach ($progressReport as $row) {
             $red = 0;
             $yellow = 0;
             $green = 0;
             $finish = 0;
             if (!empty($row['detail'])) {
-                foreach ($row['detail'] as $value) {
-                    switch ($value['indicator']) {
-                        case 'red':
-                            $red += 1;
-                            break;
+                //     foreach ($row['detail'] as $value) {
+                //         switch ($value['indicator']) {
+                //             case 'red':
+                //                 $red += 1;
+                //                 break;
 
-                        case 'yellow':
-                            $yellow += 1;
-                            break;
+                //             case 'yellow':
+                //                 $yellow += 1;
+                //                 break;
 
-                        case 'green':
-                            $green += 1;
-                            break;
-                    }
-                    if (!empty($value['pkgd_pho_date'])) {
-                        $finish += 1;
+                //             case 'green':
+                //                 $green += 1;
+                //                 break;
+                //         }
+                //         if (!empty($value['pkgd_pho_date'])) {
+                //             $finish += 1;
+                //         }
+                //     }
+
+                foreach ($row['detail'] as $detail) {
+                    foreach ($detail as $value) {
+                        switch ($value['indicator']) {
+                            case 'red':
+                                $red += 1;
+                                break;
+
+                            case 'yellow':
+                                $yellow += 1;
+                                break;
+
+                            case 'green':
+                                $green += 1;
+                                break;
+                        }
+                        if (!empty($value['pkgd_pho_date'])) {
+                            $finish += 1;
+                        }
                     }
                 }
             }

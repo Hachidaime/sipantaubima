@@ -257,8 +257,6 @@ class ProgressReportModel extends Model
             }
         }
 
-        var_dump($indicator);
-
         $result = [
             'pkgd_id' => $id,
             'pkgd_no' => $pkgdNo,
