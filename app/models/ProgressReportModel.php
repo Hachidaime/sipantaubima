@@ -161,7 +161,7 @@ class ProgressReportModel extends Model
                                 ? ($progFinanceCum / $cntValue) * 100
                                 : 0);
 
-                        $devnFinancePct = $trgFinancePct - $progFinancePct;
+                        $devnFinancePct = $progFinancePct - $trgFinancePct;
 
                         $detail = array_merge($detail, [
                             'trg_finance_pct' => Functions::commaDecimal(
@@ -218,7 +218,7 @@ class ProgressReportModel extends Model
 
         $cntValueEnd = $this->db->getCount() > 0 ? $addendum['add_value'] : 0;
 
-        $devnPhysical = $trgPhysical - $progPhysical;
+        $devnPhysical = $progPhysical - $trgPhysical;
 
         $indicator = 'white';
 
@@ -227,21 +227,21 @@ class ProgressReportModel extends Model
                 if (
                     ($trgPhysical >= 0 &&
                         $trgPhysical <= 70 &&
-                        $devnPhysical < -10) ||
+                        $devnPhysical > -10) ||
                     ($trgPhysical > 70 &&
                         $trgPhysical <= 100 &&
-                        $devnPhysical < -5)
+                        $devnPhysical > -5)
                 ) {
                     $indicator = 'red';
                 } elseif (
                     ($trgPhysical >= 0 &&
                         $trgPhysical <= 70 &&
-                        $devnPhysical >= 0 &&
-                        $devnPhysical <= 10) ||
+                        $devnPhysical >= -10 &&
+                        $devnPhysical <= 0) ||
                     ($trgPhysical > 70 &&
                         $trgPhysical <= 100 &&
-                        $devnPhysical >= 0 &&
-                        $devnPhysical <= 5)
+                        $devnPhysical >= -5 &&
+                        $devnPhysical <= 0)
                 ) {
                     $indicator = 'yellow';
                 } elseif (
